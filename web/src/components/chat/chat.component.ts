@@ -20,7 +20,6 @@ export class ChatComponent {
 
     constructor() {
         effect(() => {
-            const msgs = this.messages();
             setTimeout(() => {
                 const el = this.scrollContainer().nativeElement;
                 el.scrollTop = el.scrollHeight;
