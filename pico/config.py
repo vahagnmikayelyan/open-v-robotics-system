@@ -1,0 +1,27 @@
+# PINS config
+
+# --- UART ---
+# Connection with Raspberry Pi 5
+UART_ID = 0
+UART_TX_PIN = 0
+UART_RX_PIN = 1
+UART_BAUDRATE = 115200
+
+# --- I2C ---
+# INA219
+INA219_I2C_ID = 1
+INA219_SDA_PIN = 2
+INA219_SCL_PIN = 3
+INA219_I2C_ADDR = 0x40
+
+# --- I2C ---
+# VL53L1X - ToF
+TOF_LIDAR_SDA_PIN = 4
+TOF_LIDAR_SCL_PIN = 5
+TOF_LIDAR_I2C_ID = 0
+
+# --- PWM  ---
+# LED
+LED_LEFT_PIN = 9
+LED_RIGHT_PIN = 22
+LED_PWM_FREQ = 1000

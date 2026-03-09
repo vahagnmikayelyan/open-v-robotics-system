@@ -1,0 +1,27 @@
+<div class="chat-wrapper">
+
+    <div class="messages-container" #scrollContainer>
+        <div class="message-row" *ngFor="let msg of messages()" [ngClass]="msg.type">
+            <div class="bubble">
+                <span *ngIf="msg.type === 'userCommand'" class="cmd-prefix">&gt;_</span>
+                <span *ngIf="msg.type === 'systemCommand'" class="cmd-prefix">#</span>
+                <span *ngIf="msg.type === 'system'" class="cmd-prefix">AI:</span>
+                <span class="text-content">{{ msg.text }}</span>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="input-area">
+    <textarea
+        #msgInput
+        rows="1"
+        placeholder="Enter command..."
+        [(ngModel)]="inputText"
+        (ngModelChange)="inputText.set($event)"
+        (input)="adjustHeight(msgInput)"
+        (keydown)="onKeydown($event, msgInput)"></textarea>
+        <button (click)="onSend(msgInput)">SEND</button>
+    </div>
+
+</div>

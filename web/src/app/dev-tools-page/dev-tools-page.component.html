@@ -1,0 +1,27 @@
+<header>
+    <div class="header-title">
+        <span>Open V Robotics System v0.0.1</span>
+        <span class="dev-mode-label">DEV MODE</span>
+    </div>
+</header>
+
+<div class="dashboard-grid">
+
+    <div class="panel">
+
+        <sensor-tile
+            label="Power" [valueMain]="powerDataSignal().v" unit="V" [valueSec]="powerDataSignal().p"
+            unitSec="%" (isActiveChange)="changeModuleUpdates('power', $event)"></sensor-tile>
+
+        <sensor-tile
+            label="Distance sensor" [valueMain]="distanceSensorDataSignal().v" unit="mm"
+            (isActiveChange)="changeModuleUpdates('distanceSensor', $event)"></sensor-tile>
+
+        <dual-led-control (changeValues)="changeLed($event)"></dual-led-control>
+    </div>
+
+    <div class="panel">
+        <chat [messages]="messages()"></chat>
+    </div>
+
+</div>
