@@ -1,0 +1,88 @@
+<div class="widget">
+
+    <div class="widget-header">
+        <span class="widget-label">Motors control</span>
+    </div>
+
+    <div class="widget-content chassis-view">
+
+        <div class="chassis-settings-row">
+            <label>SPEED</label>
+            <input type="range" class="range-input" min="0" max="100" step="10" [ngModel]="speed()" (ngModelChange)="speed.set($event)">
+            <span class="value">{{ speed() }}%</span>
+        </div>
+
+        <div class="chassis-view">
+            <div class="robot-body">
+                <div class="front-indicator">FRONT</div>
+
+                <div class="wheel fl" [class]="getWheelClass('fl')"
+                     (mousedown)="startWheel('fl')" (mouseup)="stop()" (mouseleave)="stop()"
+                     (touchstart)="startWheel('fl')" (touchend)="stop()">
+                    <span>FL</span>
+                </div>
+
+                <div class="wheel fr" [class]="getWheelClass('fr')"
+                     (mousedown)="startWheel('fr')" (mouseup)="stop()" (mouseleave)="stop()"
+                     (touchstart)="startWheel('fr')" (touchend)="stop()">
+                    <span>FR</span>
+                </div>
+
+                <div class="wheel bl" [class]="getWheelClass('bl')"
+                     (mousedown)="startWheel('bl')" (mouseup)="stop()" (mouseleave)="stop()"
+                     (touchstart)="startWheel('bl')" (touchend)="stop()">
+                    <span>RL</span>
+                </div>
+
+                <div class="wheel br" [class]="getWheelClass('br')"
+                     (mousedown)="startWheel('br')" (mouseup)="stop()" (mouseleave)="stop()"
+                     (touchstart)="startWheel('br')" (touchend)="stop()">
+                    <span>RR</span>
+                </div>
+
+                <div class="status-center">
+                    {{ currentAction() ? (currentAction() | uppercase) : 'IDLE' }}
+                </div>
+            </div>
+        </div>
+
+        <div class="d-pad-grid">
+            <button class="d-btn" (mousedown)="rotateLeft()" (mouseup)="stop()" (mouseleave)="stop()"
+                    (touchstart)="rotateLeft()" (touchend)="stop()">
+                <lucide-icon [img]="LucideIcons.RotateCcw" class="d-icon"></lucide-icon>
+            </button>
+
+            <button class="d-btn main" (mousedown)="forward()" (mouseup)="stop()" (mouseleave)="stop()"
+                    (touchstart)="forward()" (touchend)="stop()">
+                <lucide-icon [img]="LucideIcons.ArrowUp" class="d-icon"></lucide-icon>
+            </button>
+
+            <button class="d-btn" (mousedown)="rotateRight()" (mouseup)="stop()" (mouseleave)="stop()"
+                    (touchstart)="rotateRight()" (touchend)="stop()">
+                <lucide-icon [img]="LucideIcons.RotateCw" class="d-icon"></lucide-icon>
+            </button>
+
+            <button class="d-btn" (mousedown)="spinLeft()" (mouseup)="stop()" (mouseleave)="stop()"
+                    (touchstart)="spinLeft()" (touchend)="stop()">
+                <lucide-icon [img]="LucideIcons.ArrowLeft" class="d-icon"></lucide-icon>
+            </button>
+
+            <button class="d-btn stop-btn" (click)="stop(true)">STOP</button>
+
+            <button class="d-btn" (mousedown)="spinRight()" (mouseup)="stop()" (mouseleave)="stop()"
+                    (touchstart)="spinRight()" (touchend)="stop()">
+                <lucide-icon [img]="LucideIcons.ArrowRight" class="d-icon"></lucide-icon>
+            </button>
+
+            <button class="d-btn disabled"></button>
+
+            <button class="d-btn main" (mousedown)="backward()" (mouseup)="stop()" (mouseleave)="stop()"
+                     (touchstart)="backward()" (touchend)="stop()">
+                <lucide-icon [img]="LucideIcons.ArrowDown" class="d-icon"></lucide-icon>
+            </button>
+
+            <button class="d-btn disabled"></button>
+        </div>
+
+    </div>
+</div>

@@ -1,4 +1,4 @@
-class PowerMonitor {
+class InertialSensor {
 
     constructor(moduleName, connector) {
         this.moduleName = moduleName;
@@ -10,4 +10,4 @@ class PowerMonitor {
     }
 }
 
-export default PowerMonitor;
+export default InertialSensor;

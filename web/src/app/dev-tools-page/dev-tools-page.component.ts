@@ -1,9 +1,13 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../environments/environment';
 import { UiSocketService } from '../../services/ui-socket.service';
 import { ChatMessage, ChatMessageType } from '../../models/models';
 import { ChatComponent } from '../../components/chat/chat.component';
+import { UiSliderComponent } from '../../components/ui-slider/ui-slider.component';
 import { SensorTileComponent } from '../../components/sensor-tile/sensor-tile.component';
+import { ImuWidgetComponent, MpuData } from '../../components/imu-widget/imu-widget.component';
+import { MotorCommand, MotorControlComponent } from '../../components/motor-control/motor-control.component';
 import { DualLedControlComponent, LedState } from '../../components/dual-led-control/dual-led-control.component';
 
 @Component({
@@ -11,7 +15,10 @@ import { DualLedControlComponent, LedState } from '../../components/dual-led-con
     imports: [
         FormsModule,
         ChatComponent,
+        UiSliderComponent,
         SensorTileComponent,
+        ImuWidgetComponent,
+        MotorControlComponent,
         DualLedControlComponent,
     ],
     templateUrl: './dev-tools-page.component.html',
@@ -23,12 +30,23 @@ export class DevToolsPageComponent implements OnInit {
     messages = signal<ChatMessage[]>([]);
 
     modulesUpdatesTimers: Record<string, { timerId: any | null, action: string, params: any[] | null }> = {
-        power: { timerId: null, action: 'getVoltage', params: null },
-        distanceSensor: { timerId: null, action: 'getDistance', params: null },
+        power: { timerId: null, action: 'getValue', params: null },
+        lightSensor: { timerId: null, action: 'getValue', params: null },
+        distanceSensor: { timerId: null, action: 'getValue', params: null },
+        thermalSensor: { timerId: null, action: 'getValue', params: null },
+        inertialSensor: { timerId: null, action: 'getValue', params: null },
     };
 
     powerDataSignal = signal({ v: 0, p: 0 });
+    lightSensorDataSignal = signal({ v: 0, p: 0 });
     distanceSensorDataSignal = signal({ v: 0 });
+    thermalSensorDataSignal = signal({ v: 0 });
+    inertialSensorDataSignal = signal<MpuData>({ accel: {x: 0, y: 0, z: 0}, gyro: { x: 0, y: 0, z: 0} });
+
+    fanSpeed = signal<number>(0);
+    servoAngle = signal<number>(0);
+
+    platformVersion = signal<string>('');
 
     ngOnInit() {
         this.uiSocketService.onInit.subscribe(() => {
@@ -39,6 +57,8 @@ export class DevToolsPageComponent implements OnInit {
             this.addMessage(JSON.stringify(message), ChatMessageType.systemCommand);
             this.handleCommandResult(message);
         });
+
+        this.platformVersion.set(environment.version);
     }
 
     addMessage(text: string, type: ChatMessageType) {
@@ -53,8 +73,23 @@ export class DevToolsPageComponent implements OnInit {
                 this.powerDataSignal.set(commandResult);
             }
 
+            if (commandResult.module === 'lightSensor') {
+                this.lightSensorDataSignal.set(commandResult);
+            }
+
             if (commandResult.module === 'distanceSensor') {
                 this.distanceSensorDataSignal.set(commandResult);
+            }
+
+            if (commandResult.module === 'thermalSensor') {
+                this.thermalSensorDataSignal.set(commandResult);
+            }
+
+            if (commandResult.module === 'inertialSensor') {
+                this.inertialSensorDataSignal.set({
+                    accel: { x: commandResult.a[0], y: commandResult.a[1], z: commandResult.a[2] },
+                    gyro: { x: commandResult.g[0], y: commandResult.g[1], z: commandResult.g[2] },
+                });
             }
         }
     }
@@ -66,8 +101,6 @@ export class DevToolsPageComponent implements OnInit {
     }
 
     changeModuleUpdates(module: string, isEnabled: boolean) {
-        console.log('changeModuleUpdates', module, isEnabled);
-
         this.modulesUpdatesTimers[module].timerId && clearInterval(this.modulesUpdatesTimers[module].timerId);
 
         if (isEnabled) {
@@ -75,6 +108,18 @@ export class DevToolsPageComponent implements OnInit {
                 this.uiSocketService.sendCommand(module, this.modulesUpdatesTimers[module].action, this.modulesUpdatesTimers[module].params);
             }, 500);
         }
+    }
+
+    changeFanSpeed(speed: number) {
+        this.runCommand('fan', 'changeSpeed', [speed]);
+    }
+
+    changeServoAngle(angle: number) {
+        this.runCommand('headServo', 'rotate', [angle]);
+    }
+
+    handleMotorCommand({ type, data}: MotorCommand) {
+        this.runCommand('drive', type, [data.fl, data.fr, data.bl, data.br]);
     }
 
     changeLed(values: LedState) {

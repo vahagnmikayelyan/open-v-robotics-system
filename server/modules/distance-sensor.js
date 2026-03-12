@@ -5,7 +5,7 @@ class DistanceSensor {
         this.connector = connector;
     }
 
-    getDistance() {
+    getValue() {
         return this.connector.sendCommand(this.moduleName, 'get');
     }
 }
