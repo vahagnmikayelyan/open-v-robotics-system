@@ -1,0 +1,59 @@
+<div class="widget" [class.active]="isActive()">
+
+    <div class="widget-header">
+        <span class="widget-label">Inertial sensor</span>
+        <div class="widget-toggle-switch" (click)="toggleStream()">
+            <div class="knob"></div>
+        </div>
+    </div>
+
+    <div class="widget-content content-grid">
+
+        <div class="visual-part">
+            <div class="instrument-face">
+
+                <div class="crosshair h"></div>
+                <div class="crosshair v"></div>
+                <div class="ring"></div>
+
+                <div class="dot" [style.transform]="dotTransform()"></div>
+
+            </div>
+        </div>
+
+        <div class="data-part">
+
+            <div class="data-row">
+                <span class="axis">Accel</span>
+            </div>
+
+            <div class="data-row">
+                <span class="axis">X</span>
+                <span class="val">{{ data().accel.x | number:'1.2-2' }}</span>
+                <span class="separator">|</span>
+                <span class="axis">Y</span>
+                <span class="val">{{ data().accel.y | number:'1.2-2' }}</span>
+                <span class="separator">|</span>
+                <span class="axis">Z</span>
+                <span class="val">{{ data().accel.z | number:'1.2-2' }}</span>
+            </div>
+
+            <div class="data-row">
+                <span class="axis">GYRO</span>
+            </div>
+
+            <div class="data-row">
+                <span class="axis">X</span>
+                <span class="val">{{ data().gyro.x | number:'1.1-1' }}</span>
+                <span class="separator">|</span>
+                <span class="axis">Y</span>
+                <span class="val">{{ data().gyro.y | number:'1.1-1' }}</span>
+                <span class="separator">|</span>
+                <span class="axis">Z</span>
+                <span class="val">{{ data().gyro.z | number:'1.1-1' }}</span>
+            </div>
+
+        </div>
+
+    </div>
+</div>
