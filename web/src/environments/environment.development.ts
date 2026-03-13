@@ -1,5 +1,5 @@
 export const environment = {
     production: false,
     serverPort: 3000,
-    version: '0.0.2',
+    version: '0.0.3',
 };

@@ -20,10 +20,26 @@ const SocketHandler = (server, hardwareConnector) => {
 			socket.emit('init');
 		};
 
+		hardwareConnector.modules['camera'].on('frame', (frame) => {
+			socket.emit('cameraData', 'data:image/jpg;base64,' + frame.toString('base64'));
+		});
+
 		socket.on('command', ({ module, command, params }) => {
 			hardwareConnector.runCommand(module, command, params).then((response) => {
 				response && socket.emit('commandResult', response);
 			});
+		});
+
+		socket.on('cameraCommand', ({ command }) => {
+			if (command === 'takePhoto') {
+				hardwareConnector.modules['camera'].takePhoto().then(frame => {
+					socket.emit('cameraData', 'data:image/jpg;base64,' + frame.toString('base64'));
+				});
+			} else if (command === 'startStream') {
+				hardwareConnector.modules['camera'].startVideo();
+			} else if (command === 'stopStream') {
+				hardwareConnector.modules['camera'].stopVideo();
+			}
 		});
 
         socket.on('disconnect', () => {

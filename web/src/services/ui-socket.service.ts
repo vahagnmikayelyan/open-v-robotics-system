@@ -12,6 +12,7 @@ export class UiSocketService {
 
     public onInit = new EventEmitter<null>();
     public onCommandResult = new EventEmitter<any>();
+    public onCameraData = new EventEmitter<string>();
 
     private wss: WebsocketWrapper | undefined;
 
@@ -25,6 +26,7 @@ export class UiSocketService {
 
         this.wss.on('init', (data: any) => this.onInit.emit(data));
         this.wss.on('commandResult', (data: any) => this.onCommandResult.emit(data));
+        this.wss.on('cameraData', (data: string) => this.onCameraData.emit(data));
     }
 
     private send(event: string, data: any = null) {
@@ -33,5 +35,9 @@ export class UiSocketService {
 
     sendCommand(module: string, command: string, params: any[] | null = null) {
         this.send('command', { module, command, params });
+    }
+
+    sendCameraCommand(command: string, params: any[] | null = null) {
+        this.send('cameraCommand', { command, params });
     }
 }
