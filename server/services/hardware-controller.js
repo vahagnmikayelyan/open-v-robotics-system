@@ -8,11 +8,12 @@ import LightController from '../modules/light-controller.js';
 import LightSensor from '../modules/light-sensor.js';
 import PowerMonitor from '../modules/power-monitor.js';
 import ThermalSensor from '../modules/thermal-sensor.js';
+import CameraController from '../modules/camera-controller.js';
 
 class HardwareController {
 
     constructor() {
-        this.picoConnector = new PicoUartConnector(this.onPicoReady);
+        this.picoConnector = new PicoUartConnector();
 
         this.modules = {
             'distanceSensor': new DistanceSensor('distanceSensor', this.picoConnector),
@@ -24,8 +25,10 @@ class HardwareController {
             'power': new PowerMonitor('power', this.picoConnector),
             'headServo': new HeadController('headServo', this.picoConnector),
             'thermalSensor': new ThermalSensor('thermalSensor', this.picoConnector),
+            'camera': new CameraController(),
         };
 
+        this.picoConnector.on('ready', this.onPicoReady);
         this.picoConnector.init();
     }
 

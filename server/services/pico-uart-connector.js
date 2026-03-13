@@ -1,9 +1,11 @@
+import EventEmitter from "events";
 import { SerialPort } from "serialport";
 import { ReadlineParser } from "@serialport/parser-readline";
 
-class PicoUartConnector {
-    constructor(onReady, path = '/dev/ttyAMA0', baudRate = 115200) {
-        this.onReady = onReady;
+class PicoUartConnector extends EventEmitter {
+    constructor(path = '/dev/ttyAMA0', baudRate = 115200) {
+        super();
+
         this.messageId = 0;
         this.handlers = new Map();
 
@@ -16,7 +18,7 @@ class PicoUartConnector {
     setupListeners() {
         this.port.on('open', () => {
             console.log('UART port opened');
-            this.onReady && this.onReady();
+            this.emit('ready');
         });
 
         this.parser.on('data', (line) => {

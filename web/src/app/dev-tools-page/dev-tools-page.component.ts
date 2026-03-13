@@ -9,6 +9,7 @@ import { SensorTileComponent } from '../../components/sensor-tile/sensor-tile.co
 import { ImuWidgetComponent, MpuData } from '../../components/imu-widget/imu-widget.component';
 import { MotorCommand, MotorControlComponent } from '../../components/motor-control/motor-control.component';
 import { DualLedControlComponent, LedState } from '../../components/dual-led-control/dual-led-control.component';
+import { CameraWidgetComponent } from '../../components/camera-widget/camera-widget.component';
 
 @Component({
     selector: 'dev-tools-page',
@@ -20,6 +21,7 @@ import { DualLedControlComponent, LedState } from '../../components/dual-led-con
         ImuWidgetComponent,
         MotorControlComponent,
         DualLedControlComponent,
+        CameraWidgetComponent
     ],
     templateUrl: './dev-tools-page.component.html',
     styleUrl: './dev-tools-page.component.less'
