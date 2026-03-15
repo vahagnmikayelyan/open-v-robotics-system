@@ -1,15 +1,7 @@
 import { Component, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  LucideAngularModule,
-  RotateCcw,
-  RotateCw,
-  ArrowUp,
-  ArrowDown,
-  ArrowLeft,
-  ArrowRight,
-} from 'lucide-angular';
+import { LucideAngularModule, RotateCcw, RotateCw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-angular';
 
 interface Wheels {
   fl: number;
@@ -43,12 +35,16 @@ export class MotorControlComponent {
     ArrowRight,
   };
 
-  speed = signal<number>(50);
+  speed = signal<number>(70);
   direction = signal<number>(1);
   currentAction = signal<string | null>(null);
   wheelsStates = signal<Wheels>({ ...defaultStates });
 
   command = output<MotorCommand>();
+
+  private getCommand(frontLeft: number, frontRight: number, backLeft: number, backRight: number) {
+    return { fl: frontLeft, fr: frontRight, bl: backLeft, br: backRight };
+  }
 
   startWheel(id: string) {
     this.wheelsStates.set({ ...defaultStates, [id]: this.direction() * this.speed() });
@@ -57,67 +53,37 @@ export class MotorControlComponent {
   }
 
   rotateLeft() {
-    this.wheelsStates.set({
-      fl: -1 * this.speed(),
-      fr: this.speed(),
-      bl: -1 * this.speed(),
-      br: this.speed(),
-    });
+    this.wheelsStates.set(this.getCommand(-1 * this.speed(), this.speed(), -1 * this.speed(), this.speed()));
     this.currentAction.set('rotateLeft');
     this.command.emit({ type: 'control', data: this.wheelsStates() });
   }
 
   rotateRight() {
-    this.wheelsStates.set({
-      fl: this.speed(),
-      fr: -1 * this.speed(),
-      bl: this.speed(),
-      br: -1 * this.speed(),
-    });
+    this.wheelsStates.set(this.getCommand(this.speed(), -1 * this.speed(), this.speed(), -1 * this.speed()));
     this.currentAction.set('rotateLeft');
     this.command.emit({ type: 'control', data: this.wheelsStates() });
   }
 
   spinLeft() {
-    this.wheelsStates.set({
-      fl: -1 * this.speed(),
-      fr: this.speed(),
-      bl: this.speed(),
-      br: -1 * this.speed(),
-    });
+    this.wheelsStates.set(this.getCommand(-1 * this.speed(), this.speed(), this.speed(), -1 * this.speed()));
     this.currentAction.set('spinLeft');
     this.command.emit({ type: 'control', data: this.wheelsStates() });
   }
 
   spinRight() {
-    this.wheelsStates.set({
-      fl: this.speed(),
-      fr: -1 * this.speed(),
-      bl: -1 * this.speed(),
-      br: this.speed(),
-    });
+    this.wheelsStates.set(this.getCommand(this.speed(), -1 * this.speed(), -1 * this.speed(), this.speed()));
     this.currentAction.set('spinRight');
     this.command.emit({ type: 'control', data: this.wheelsStates() });
   }
 
   forward() {
-    this.wheelsStates.set({
-      fl: this.speed(),
-      fr: this.speed(),
-      bl: this.speed(),
-      br: this.speed(),
-    });
+    this.wheelsStates.set(this.getCommand(this.speed(), this.speed(), this.speed(), this.speed()));
     this.currentAction.set('forward');
     this.command.emit({ type: 'control', data: this.wheelsStates() });
   }
 
   backward() {
-    this.wheelsStates.set({
-      fl: -1 * this.speed(),
-      fr: -1 * this.speed(),
-      bl: -1 * this.speed(),
-      br: -1 * this.speed(),
-    });
+    this.wheelsStates.set(this.getCommand(-1 * this.speed(), -1 * this.speed(), -1 * this.speed(), -1 * this.speed()));
     this.currentAction.set('backward');
     this.command.emit({ type: 'control', data: this.wheelsStates() });
   }

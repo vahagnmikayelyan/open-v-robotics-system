@@ -1,12 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { UiSocketService } from '../services/ui-socket.service';
+import { NotificationComponent } from '../components/notification/notification.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, NotificationComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.less'
+  styleUrl: './app.component.less',
 })
 export class AppComponent implements OnInit {
   private uiSocketService = inject(UiSocketService);
