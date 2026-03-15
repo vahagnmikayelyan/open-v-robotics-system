@@ -2,11 +2,16 @@ export enum ChatMessageType {
   user = 'user',
   system = 'system',
   userCommand = 'userCommand',
-  systemCommand = 'systemCommand'
+  systemCommand = 'systemCommand',
 }
 
 export interface ChatMessage {
   text: string;
   type: ChatMessageType;
   timestamp?: Date;
+}
+
+export interface IConfig {
+  key: string;
+  value: unknown;
 }

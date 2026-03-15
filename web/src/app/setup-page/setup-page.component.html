@@ -1,0 +1,42 @@
+<div class="setup-container">
+
+  <div class="header">
+    <button class="nav-btn back" routerLink="/menu">BACK</button>
+    <span class="title">SYSTEM SETTINGS</span>
+    <button class="nav-btn primary save-btn" (click)="save()">SAVE</button>
+  </div>
+
+  <div class="settings-scroll">
+
+    <div class="section-title">GENERAL</div>
+    <div class="card-group">
+
+      <div class="setting-row">
+        <div class="label-group">
+          <span class="lbl">Robot Name</span>
+          <span class="sub">Using in AI models</span>
+        </div>
+        <div class="value-group">
+          <input type="text" [(ngModel)]="configs().general_robotName" class="input-dark">
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="label-group">
+          <span class="lbl">Global Speed Limit</span>
+          <span class="sub">Safety cap (50%-100%)</span>
+        </div>
+        <div class="value-group">
+          <div class="value-display">{{ configs().general_maxSpeedLimit }}%</div>
+          <input type="range" [(ngModel)]="configs().general_maxSpeedLimit" min="10" max="100" class="range-input">
+        </div>
+      </div>
+
+    </div>
+
+    <div class="info-block">
+      <div>System Version: v{{ platformVersion() }}</div>
+    </div>
+
+  </div>
+</div>

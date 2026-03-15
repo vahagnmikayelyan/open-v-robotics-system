@@ -1,5 +1,5 @@
 import type { Server } from 'node:http';
-import type { IHardwareController } from '../types/types.js';
+import { IHardwareController } from '../types/types.js';
 import { WebSocketServer } from 'ws';
 import Socket from './socket.js';
 

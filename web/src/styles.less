@@ -34,6 +34,93 @@ body {
   overflow: hidden;
 }
 
+/* --- GLOBAL NAVIGATION BUTTONS --- */
+.nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    height: 32px;
+    padding: 0 10px;
+    background: rgba(30, 30, 30, 0.8);
+    border: 1px solid #444;
+    border-radius: 6px;
+    color: #ccc;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease-out;
+    position: relative;
+    overflow: hidden;
+
+    &:active {
+        transform: scale(0.96);
+        background: #333;
+        color: #fff;
+        border-color: #666;
+    }
+
+    &.back {
+        justify-content: flex-start;
+        border-color: #555;
+        background: linear-gradient(90deg, #222 0%, #111 100%);
+
+        &::before {
+            content: '‹';
+            font-size: 1.8rem;
+            margin-right: 5px;
+            margin-top: -4px;
+            color: #00d4ff;
+        }
+
+        &:active {
+            border-color: #00d4ff;
+            &::before { color: #fff; }
+        }
+    }
+
+    &.primary {
+        background: rgba(0, 212, 255, 0.1);
+        border-color: #00d4ff;
+        color: #00d4ff;
+        box-shadow: 0 0 10px rgba(0, 212, 255, 0.1);
+
+        &:active {
+            background: rgba(0, 212, 255, 0.3);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+        }
+    }
+
+    &.danger {
+        background: rgba(255, 68, 68, 0.1);
+        border-color: #ff4444;
+        color: #ff4444;
+
+        &:active {
+            background: rgba(255, 68, 68, 0.3);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 68, 68, 0.4);
+        }
+    }
+
+    &.ghost {
+        background: transparent;
+        border-color: transparent;
+        color: #666;
+
+        &:active {
+            color: #fff;
+            background: rgba(255,255,255,0.05);
+        }
+    }
+}
+
 /* --- Header / Status Bar --- */
 header {
   background-color: var(--panel-bg);
@@ -117,6 +204,11 @@ header {
       }
     }
   }
+}
+
+lucide-icon {
+  height: 24px;
+  width: 24px;
 }
 
 /* Range input styling */

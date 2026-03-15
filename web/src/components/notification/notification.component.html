@@ -1,0 +1,21 @@
+<div class="notifications-wrapper">
+
+  <div class="toast-item" *ngFor="let notification of notifications.notifications()"
+       [ngClass]="notification.type" (click)="close(notification.id)">
+
+    <div class="icon-container">
+      <lucide-icon *ngIf="notification.type === 'success'" [img]="LucideIcons.CheckCircle"
+                   class="toast-icon"></lucide-icon>
+      <lucide-icon *ngIf="notification.type === 'error'" [img]="LucideIcons.XCircle" class="toast-icon"></lucide-icon>
+      <lucide-icon *ngIf="notification.type === 'info'" [img]="LucideIcons.Info" class="toast-icon"></lucide-icon>
+      <lucide-icon *ngIf="notification.type === 'warning'" [img]="LucideIcons.AlertTriangle"
+                   class="toast-icon"></lucide-icon>
+    </div>
+
+    <div class="message">
+      {{ notification.message }}
+    </div>
+
+  </div>
+
+</div>

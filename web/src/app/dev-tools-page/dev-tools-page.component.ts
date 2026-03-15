@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../environments/environment';
 import { UiSocketService } from '../../services/ui-socket.service';
@@ -14,6 +15,7 @@ import { CameraWidgetComponent } from '../../components/camera-widget/camera-wid
 @Component({
   selector: 'dev-tools-page',
   imports: [
+    RouterLink,
     FormsModule,
     ChatComponent,
     UiSliderComponent,
@@ -21,17 +23,17 @@ import { CameraWidgetComponent } from '../../components/camera-widget/camera-wid
     ImuWidgetComponent,
     MotorControlComponent,
     DualLedControlComponent,
-    CameraWidgetComponent
+    CameraWidgetComponent,
   ],
   templateUrl: './dev-tools-page.component.html',
-  styleUrl: './dev-tools-page.component.less'
+  styleUrl: './dev-tools-page.component.less',
 })
 export class DevToolsPageComponent implements OnInit {
   private uiSocketService = inject(UiSocketService);
 
   messages = signal<ChatMessage[]>([]);
 
-  modulesUpdatesTimers: Record<string, { timerId: any | null, action: string, params: any[] | null }> = {
+  modulesUpdatesTimers: Record<string, { timerId: any | null; action: string; params: any[] | null }> = {
     power: { timerId: null, action: 'getValue', params: null },
     lightSensor: { timerId: null, action: 'getValue', params: null },
     distanceSensor: { timerId: null, action: 'getValue', params: null },
@@ -43,7 +45,10 @@ export class DevToolsPageComponent implements OnInit {
   lightSensorDataSignal = signal({ v: 0, p: 0 });
   distanceSensorDataSignal = signal({ v: 0 });
   thermalSensorDataSignal = signal({ v: 0 });
-  inertialSensorDataSignal = signal<MpuData>({ accel: { x: 0, y: 0, z: 0 }, gyro: { x: 0, y: 0, z: 0 } });
+  inertialSensorDataSignal = signal<MpuData>({
+    accel: { x: 0, y: 0, z: 0 },
+    gyro: { x: 0, y: 0, z: 0 },
+  });
 
   fanSpeed = signal<number>(0);
   servoAngle = signal<number>(0);
@@ -65,11 +70,10 @@ export class DevToolsPageComponent implements OnInit {
 
   addMessage(text: string, type: ChatMessageType) {
     const newMessage: ChatMessage = { text, type, timestamp: new Date() };
-    this.messages.update(prev => [...prev, newMessage]);
+    this.messages.update((prev) => [...prev, newMessage]);
   }
 
   handleCommandResult(commandResult: any) {
-
     if (commandResult && commandResult.hasOwnProperty('module')) {
       if (commandResult.module === 'power') {
         this.powerDataSignal.set(commandResult);
@@ -97,7 +101,7 @@ export class DevToolsPageComponent implements OnInit {
   }
 
   runCommand(module: string, command: string, params: any[] | null = null) {
-    const chatMessage = params ? `${module} -> ${command} (${JSON.stringify(params)})` : `${module} -> ${command}`
+    const chatMessage = params ? `${module} -> ${command} (${JSON.stringify(params)})` : `${module} -> ${command}`;
     this.addMessage(chatMessage, ChatMessageType.userCommand);
     this.uiSocketService.sendCommand(module, command, params);
   }
@@ -107,7 +111,11 @@ export class DevToolsPageComponent implements OnInit {
 
     if (isEnabled) {
       this.modulesUpdatesTimers[module].timerId = setInterval(() => {
-        this.uiSocketService.sendCommand(module, this.modulesUpdatesTimers[module].action, this.modulesUpdatesTimers[module].params);
+        this.uiSocketService.sendCommand(
+          module,
+          this.modulesUpdatesTimers[module].action,
+          this.modulesUpdatesTimers[module].params,
+        );
       }, 500);
     }
   }

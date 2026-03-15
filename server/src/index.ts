@@ -7,20 +7,26 @@ import config from './config.js';
 
 import HardwareController from './services/hardware-controller.js';
 import SocketHandler from './services/socket-handler.js';
+import SqliteClient from './database/sqlite-client.js';
+import ApiHandler from './services/api-handler.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const baseDirectory = path.dirname(path.resolve(__filename, '..'));
 
 const app = express();
 const server = createServer({}, app);
 
 const hardwareController = new HardwareController();
 
+const dbClient = new SqliteClient(path.join(baseDirectory, config.sqLiteDBPath));
+
+ApiHandler(app, dbClient.getInstance());
 SocketHandler(server, hardwareController);
 
-const __filename = fileURLToPath(import.meta.url);
-const baseDirectory = path.dirname(path.resolve(__filename, '..'));
 const webBuildPath = path.join(baseDirectory, config.webBuildPath);
 
 app.use(express.static(webBuildPath));
-app.get('*', (req, res) => {
+app.get('*', (_, res) => {
   res.sendFile(path.join(webBuildPath, 'index.html'));
 });
 
