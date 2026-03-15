@@ -12,6 +12,13 @@
   gap: 1rem;
   padding: 1rem;
   height: calc(100vh - 60px);
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
 }
 
 .panel {
