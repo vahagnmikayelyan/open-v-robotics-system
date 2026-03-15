@@ -1,0 +1,210 @@
+.prompt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.prompt-card {
+  background: #111;
+  width: 320px;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 1px solid #333;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  .icon-box {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+
+  lucide-icon {
+    width: 48px;
+    height: 48px;
+    stroke-width: 1.5px;
+  }
+
+  &.delete {
+    border-color: #ff4444;
+    box-shadow: 0 0 20px rgba(255, 68, 68, 0.15);
+
+    lucide-icon {
+      color: #ff4444;
+    }
+  }
+
+  &.warning {
+    border-color: #ffaa00;
+    box-shadow: 0 0 20px rgba(255, 170, 0, 0.15);
+
+    lucide-icon {
+      color: #ffaa00;
+    }
+  }
+
+  &.question {
+    border-color: #00d4ff;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.15);
+
+    lucide-icon {
+      color: #00d4ff;
+    }
+  }
+
+  &.info {
+    border-color: #00ff88;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
+
+    lucide-icon {
+      color: #00ff88;
+    }
+  }
+}
+
+.prompt-title {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #fff;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.prompt-msg {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin-bottom: 25px;
+  line-height: 1.4;
+}
+
+.prompt-actions {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+
+  .btn {
+    flex: 1;
+    padding: 12px 0;
+    border-radius: 6px;
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &.cancel {
+      background: #222;
+      color: #888;
+      border: 1px solid #444;
+    }
+
+    &.confirm {
+      background: #333;
+      color: #fff;
+      border: 1px solid #555;
+    }
+  }
+}
+
+.prompt-card.delete .btn.confirm {
+  background: #ff4444;
+  color: #fff;
+  border-color: #ff0000;
+}
+
+.prompt-card.warning .btn.confirm {
+  background: #ffaa00;
+  color: #000;
+  border-color: #cc8800;
+}
+
+.prompt-card.question .btn.confirm {
+  background: #00d4ff;
+  color: #000;
+  border-color: #0099cc;
+}
+
+.prompt-card.info .btn.confirm {
+  background: #00ff88;
+  color: #000;
+  border-color: #00cc66;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.prompt-actions {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+
+  .btn {
+    flex: 1;
+    padding: 12px 0;
+    border-radius: 6px;
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &.btn-secondary {
+      background: #222;
+      color: #888;
+      border-color: #444;
+    }
+
+    &.btn-primary {
+      background: #00d4ff;
+      color: #000;
+      border-color: #0099cc;
+    }
+
+    &.btn-danger {
+      background: #ff4444;
+      color: #fff;
+      border-color: #cc0000;
+      box-shadow: 0 0 10px rgba(255, 68, 68, 0.4);
+    }
+  }
+}

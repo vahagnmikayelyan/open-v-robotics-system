@@ -110,12 +110,10 @@ export class DevToolsPageComponent implements OnInit {
     this.modulesUpdatesTimers[module].timerId && clearInterval(this.modulesUpdatesTimers[module].timerId);
 
     if (isEnabled) {
+      const action = this.modulesUpdatesTimers[module].action;
+      const params = this.modulesUpdatesTimers[module].params;
       this.modulesUpdatesTimers[module].timerId = setInterval(() => {
-        this.uiSocketService.sendCommand(
-          module,
-          this.modulesUpdatesTimers[module].action,
-          this.modulesUpdatesTimers[module].params,
-        );
+        this.uiSocketService.sendCommand(module, action, params);
       }, 500);
     }
   }
