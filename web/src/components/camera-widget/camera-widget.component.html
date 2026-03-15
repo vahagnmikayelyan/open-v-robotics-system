@@ -1,38 +1,40 @@
 <div class="widget">
 
-    <div class="widget-header">
-        <span class="widget-label">Camera</span>
-        <span class="status" [class.live]="isStreaming()">{{ statusText() }}</span>
+  <div class="widget-header">
+    <span class="widget-label">Camera</span>
+    <span class="status" [class.live]="isStreaming()">{{ statusText() }}</span>
+  </div>
+
+  <div class="widget-content">
+
+    <div class="viewport" [class.no-signal]="!isStreaming()">
+
+      <img *ngIf="imageSrc(); else placeholder" [src]="imageSrc()" class="feed-img">
+
+      <ng-template #placeholder>
+        <div class="static-noise"></div>
+        <div class="center-msg">NO SIGNAL</div>
+      </ng-template>
+
+      <div class="hud-layer">
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+
+        <div class="crosshair"></div>
+
+        <div class="scanline" *ngIf="isStreaming()"></div>
+      </div>
     </div>
 
-    <div class="widget-content">
-
-        <div class="viewport" [class.no-signal]="!isStreaming()">
-
-            <img *ngIf="imageSrc(); else placeholder" [src]="imageSrc()" class="feed-img">
-
-            <ng-template #placeholder>
-                <div class="static-noise"></div>
-                <div class="center-msg">NO SIGNAL</div>
-            </ng-template>
-
-            <div class="hud-layer">
-                <div class="corner tl"></div>
-                <div class="corner tr"></div>
-                <div class="corner bl"></div>
-                <div class="corner br"></div>
-
-                <div class="crosshair"></div>
-
-                <div class="scanline" *ngIf="isStreaming()"></div>
-            </div>
-        </div>
-
-        <div class="controls">
-            <button class="cam-btn snap" (click)="takePhoto()">PHOTO</button>
-            <button class="cam-btn stream" [class.active]="isStreaming()" (click)="toggleStream()">{{ isStreaming() ? 'STOP' : 'LIVE' }}</button>
-        </div>
-
+    <div class="controls">
+      <button class="cam-btn snap" (click)="takePhoto()">PHOTO</button>
+      <button class="cam-btn stream" [class.active]="isStreaming()"
+              (click)="toggleStream()">{{ isStreaming() ? 'STOP' : 'LIVE' }}
+      </button>
     </div>
+
+  </div>
 
 </div>

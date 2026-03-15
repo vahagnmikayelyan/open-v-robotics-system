@@ -1,17 +1,17 @@
 <div class="widget">
-    <div class="widget-header">
-        <span class="widget-label">{{ label() }}</span>
-        <span class="val-display">{{ value() }}<span class="unit">{{ unit() }}</span></span>
-    </div>
+  <div class="widget-header">
+    <span class="widget-label">{{ label() }}</span>
+    <span class="val-display">{{ value() }}<span class="unit">{{ unit() }}</span></span>
+  </div>
 
-    <div class="widget-content">
-        <input
-            class="range-input"
-            type="range"
-            [min]="min()"
-            [max]="max()"
-            [step]="step()"
-            [ngModel]="value()"
-            (ngModelChange)="value.set($event)">
-    </div>
+  <div class="widget-content">
+    <input
+      class="range-input"
+      type="range"
+      [min]="min()"
+      [max]="max()"
+      [step]="step()"
+      [ngModel]="value()"
+      (ngModelChange)="value.set($event)">
+  </div>
 </div>
