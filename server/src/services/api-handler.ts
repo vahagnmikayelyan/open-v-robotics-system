@@ -5,11 +5,14 @@ import type { Express } from 'express';
 import ApiConfigController from '../api/api-config-controller.js';
 import ConfigRepository from '../repositories/sqlite/config-repository.js';
 import ConfigController from './config-controller.js';
+import ApiUtilsController from '../api/api-utils-controller.js';
 
 const ApiHandler = (app: Express, dbClient: any) => {
   const configRepo = new ConfigRepository(dbClient);
   const configController = new ConfigController(configRepo);
   const apiConfigController = ApiConfigController(configController);
+
+  const apiUtilsController = ApiUtilsController();
 
   const router = express.Router();
 
@@ -21,6 +24,9 @@ const ApiHandler = (app: Express, dbClient: any) => {
   router.get('/config/:key', apiConfigController.getConfig);
   router.put('/config/:key', apiConfigController.updateConfig);
   router.put('/config', apiConfigController.updateConfigs);
+
+  // Utils
+  router.get('/utils/connection', apiUtilsController.getConnectionInfo);
 
   app.use('/api', router);
 };

@@ -2,6 +2,10 @@
 
   <div class="top-bar">
 
+    <button class="nav-btn" (click)="openConnectDialog()">
+      <lucide-icon [img]="LucideIcons.QrCode" class="icon"></lucide-icon>
+    </button>
+
     <button class="nav-btn" routerLink="/setup">
       <lucide-icon [img]="LucideIcons.Settings" class="icon"></lucide-icon>
     </button>
@@ -9,6 +13,28 @@
     <button class="nav-btn primary" routerLink="/devtools">
       <lucide-icon [img]="LucideIcons.Wrench" class="icon"></lucide-icon>
     </button>
+  </div>
+
+  <div class="modal-overlay" *ngIf="isConnectDialogOpen()" (click)="closeConnectDialog()">
+
+    <div class="modal-card" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">REMOTE CONTROL</div>
+
+      <div class="qr-box">
+        <img *ngIf="qrImageUrl()" [src]="qrImageUrl()" alt="QR Code" width="180" height="180" />
+        <div *ngIf="!qrImageUrl()" class="loader-wrapper qr-loader">
+          <ui-loader></ui-loader>
+        </div>
+      </div>
+
+      <div class="ip-info">
+        <div class="label">SCAN TO CONNECT</div>
+        <div class="val">{{ connectionString() }}</div>
+      </div>
+
+      <button class="nav-btn back close-btn" (click)="closeConnectDialog()">CLOSE</button>
+    </div>
   </div>
 
 </div>
