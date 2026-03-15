@@ -1,26 +1,26 @@
 <div class="widget" [class.active]="isActive()">
 
-    <div class="widget-header">
-        <span class="widget-label">{{ label() }}</span>
-        <div class="widget-toggle-switch" (click)="toggle()">
-            <div class="knob"></div>
-        </div>
+  <div class="widget-header">
+    <span class="widget-label">{{ label() }}</span>
+    <div class="widget-toggle-switch" (click)="toggle()">
+      <div class="knob"></div>
+    </div>
+  </div>
+
+  <div class="widget-content">
+
+    <div class="val-col">
+      <span class="value">{{ valueMain() }}</span>
+      <span class="unit" *ngIf="unit()">{{ unit() }}</span>
     </div>
 
-    <div class="widget-content">
+    <ng-container *ngIf="valueSec() !== null">
+      <div class="separator"></div>
+      <div class="val-col right">
+        <span class="value">{{ valueSec() }}</span>
+        <span class="unit" *ngIf="unitSec()">{{ unitSec() }}</span>
+      </div>
+    </ng-container>
 
-        <div class="val-col">
-            <span class="value">{{ valueMain() }}</span>
-            <span class="unit" *ngIf="unit()">{{ unit() }}</span>
-        </div>
-
-        <ng-container *ngIf="valueSec() !== null">
-            <div class="separator"></div>
-            <div class="val-col right">
-                <span class="value">{{ valueSec() }}</span>
-                <span class="unit" *ngIf="unitSec()">{{ unitSec() }}</span>
-            </div>
-        </ng-container>
-
-    </div>
+  </div>
 </div>

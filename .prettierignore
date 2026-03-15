@@ -1,0 +1,7 @@
+# .prettierignore
+
+pico/
+
+node_modules/
+dist/
+.angular/

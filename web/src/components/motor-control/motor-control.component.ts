@@ -2,105 +2,140 @@ import { Component, output, signal, ChangeDetectionStrategy } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
-    LucideAngularModule,
-    RotateCcw,
-    RotateCw,
-    ArrowUp,
-    ArrowDown,
-    ArrowLeft,
-    ArrowRight
+  LucideAngularModule,
+  RotateCcw,
+  RotateCw,
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
 } from 'lucide-angular';
 
 interface Wheels {
-    fl: number,
-    fr: number,
-    bl: number,
-    br: number
+  fl: number;
+  fr: number;
+  bl: number;
+  br: number;
 }
 
 export interface MotorCommand {
-    type: 'control' | 'stop';
-    data: Wheels
+  type: 'control' | 'stop';
+  data: Wheels;
 }
 
 const defaultStates: Wheels = { fl: 0, fr: 0, bl: 0, br: 0 };
 
 @Component({
-    selector: 'motor-control',
-    standalone: true,
-    imports: [CommonModule, FormsModule, LucideAngularModule],
-    templateUrl: './motor-control.component.html',
-    styleUrl: './motor-control.component.less',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'motor-control',
+  standalone: true,
+  imports: [CommonModule, FormsModule, LucideAngularModule],
+  templateUrl: './motor-control.component.html',
+  styleUrl: './motor-control.component.less',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MotorControlComponent {
-    readonly LucideIcons = {
-        RotateCcw, RotateCw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight
-    };
+  readonly LucideIcons = {
+    RotateCcw,
+    RotateCw,
+    ArrowUp,
+    ArrowDown,
+    ArrowLeft,
+    ArrowRight,
+  };
 
-    speed = signal<number>(50);
-    direction = signal<number>(1);
-    currentAction = signal<string | null>(null);
-    wheelsStates = signal<Wheels>({ ...defaultStates });
+  speed = signal<number>(50);
+  direction = signal<number>(1);
+  currentAction = signal<string | null>(null);
+  wheelsStates = signal<Wheels>({ ...defaultStates });
 
-    command = output<MotorCommand>();
+  command = output<MotorCommand>();
 
-    startWheel(id: string) {
-        this.wheelsStates.set({ ...defaultStates, [id]: this.direction() * this.speed() });
-        this.currentAction.set(id);
-        this.command.emit({ type: 'control', data: this.wheelsStates() });
+  startWheel(id: string) {
+    this.wheelsStates.set({ ...defaultStates, [id]: this.direction() * this.speed() });
+    this.currentAction.set(id);
+    this.command.emit({ type: 'control', data: this.wheelsStates() });
+  }
+
+  rotateLeft() {
+    this.wheelsStates.set({
+      fl: -1 * this.speed(),
+      fr: this.speed(),
+      bl: -1 * this.speed(),
+      br: this.speed(),
+    });
+    this.currentAction.set('rotateLeft');
+    this.command.emit({ type: 'control', data: this.wheelsStates() });
+  }
+
+  rotateRight() {
+    this.wheelsStates.set({
+      fl: this.speed(),
+      fr: -1 * this.speed(),
+      bl: this.speed(),
+      br: -1 * this.speed(),
+    });
+    this.currentAction.set('rotateLeft');
+    this.command.emit({ type: 'control', data: this.wheelsStates() });
+  }
+
+  spinLeft() {
+    this.wheelsStates.set({
+      fl: -1 * this.speed(),
+      fr: this.speed(),
+      bl: this.speed(),
+      br: -1 * this.speed(),
+    });
+    this.currentAction.set('spinLeft');
+    this.command.emit({ type: 'control', data: this.wheelsStates() });
+  }
+
+  spinRight() {
+    this.wheelsStates.set({
+      fl: this.speed(),
+      fr: -1 * this.speed(),
+      bl: -1 * this.speed(),
+      br: this.speed(),
+    });
+    this.currentAction.set('spinRight');
+    this.command.emit({ type: 'control', data: this.wheelsStates() });
+  }
+
+  forward() {
+    this.wheelsStates.set({
+      fl: this.speed(),
+      fr: this.speed(),
+      bl: this.speed(),
+      br: this.speed(),
+    });
+    this.currentAction.set('forward');
+    this.command.emit({ type: 'control', data: this.wheelsStates() });
+  }
+
+  backward() {
+    this.wheelsStates.set({
+      fl: -1 * this.speed(),
+      fr: -1 * this.speed(),
+      bl: -1 * this.speed(),
+      br: -1 * this.speed(),
+    });
+    this.currentAction.set('backward');
+    this.command.emit({ type: 'control', data: this.wheelsStates() });
+  }
+
+  stop(force: boolean = false) {
+    if (this.currentAction() === null && !force) {
+      return;
     }
 
-    rotateLeft() {
-        this.wheelsStates.set({ fl: -1 * this.speed(), fr: this.speed(),  bl: -1 * this.speed(), br: this.speed() });
-        this.currentAction.set('rotateLeft');
-        this.command.emit({ type: 'control', data: this.wheelsStates() });
-    }
+    this.wheelsStates.set({ ...defaultStates });
+    this.currentAction.set(null);
+    this.command.emit({ type: 'control', data: this.wheelsStates() });
+  }
 
-    rotateRight() {
-        this.wheelsStates.set({ fl: this.speed(), fr: -1 * this.speed(),  bl: this.speed(), br: -1 * this.speed() });
-        this.currentAction.set('rotateLeft');
-        this.command.emit({ type: 'control', data: this.wheelsStates() });
-    }
-
-    spinLeft() {
-        this.wheelsStates.set({ fl: -1 * this.speed(), fr: this.speed(),  bl: this.speed(), br: -1 * this.speed() });
-        this.currentAction.set('spinLeft');
-        this.command.emit({ type: 'control', data: this.wheelsStates() });
-    }
-
-    spinRight() {
-        this.wheelsStates.set({ fl: this.speed(), fr: -1 * this.speed(),  bl: -1 * this.speed(), br: this.speed() });
-        this.currentAction.set('spinRight');
-        this.command.emit({ type: 'control', data: this.wheelsStates() });
-    }
-
-    forward() {
-        this.wheelsStates.set({ fl: this.speed(), fr: this.speed(),  bl: this.speed(), br: this.speed() });
-        this.currentAction.set('forward');
-        this.command.emit({ type: 'control', data: this.wheelsStates() });
-    }
-
-    backward() {
-        this.wheelsStates.set({ fl: -1 * this.speed(), fr: -1 * this.speed(),  bl: -1 * this.speed(), br: -1 * this.speed() });
-        this.currentAction.set('backward');
-        this.command.emit({ type: 'control', data: this.wheelsStates() });
-    }
-
-    stop(force: boolean = false) {
-        if (this.currentAction() === null && !force) {
-            return;
-        }
-
-        this.wheelsStates.set({ ...defaultStates });
-        this.currentAction.set(null);
-        this.command.emit({ type: 'control', data: this.wheelsStates() });
-    }
-
-    getWheelClass(id: 'fl' | 'fr' | 'bl' | 'br') {
-        const state = this.wheelsStates()[id];
-        if (state > 0) return 'fwd';  // Green
-        if (state < 0) return 'bwd'; // Red
-        return '';
-    }
+  getWheelClass(id: 'fl' | 'fr' | 'bl' | 'br') {
+    const state = this.wheelsStates()[id];
+    if (state > 0) return 'fwd'; // Green
+    if (state < 0) return 'bwd'; // Red
+    return '';
+  }
 }

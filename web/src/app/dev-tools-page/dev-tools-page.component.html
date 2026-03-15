@@ -1,49 +1,49 @@
 <header>
-    <div class="header-title">
-        <span>Open V Robotics System v{{platformVersion()}}</span>
-        <span class="dev-mode-label">DEV MODE</span>
-    </div>
+  <div class="header-title">
+    <span>Open V Robotics System v{{ platformVersion() }}</span>
+    <span class="dev-mode-label">DEV MODE</span>
+  </div>
 </header>
 
 <div class="dashboard-grid">
 
-    <div class="panel">
+  <div class="panel">
 
-        <sensor-tile
-            label="Power" [valueMain]="powerDataSignal().v" unit="V" [valueSec]="powerDataSignal().p"
-            unitSec="%" (isActiveChange)="changeModuleUpdates('power', $event)"></sensor-tile>
+    <sensor-tile
+      label="Power" [valueMain]="powerDataSignal().v" unit="V" [valueSec]="powerDataSignal().p"
+      unitSec="%" (isActiveChange)="changeModuleUpdates('power', $event)"></sensor-tile>
 
-        <sensor-tile
-            label="Light sensor" [valueMain]="lightSensorDataSignal().v" unit="" [valueSec]="lightSensorDataSignal().p"
-            unitSec="%" (isActiveChange)="changeModuleUpdates('lightSensor', $event)"></sensor-tile>
+    <sensor-tile
+      label="Light sensor" [valueMain]="lightSensorDataSignal().v" unit="" [valueSec]="lightSensorDataSignal().p"
+      unitSec="%" (isActiveChange)="changeModuleUpdates('lightSensor', $event)"></sensor-tile>
 
-        <sensor-tile
-            label="Distance sensor" [valueMain]="distanceSensorDataSignal().v" unit="mm"
-            (isActiveChange)="changeModuleUpdates('distanceSensor', $event)"></sensor-tile>
+    <sensor-tile
+      label="Distance sensor" [valueMain]="distanceSensorDataSignal().v" unit="mm"
+      (isActiveChange)="changeModuleUpdates('distanceSensor', $event)"></sensor-tile>
 
-        <sensor-tile
-            label="Thermal sensor" [valueMain]="thermalSensorDataSignal().v" unit="C"
-            (isActiveChange)="changeModuleUpdates('thermalSensor', $event)"></sensor-tile>
+    <sensor-tile
+      label="Thermal sensor" [valueMain]="thermalSensorDataSignal().v" unit="C"
+      (isActiveChange)="changeModuleUpdates('thermalSensor', $event)"></sensor-tile>
 
-        <imu-widget
-            [data]="inertialSensorDataSignal()"
-            (isActiveChange)="changeModuleUpdates('inertialSensor', $event)"></imu-widget>
+    <imu-widget
+      [data]="inertialSensorDataSignal()"
+      (isActiveChange)="changeModuleUpdates('inertialSensor', $event)"></imu-widget>
 
-        <ui-slider label="Cooling Fan" [(value)]="fanSpeed" unit="%" [min]="0" [max]="100" [step]="5"
-                   (valueChange)="changeFanSpeed($event)"></ui-slider>
+    <ui-slider label="Cooling Fan" [(value)]="fanSpeed" unit="%" [min]="0" [max]="100" [step]="5"
+               (valueChange)="changeFanSpeed($event)"></ui-slider>
 
-        <ui-slider label="Head servo" [(value)]="servoAngle" unit="%" [min]="-40" [max]="35" [step]="5"
-                   (valueChange)="changeServoAngle($event)"></ui-slider>
+    <ui-slider label="Head servo" [(value)]="servoAngle" unit="%" [min]="-40" [max]="35" [step]="5"
+               (valueChange)="changeServoAngle($event)"></ui-slider>
 
-        <motor-control (command)="handleMotorCommand($event)"></motor-control>
+    <motor-control (command)="handleMotorCommand($event)"></motor-control>
 
-        <dual-led-control (changeValues)="changeLed($event)"></dual-led-control>
+    <dual-led-control (changeValues)="changeLed($event)"></dual-led-control>
 
-        <camera-widget></camera-widget>
-    </div>
+    <camera-widget></camera-widget>
+  </div>
 
-    <div class="panel">
-        <chat [messages]="messages()"></chat>
-    </div>
+  <div class="panel">
+    <chat [messages]="messages()"></chat>
+  </div>
 
 </div>

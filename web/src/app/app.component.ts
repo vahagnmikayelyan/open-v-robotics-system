@@ -3,15 +3,15 @@ import { RouterOutlet } from '@angular/router';
 import { UiSocketService } from '../services/ui-socket.service';
 
 @Component({
-    selector: 'app-root',
-    imports: [RouterOutlet],
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.less'
+  selector: 'app-root',
+  imports: [RouterOutlet],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.less'
 })
 export class AppComponent implements OnInit {
-    private uiSocketService = inject(UiSocketService);
+  private uiSocketService = inject(UiSocketService);
 
-    ngOnInit() {
-        this.uiSocketService.init();
-    }
+  ngOnInit() {
+    this.uiSocketService.init();
+  }
 }

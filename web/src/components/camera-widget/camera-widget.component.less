@@ -1,188 +1,188 @@
 :host {
-    display: block;
-    --viewport-bg: #000;
-    --hud-color: rgba(0, 212, 255, 0.6);
-    --accent: #00d4ff;
-    --danger: #ff4444;
-    --font-mono: 'Courier New', Courier, monospace;
+  display: block;
+  --viewport-bg: #000;
+  --hud-color: rgba(0, 212, 255, 0.6);
+  --accent: #00d4ff;
+  --danger: #ff4444;
+  --font-mono: 'Courier New', Courier, monospace;
 }
 
 .widget-header {
 
-    .status {
-        font-size: 0.7rem;
-        font-family: var(--font-mono);
-        color: #666;
-        display: flex;
-        align-items: center;
-        gap: 6px;
+  .status {
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 
-        &.live {
-            color: var(--accent);
-        }
+    &.live {
+      color: var(--accent);
     }
+  }
 }
 
 /* --- VIEWPORT --- */
 .viewport {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 4/3;
-    background: var(--viewport-bg);
-    border: 1px solid #333;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--viewport-bg);
+  border: 1px solid #333;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 10px;
 
-    &.no-signal {
-        border-color: var(--danger);
-    }
+  &.no-signal {
+    border-color: var(--danger);
+  }
 }
 
 .feed-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .static-noise {
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
 }
 
 .center-msg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #555;
-    font-family: var(--font-mono);
-    font-size: 0.9rem;
-    letter-spacing: 2px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #555;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  letter-spacing: 2px;
 }
 
 /* --- HUD OVERLAY --- */
 .hud-layer {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    padding: 10px;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  padding: 10px;
 }
 
 .corner {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border-color: var(--hud-color);
-    border-style: solid;
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: var(--hud-color);
+  border-style: solid;
 
-    &.tl {
-        top: 8px;
-        left: 8px;
-        border-width: 2px 0 0 2px;
-    }
+  &.tl {
+    top: 8px;
+    left: 8px;
+    border-width: 2px 0 0 2px;
+  }
 
-    &.tr {
-        top: 8px;
-        right: 8px;
-        border-width: 2px 2px 0 0;
-    }
+  &.tr {
+    top: 8px;
+    right: 8px;
+    border-width: 2px 2px 0 0;
+  }
 
-    &.bl {
-        bottom: 8px;
-        left: 8px;
-        border-width: 0 0 2px 2px;
-    }
+  &.bl {
+    bottom: 8px;
+    left: 8px;
+    border-width: 0 0 2px 2px;
+  }
 
-    &.br {
-        bottom: 8px;
-        right: 8px;
-        border-width: 0 2px 2px 0;
-    }
+  &.br {
+    bottom: 8px;
+    right: 8px;
+    border-width: 0 2px 2px 0;
+  }
 }
 
 .crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+
+  &::after {
+    content: '';
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: 20px;
-    height: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-
-    &::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 2px;
-        height: 2px;
-        background: var(--accent);
-        transform: translate(-1px, -1px);
-    }
+    width: 2px;
+    height: 2px;
+    background: var(--accent);
+    transform: translate(-1px, -1px);
+  }
 }
 
 .scanline {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    background: linear-gradient(to bottom, transparent 50%, rgba(0, 212, 255, 0.05) 51%, transparent 51%);
-    background-size: 100% 4px;
-    animation: scan 0.2s linear infinite;
-    pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent 50%, rgba(0, 212, 255, 0.05) 51%, transparent 51%);
+  background-size: 100% 4px;
+  animation: scan 0.2s linear infinite;
+  pointer-events: none;
 }
 
 @keyframes scan {
-    from {
-        background-position: 0 0;
-    }
-    to {
-        background-position: 0 4px;
-    }
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 4px;
+  }
 }
 
 @keyframes blink {
-    50% {
-        opacity: 0.3;
-    }
+  50% {
+    opacity: 0.3;
+  }
 }
 
 /* --- CONTROLS --- */
 .controls {
-    display: flex;
-    gap: 8px;
+  display: flex;
+  gap: 8px;
 }
 
 .cam-btn {
-    flex: 1;
-    background: #222;
-    border: 1px solid #444;
-    color: #ccc;
-    padding: 10px;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s;
+  flex: 1;
+  background: #222;
+  border: 1px solid #444;
+  color: #ccc;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
 
-    &:active {
-        transform: scale(0.98);
-    }
+  &:active {
+    transform: scale(0.98);
+  }
 
-    &.snap:hover {
-        background: #333;
-        border-color: #666;
-    }
+  &.snap:hover {
+    background: #333;
+    border-color: #666;
+  }
 
-    &.stream.active {
-        background: rgba(0, 212, 255, 0.1);
-        border-color: var(--accent);
-        color: var(--accent);
-        box-shadow: 0 0 8px rgba(0, 212, 255, 0.2);
-    }
+  &.stream.active {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 8px rgba(0, 212, 255, 0.2);
+  }
 }

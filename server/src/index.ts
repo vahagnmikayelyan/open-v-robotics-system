@@ -16,12 +16,12 @@ const hardwareController = new HardwareController();
 SocketHandler(server, hardwareController);
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const webBuildPath = path.join(__dirname, config.webBuildPath);
+const baseDirectory = path.dirname(path.resolve(__filename, '..'));
+const webBuildPath = path.join(baseDirectory, config.webBuildPath);
 
 app.use(express.static(webBuildPath));
 app.get('*', (req, res) => {
-    res.sendFile(path.join(webBuildPath, 'index.html'));
+  res.sendFile(path.join(webBuildPath, 'index.html'));
 });
 
 console.log('Server Listening on PORT:', config.port);

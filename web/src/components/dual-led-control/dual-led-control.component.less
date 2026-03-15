@@ -1,54 +1,57 @@
 :host {
-    display: block;
-    --accent: #00d4ff;
-    --link-color: #00d4ff;
-    --font-mono: 'Courier New', Courier, monospace;
+  display: block;
+  --accent: #00d4ff;
+  --link-color: #00d4ff;
+  --font-mono: 'Courier New', Courier, monospace;
 }
 
 .actions {
-    display: flex;
-    gap: 8px;
+  display: flex;
+  gap: 8px;
 }
 
 .icon-btn {
-    background: #222;
-    border: 1px solid #444;
-    color: #888;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: all 0.2s;
+  background: #222;
+  border: 1px solid #444;
+  color: #888;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
 
-    &.link-btn.active {
-        background: rgba(0, 212, 255, 0.2);
-        border-color: var(--link-color);
-        color: var(--link-color);
-    }
+  &.link-btn.active {
+    background: rgba(0, 212, 255, 0.2);
+    border-color: var(--link-color);
+    color: var(--link-color);
+  }
 }
 
 .control-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .bulb-icon {
+    color: #fff;
+    transition: all 0.1s;
+    width: 24px;
+    height: 24px;
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
+  }
 
-    &:last-child { margin-bottom: 0; }
-
-    .bulb-icon {
-        color: #fff;
-        transition: all 0.1s;
-        width: 24px; height: 24px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .val {
-        font-family: var(--font-mono);
-        width: 35px;
-        text-align: right;
-        font-size: 1rem;
-        color: var(--accent);
-    }
+  .val {
+    font-family: var(--font-mono);
+    width: 35px;
+    text-align: right;
+    font-size: 1rem;
+    color: var(--accent);
+  }
 }
