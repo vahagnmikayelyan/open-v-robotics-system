@@ -11,6 +11,7 @@ import LightSensor from '../modules/light-sensor.js';
 import PowerMonitor from '../modules/power-monitor.js';
 import ThermalSensor from '../modules/thermal-sensor.js';
 import CameraController from '../modules/camera-controller.js';
+import SpeakerController from '../modules/speaker-controller.js';
 
 class HardwareController implements IHardwareController {
   private readonly picoConnector: IHardwareConnector;
@@ -20,16 +21,17 @@ class HardwareController implements IHardwareController {
     this.picoConnector = new PicoUartConnector();
 
     this.modules = {
-      'distanceSensor': new DistanceSensor('distanceSensor', this.picoConnector),
-      'drive': new DriveController('drive', this.picoConnector),
-      'fan': new FanController('fan', this.picoConnector),
-      'inertialSensor': new InertialSensor('inertialSensor', this.picoConnector),
-      'light': new LightController('light', this.picoConnector),
-      'lightSensor': new LightSensor('lightSensor', this.picoConnector),
-      'power': new PowerMonitor('power', this.picoConnector),
-      'headServo': new HeadController('headServo', this.picoConnector),
-      'thermalSensor': new ThermalSensor('thermalSensor', this.picoConnector),
-      'camera': new CameraController(),
+      distanceSensor: new DistanceSensor('distanceSensor', this.picoConnector),
+      drive: new DriveController('drive', this.picoConnector),
+      fan: new FanController('fan', this.picoConnector),
+      inertialSensor: new InertialSensor('inertialSensor', this.picoConnector),
+      light: new LightController('light', this.picoConnector),
+      lightSensor: new LightSensor('lightSensor', this.picoConnector),
+      power: new PowerMonitor('power', this.picoConnector),
+      headServo: new HeadController('headServo', this.picoConnector),
+      thermalSensor: new ThermalSensor('thermalSensor', this.picoConnector),
+      camera: new CameraController(),
+      speaker: new SpeakerController(),
     };
 
     this.picoConnector.on('ready', this.onPicoReady);

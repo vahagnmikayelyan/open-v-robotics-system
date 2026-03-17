@@ -10,6 +10,7 @@ import { SensorTileComponent } from '../../components/sensor-tile/sensor-tile.co
 import { ImuWidgetComponent, MpuData } from '../../components/imu-widget/imu-widget.component';
 import { MotorCommand, MotorControlComponent } from '../../components/motor-control/motor-control.component';
 import { DualLedControlComponent, LedState } from '../../components/dual-led-control/dual-led-control.component';
+import { SpeakerChannel, SpeakerTestComponent } from '../../components/speaker-test/speaker-test.component';
 import { CameraWidgetComponent } from '../../components/camera-widget/camera-widget.component';
 
 @Component({
@@ -23,6 +24,7 @@ import { CameraWidgetComponent } from '../../components/camera-widget/camera-wid
     ImuWidgetComponent,
     MotorControlComponent,
     DualLedControlComponent,
+    SpeakerTestComponent,
     CameraWidgetComponent,
   ],
   templateUrl: './dev-tools-page.component.html',
@@ -128,6 +130,10 @@ export class DevToolsPageComponent implements OnInit {
 
   handleMotorCommand({ type, data }: MotorCommand) {
     this.runCommand('drive', type, [data.fl, data.fr, data.bl, data.br]);
+  }
+
+  speakerTestCommand(channel: SpeakerChannel) {
+    this.runCommand('speaker', 'testSpeaker', [channel]);
   }
 
   changeLed(values: LedState) {

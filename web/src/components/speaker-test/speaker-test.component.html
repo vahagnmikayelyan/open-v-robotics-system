@@ -1,0 +1,18 @@
+<div class="widget">
+
+  <div class="widget-header">
+    <span class="widget-label">Speakers</span>
+    <span class="status" [class.active]="activeChannel() !== null">
+      {{ activeChannel() ? 'PLAYING: ' + (activeChannel() | uppercase) : 'IDLE' }}
+    </span>
+  </div>
+
+  <div class="widget-content">
+    <div class="btn-grid">
+      <button class="spk-btn" [class.active]="activeChannel() === 'L'" (click)="toggle('L')">LEFT</button>
+      <button class="spk-btn" [class.active]="activeChannel() === 'C'" (click)="toggle('C')">STEREO</button>
+      <button class="spk-btn" [class.active]="activeChannel() === 'R'" (click)="toggle('R')">RIGHT</button>
+    </div>
+  </div>
+
+</div>

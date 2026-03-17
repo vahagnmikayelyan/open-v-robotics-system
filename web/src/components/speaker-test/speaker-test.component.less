@@ -1,0 +1,47 @@
+:host {
+  display: block;
+  --btn-bg: #222;
+  --color-active: #00ff88;
+  --font-mono: 'Courier New', Courier, monospace;
+}
+
+.widget-header {
+
+  .status {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: #555;
+    font-weight: bold;
+
+    &.active {
+      color: var(--color-active);
+    }
+  }
+}
+
+.btn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.spk-btn {
+  background: var(--btn-bg);
+  border: 1px solid #444;
+  color: #aaa;
+  padding: 15px 0;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+
+  &.active {
+    transform: scale(0.96);
+    background: rgba(0, 255, 136, 0.1);
+    color: var(--color-active);
+    border-color: var(--color-active);
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+  }
+}
