@@ -4,7 +4,6 @@ import { WebsocketWrapper } from './websocket-wrapper';
 
 @Injectable({ providedIn: 'root' })
 export class UiSocketService {
-
   // Socket events
   public onConnect = new EventEmitter<null>();
   public onDisconnect = new EventEmitter<null>();
@@ -35,9 +34,5 @@ export class UiSocketService {
 
   sendCommand(module: string, command: string, params: any[] | null = null) {
     this.send('command', { module, command, params });
-  }
-
-  sendCameraCommand(command: string, params: any[] | null = null) {
-    this.send('cameraCommand', { command, params });
   }
 }

@@ -8,9 +8,9 @@ import { ChatComponent } from '../../components/chat/chat.component';
 import { UiSliderComponent } from '../../components/ui-slider/ui-slider.component';
 import { SensorTileComponent } from '../../components/sensor-tile/sensor-tile.component';
 import { ImuWidgetComponent, MpuData } from '../../components/imu-widget/imu-widget.component';
-import { MotorCommand, MotorControlComponent } from '../../components/motor-control/motor-control.component';
-import { DualLedControlComponent, LedState } from '../../components/dual-led-control/dual-led-control.component';
-import { SpeakerChannel, SpeakerTestComponent } from '../../components/speaker-test/speaker-test.component';
+import { MotorsWidgetComponent } from '../../components/motors-widget/motors-widget.component';
+import { DualLedWidgetComponent } from '../../components/dual-led-widget/dual-led-widget.component';
+import { SpeakerWidgetComponent } from '../../components/speaker-widget/speaker-widget.component';
 import { CameraWidgetComponent } from '../../components/camera-widget/camera-widget.component';
 
 @Component({
@@ -22,9 +22,9 @@ import { CameraWidgetComponent } from '../../components/camera-widget/camera-wid
     UiSliderComponent,
     SensorTileComponent,
     ImuWidgetComponent,
-    MotorControlComponent,
-    DualLedControlComponent,
-    SpeakerTestComponent,
+    MotorsWidgetComponent,
+    DualLedWidgetComponent,
+    SpeakerWidgetComponent,
     CameraWidgetComponent,
   ],
   templateUrl: './dev-tools-page.component.html',
@@ -70,12 +70,12 @@ export class DevToolsPageComponent implements OnInit {
     this.platformVersion.set(environment.version);
   }
 
-  addMessage(text: string, type: ChatMessageType) {
+  private addMessage(text: string, type: ChatMessageType) {
     const newMessage: ChatMessage = { text, type, timestamp: new Date() };
     this.messages.update((prev) => [...prev, newMessage]);
   }
 
-  handleCommandResult(commandResult: any) {
+  private handleCommandResult(commandResult: any) {
     if (commandResult && commandResult.hasOwnProperty('module')) {
       if (commandResult.module === 'power') {
         this.powerDataSignal.set(commandResult);
@@ -102,7 +102,7 @@ export class DevToolsPageComponent implements OnInit {
     }
   }
 
-  runCommand(module: string, command: string, params: any[] | null = null) {
+  private runCommand(module: string, command: string, params: any[] | null = null) {
     const chatMessage = params ? `${module} -> ${command} (${JSON.stringify(params)})` : `${module} -> ${command}`;
     this.addMessage(chatMessage, ChatMessageType.userCommand);
     this.uiSocketService.sendCommand(module, command, params);
@@ -120,23 +120,7 @@ export class DevToolsPageComponent implements OnInit {
     }
   }
 
-  changeFanSpeed(speed: number) {
-    this.runCommand('fan', 'changeSpeed', [speed]);
-  }
-
-  changeServoAngle(angle: number) {
-    this.runCommand('headServo', 'rotate', [angle]);
-  }
-
-  handleMotorCommand({ type, data }: MotorCommand) {
-    this.runCommand('drive', type, [data.fl, data.fr, data.bl, data.br]);
-  }
-
-  speakerTestCommand(channel: SpeakerChannel) {
-    this.runCommand('speaker', 'testSpeaker', [channel]);
-  }
-
-  changeLed(values: LedState) {
-    this.runCommand('light', 'light', [values.left, values.right]);
+  moduleCommand(module: string, action: string, params: any[] | null = null) {
+    this.runCommand(module, action, params);
   }
 }

@@ -1,26 +1,22 @@
 import { Component, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-export interface LedState {
-  left: number; // 0-100
-  right: number; // 0-100
-}
+import { ModuleCommand } from '../../models/models';
 
 @Component({
-  selector: 'dual-led-control',
+  selector: 'dual-led-widget',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './dual-led-control.component.html',
-  styleUrl: './dual-led-control.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './dual-led-widget.component.html',
+  styleUrl: './dual-led-widget.component.less',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DualLedControlComponent {
+export class DualLedWidgetComponent {
   leftLed = signal(0);
   rightLed = signal(0);
   isLinked = signal(true);
 
-  changeValues = output<LedState>();
+  command = output<ModuleCommand>();
 
   updateLeft(v: number) {
     this.leftLed.set(v);
@@ -35,14 +31,14 @@ export class DualLedControlComponent {
   }
 
   toggleLink() {
-    this.isLinked.update(v => !v);
+    this.isLinked.update((v) => !v);
     // If link enabled, synchronizing values
     if (this.isLinked()) this.leftLed.set(this.rightLed());
     this.sendChanges();
   }
 
   private sendChanges() {
-    this.changeValues.emit({ left: this.leftLed(), right: this.rightLed() });
+    this.command.emit({ module: 'light', action: 'light', params: [this.leftLed(), this.rightLed()] });
   }
 
   // Icons Glow Effect

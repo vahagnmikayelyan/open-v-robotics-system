@@ -31,18 +31,18 @@
       (isActiveChange)="changeModuleUpdates('inertialSensor', $event)"></imu-widget>
 
     <ui-slider label="Cooling Fan" [(value)]="fanSpeed" unit="%" [min]="0" [max]="100" [step]="5"
-               (valueChange)="changeFanSpeed($event)"></ui-slider>
+               (valueChange)="moduleCommand('fan', 'changeSpeed', [$event])"></ui-slider>
 
     <ui-slider label="Head servo" [(value)]="servoAngle" unit="%" [min]="-40" [max]="35" [step]="5"
-               (valueChange)="changeServoAngle($event)"></ui-slider>
+               (valueChange)="moduleCommand('headServo', 'rotate', [$event])"></ui-slider>
 
-    <motor-control (command)="handleMotorCommand($event)"></motor-control>
+    <motors-widget (command)="moduleCommand($event.module, $event.action, $event.params)"></motors-widget>
 
-    <dual-led-control (changeValues)="changeLed($event)"></dual-led-control>
+    <dual-led-widget (command)="moduleCommand($event.module, $event.action, $event.params)"></dual-led-widget>
 
-    <speaker-test (command)="speakerTestCommand($event)"></speaker-test>
+    <speaker-widget (command)="moduleCommand($event.module, $event.action, $event.params)"></speaker-widget>
 
-    <camera-widget></camera-widget>
+    <camera-widget (command)="moduleCommand($event.module, $event.action, $event.params)"></camera-widget>
   </div>
 
   <div class="panel">

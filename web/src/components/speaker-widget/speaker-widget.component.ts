@@ -1,19 +1,20 @@
 import { Component, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ModuleCommand } from '../../models/models';
 
-export type SpeakerChannel = 'L' | 'R' | 'C';
+type SpeakerChannel = 'L' | 'R' | 'C';
 
 @Component({
-  selector: 'speaker-test',
+  selector: 'speaker-widget',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './speaker-test.component.html',
-  styleUrl: './speaker-test.component.less',
+  templateUrl: './speaker-widget.component.html',
+  styleUrl: './speaker-widget.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SpeakerTestComponent {
+export class SpeakerWidgetComponent {
   activeChannel = signal<SpeakerChannel | null>(null);
-  command = output<SpeakerChannel>();
+  command = output<ModuleCommand>();
 
   toggle(channel: SpeakerChannel) {
     if (this.activeChannel() !== null) {
@@ -21,7 +22,7 @@ export class SpeakerTestComponent {
     }
 
     this.activeChannel.set(channel);
-    this.command.emit(channel);
+    this.command.emit({ module: 'speaker', action: 'testSpeaker', params: [channel] });
     setTimeout(() => this.activeChannel.set(null), 1000);
   }
 }
