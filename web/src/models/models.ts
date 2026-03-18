@@ -15,3 +15,9 @@ export interface IConfig {
   key: string;
   value: unknown;
 }
+
+export interface ModuleCommand {
+  module: string;
+  action: string;
+  params: any[] | null;
+}

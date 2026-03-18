@@ -31,20 +31,13 @@ const SocketHandler = (server: Server, hardwareConnector: IHardwareController) =
     });
 
     socket.on<ICommand>('command', ({ module, command, params }) => {
-      hardwareConnector.runCommand(module, command, params).then((response: unknown) => {
-        response && socket.emit('commandResult', response);
-      });
-    });
-
-    socket.on<{ command: string }>('cameraCommand', ({ command }) => {
-      if (command === 'takePhoto') {
-        hardwareConnector.modules['camera'].takePhoto().then((frame: Buffer) => {
-          socket.emit('cameraData', 'data:image/jpg;base64,' + frame.toString('base64'));
+      // ToDo need optimization and standardization for all modules
+      if (module === 'camera') {
+        hardwareConnector.runCommand(module, command, params);
+      } else {
+        hardwareConnector.runCommand(module, command, params).then((response: unknown) => {
+          response && socket.emit('commandResult', response);
         });
-      } else if (command === 'startStream') {
-        hardwareConnector.modules['camera'].startVideo();
-      } else if (command === 'stopStream') {
-        hardwareConnector.modules['camera'].stopVideo();
       }
     });
 

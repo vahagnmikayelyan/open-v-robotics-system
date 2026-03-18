@@ -18,7 +18,7 @@ class CameraController extends EventEmitter {
     super();
   }
 
-  startVideo() {
+  startStream() {
     if (this.isBusy || this.videoProcess) return;
 
     console.log('Running Camera');
@@ -47,12 +47,12 @@ class CameraController extends EventEmitter {
       // Ignoring libcamera logs
     });
 
-    this.videoProcess.on('close', (code) => {
+    this.videoProcess.on('close', (_) => {
       // maybe need restart
     });
   }
 
-  stopVideo() {
+  stopStream() {
     return new Promise((resolve) => {
       if (this.videoProcess) {
         this.videoProcess.kill();
@@ -65,7 +65,7 @@ class CameraController extends EventEmitter {
     });
   }
 
-  handleData(chunk: Buffer) {
+  private handleData(chunk: Buffer) {
     if (this.isBusy) return;
 
     this.buffer = Buffer.concat([this.buffer, chunk]);
@@ -87,7 +87,7 @@ class CameraController extends EventEmitter {
   async takePhoto(width = 0, height = 0) {
     const videoProcessing = !!this.videoProcess;
 
-    await this.stopVideo();
+    await this.stopStream();
     this.isBusy = true;
 
     return new Promise((resolve, reject) => {
@@ -113,9 +113,10 @@ class CameraController extends EventEmitter {
         const fullPhoto = Buffer.concat(chunks);
 
         this.isBusy = false;
-        videoProcessing && this.startVideo();
+        videoProcessing && this.startStream();
 
         if (fullPhoto.length > 0) {
+          this.emit('frame', fullPhoto);
           resolve(fullPhoto);
         } else {
           reject(new Error('Photo is empty, camera problem'));
@@ -124,7 +125,7 @@ class CameraController extends EventEmitter {
 
       photoProcess.on('error', (err) => {
         this.isBusy = false;
-        videoProcessing && this.startVideo();
+        videoProcessing && this.startStream();
         reject(err);
       });
     });

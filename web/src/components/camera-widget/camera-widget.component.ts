@@ -1,12 +1,7 @@
-import { Component, signal, computed, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, signal, computed, ChangeDetectionStrategy, OnInit, output } from '@angular/core';
 import { UiSocketService } from '../../services/ui-socket.service';
 import { NgIf } from '@angular/common';
-
-enum CameraCommands {
-  takePhoto = 'takePhoto',
-  startStream = 'startStream',
-  stopStream = 'stopStream'
-}
+import { ModuleCommand } from '../../models/models';
 
 @Component({
   selector: 'camera-widget',
@@ -14,14 +9,15 @@ enum CameraCommands {
   imports: [NgIf],
   templateUrl: './camera-widget.component.html',
   styleUrl: './camera-widget.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CameraWidgetComponent implements OnInit {
   imageSrc = signal<string | null>(null);
   isStreaming = signal<boolean>(false);
 
-  constructor(private uiSocketService: UiSocketService) {
-  }
+  command = output<ModuleCommand>();
+
+  constructor(private uiSocketService: UiSocketService) {}
 
   ngOnInit() {
     this.uiSocketService.onCameraData.subscribe((data) => {
@@ -30,15 +26,15 @@ export class CameraWidgetComponent implements OnInit {
   }
 
   toggleStream() {
-    this.isStreaming.update(v => !v);
-    this.uiSocketService.sendCameraCommand(this.isStreaming() ? CameraCommands.startStream : CameraCommands.stopStream);
+    this.isStreaming.update((v) => !v);
+    this.command.emit({ module: 'camera', action: this.isStreaming() ? 'startStream' : 'stopStream', params: null });
     if (!this.isStreaming()) {
       this.imageSrc.set(null);
     }
   }
 
   takePhoto() {
-    this.uiSocketService.sendCameraCommand(CameraCommands.takePhoto);
+    this.command.emit({ module: 'camera', action: 'takePhoto', params: null });
   }
 
   statusText = computed(() => {
