@@ -11,6 +11,7 @@ import { ImuWidgetComponent, MpuData } from '../../components/imu-widget/imu-wid
 import { MotorsWidgetComponent } from '../../components/motors-widget/motors-widget.component';
 import { DualLedWidgetComponent } from '../../components/dual-led-widget/dual-led-widget.component';
 import { SpeakerWidgetComponent } from '../../components/speaker-widget/speaker-widget.component';
+import { MicrophoneWidgetComponent } from '../../components/microphone-widget/microphone-widget.component';
 import { CameraWidgetComponent } from '../../components/camera-widget/camera-widget.component';
 
 @Component({
@@ -25,6 +26,7 @@ import { CameraWidgetComponent } from '../../components/camera-widget/camera-wid
     MotorsWidgetComponent,
     DualLedWidgetComponent,
     SpeakerWidgetComponent,
+    MicrophoneWidgetComponent,
     CameraWidgetComponent,
   ],
   templateUrl: './dev-tools-page.component.html',

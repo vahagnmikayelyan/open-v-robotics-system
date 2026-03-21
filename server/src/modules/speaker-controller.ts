@@ -14,7 +14,7 @@ class SpeakerController {
   }
 
   async testSpeaker(channel = 'L') {
-    const filePath = path.resolve(__dirname, '..', `../audio-test/audio-test-${channel}.ogg`);
+    const filePath = path.resolve(__dirname, '..', `../audio-test/audio-test-${channel}.wav`);
 
     if (!fs.existsSync(filePath)) {
       console.error(`[Speaker] Error: File not found at ${filePath}`);

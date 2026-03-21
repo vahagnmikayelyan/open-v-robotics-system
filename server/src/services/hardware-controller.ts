@@ -12,6 +12,7 @@ import PowerMonitor from '../modules/power-monitor.js';
 import ThermalSensor from '../modules/thermal-sensor.js';
 import CameraController from '../modules/camera-controller.js';
 import SpeakerController from '../modules/speaker-controller.js';
+import MicrophoneController from '../modules/microphone-controller.js';
 
 class HardwareController implements IHardwareController {
   private readonly picoConnector: IHardwareConnector;
@@ -30,8 +31,9 @@ class HardwareController implements IHardwareController {
       power: new PowerMonitor('power', this.picoConnector),
       headServo: new HeadController('headServo', this.picoConnector),
       thermalSensor: new ThermalSensor('thermalSensor', this.picoConnector),
-      camera: new CameraController(),
       speaker: new SpeakerController(),
+      microphone: new MicrophoneController(),
+      camera: new CameraController(),
     };
 
     this.picoConnector.on('ready', this.onPicoReady);
@@ -45,7 +47,9 @@ class HardwareController implements IHardwareController {
   runCommand(module: string, command: string, params: Record<string, unknown>) {
     console.log(module, command, params);
     if (this.modules[module] && typeof this.modules[module][command] === 'function') {
-      return params ? this.modules[module][command].apply(this.modules[module], params) : this.modules[module][command]();
+      return params
+        ? this.modules[module][command].apply(this.modules[module], params)
+        : this.modules[module][command]();
     }
 
     return null;
