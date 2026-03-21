@@ -1,4 +1,5 @@
 /dist
 /node_modules
+/audio-test/audio-test-T.wav
 /public
 /db
