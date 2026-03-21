@@ -14,7 +14,7 @@
 }
 
 .prompt-card {
-  background: #111;
+  background: var(--surface-panel);
   width: 320px;
   border-radius: 12px;
   padding: 20px;
@@ -22,7 +22,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  border: 1px solid #333;
+  border: 1px solid var(--border-color);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
   animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
@@ -75,17 +75,17 @@
 }
 
 .prompt-title {
-  font-family: 'Courier New', Courier, monospace;
+  font-family: var(--font-mono);
   font-weight: bold;
   font-size: 1.2rem;
-  color: #fff;
+  color: var(--text-primary);
   letter-spacing: 1px;
   margin-bottom: 8px;
 }
 
 .prompt-msg {
   font-size: 0.85rem;
-  color: #aaa;
+  color: var(--text-muted);
   margin-bottom: 25px;
   line-height: 1.4;
 }
@@ -103,7 +103,7 @@
     font-weight: bold;
     font-size: 0.9rem;
     cursor: pointer;
-    border: none;
+    border: 1px solid transparent;
     transition: all 0.2s;
 
     &:active {

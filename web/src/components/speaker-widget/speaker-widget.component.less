@@ -1,8 +1,5 @@
 :host {
   display: block;
-  --btn-bg: #222;
-  --color-active: #00ff88;
-  --font-mono: 'Courier New', Courier, monospace;
 }
 
 .widget-header {
@@ -14,7 +11,7 @@
     font-weight: bold;
 
     &.active {
-      color: var(--color-active);
+      color: var(--success-color);
     }
   }
 }
@@ -27,7 +24,7 @@
 }
 
 .spk-btn {
-  background: var(--btn-bg);
+  background: var(--surface-button);
   border: 1px solid #444;
   color: #aaa;
   padding: 15px 0;
@@ -40,8 +37,8 @@
   &.active {
     transform: scale(0.96);
     background: rgba(0, 255, 136, 0.1);
-    color: var(--color-active);
-    border-color: var(--color-active);
+    color: var(--success-color);
+    border-color: var(--success-color);
     box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
   }
 }

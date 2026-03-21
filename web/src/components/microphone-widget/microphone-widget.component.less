@@ -1,9 +1,5 @@
 :host {
   display: block;
-  --rec-color: #ff4444;
-  --play-color: #00ff88;
-  --idle-color: #ccc;
-  --font-mono: 'Courier New', Courier, monospace;
 }
 
 .widget-header {
@@ -18,11 +14,11 @@
     font-family: var(--font-mono);
 
     &.recording {
-      color: var(--rec-color);
+      color: var(--mic-recording-color);
     }
 
     &.playback {
-      color: var(--play-color);
+      color: var(--mic-playback-color);
     }
   }
 }
@@ -33,7 +29,7 @@
   background: #222;
   border: 1px solid #444;
   border-radius: 6px;
-  color: var(--idle-color);
+  color: var(--mic-idle-color);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -67,25 +63,25 @@
   }
 
   &.recording {
-    background: rgba(255, 68, 68, 0.08);
-    border-color: var(--rec-color);
-    color: var(--rec-color);
+    background: var(--mic-recording-bg);
+    border-color: var(--mic-recording-color);
+    color: var(--mic-recording-color);
 
     .progress-bar {
       position: absolute;
       bottom: 0;
       left: 0;
       height: 3px;
-      background: var(--rec-color);
+      background: var(--mic-recording-color);
       width: 0;
       animation: fillProgress 5s linear forwards;
     }
   }
 
   &.playback {
-    background: rgba(0, 255, 136, 0.08);
-    border-color: var(--play-color);
-    color: var(--play-color);
+    background: var(--mic-playback-bg);
+    border-color: var(--mic-playback-color);
+    color: var(--mic-playback-color);
   }
 
   &:disabled {
