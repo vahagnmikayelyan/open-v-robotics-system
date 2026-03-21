@@ -16,11 +16,11 @@
   pointer-events: auto;
   display: flex;
   align-items: center;
-  background: rgba(15, 15, 15, 0.95);
+  background: var(--notification-toast-background);
   backdrop-filter: blur(4px);
   padding: 12px 15px;
   border-radius: var(--radius-md);
-  border-left: 4px solid #fff;
+  border-left: 4px solid var(--notification-toast-border-default);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
   cursor: pointer;
 
@@ -43,7 +43,7 @@
   }
 
   .message {
-    font-family: var(--font-mono);
+    font-family: var(--font-mono), monospace;
     font-size: 0.85rem;
     font-weight: bold;
     color: var(--text-primary);
@@ -52,64 +52,66 @@
   }
 
   &.success {
-    border-left-color: #00ff88;
-    border-top: 1px solid rgba(0, 255, 136, 0.2);
-    border-bottom: 1px solid rgba(0, 255, 136, 0.2);
-    border-right: 1px solid rgba(0, 255, 136, 0.2);
-    box-shadow: 0 5px 15px rgba(0, 255, 136, 0.1);
-
-    .message {
-      color: #00ff88;
-    }
+    border-left-color: var(--notification-success-color);
+    border-top: 1px solid color-mix(in srgb, var(--notification-success-color) 20%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--notification-success-color) 20%, transparent);
+    border-right: 1px solid color-mix(in srgb, var(--notification-success-color) 20%, transparent);
+    box-shadow: 0 5px 15px color-mix(in srgb, var(--notification-success-color) 12%, transparent);
 
     .toast-icon {
-      color: #00ff88;
+      color: var(--notification-success-color);
+    }
+
+    .message {
+      color: var(--notification-success-color);
     }
   }
 
   &.error {
-    border-left-color: #ff4444;
-    border-top: 1px solid rgba(255, 68, 68, 0.2);
-    border-bottom: 1px solid rgba(255, 68, 68, 0.2);
-    border-right: 1px solid rgba(255, 68, 68, 0.2);
-    box-shadow: 0 5px 15px rgba(255, 68, 68, 0.2);
-
-    .message {
-      color: #ffbbbb;
-    }
+    border-left-color: var(--notification-error-color);
+    border-top: 1px solid color-mix(in srgb, var(--notification-error-color) 20%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--notification-error-color) 20%, transparent);
+    border-right: 1px solid color-mix(in srgb, var(--notification-error-color) 20%, transparent);
+    box-shadow: 0 5px 15px color-mix(in srgb, var(--notification-error-color) 20%, transparent);
 
     .toast-icon {
-      color: #ff4444;
+      color: var(--notification-error-color);
+    }
+
+    .message {
+      color: color-mix(in srgb, var(--notification-error-color) 42%, white);
     }
   }
 
   &.warning {
-    border-left-color: #ffaa00;
-    border-top: 1px solid rgba(255, 170, 0, 0.2);
-    border-bottom: 1px solid rgba(255, 170, 0, 0.2);
-    border-right: 1px solid rgba(255, 170, 0, 0.2);
-
-    .message {
-      color: #ffdd99;
-    }
+    border-left-color: var(--notification-warning-color);
+    border-top: 1px solid color-mix(in srgb, var(--notification-warning-color) 20%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--notification-warning-color) 20%, transparent);
+    border-right: 1px solid color-mix(in srgb, var(--notification-warning-color) 20%, transparent);
+    box-shadow: 0 5px 15px color-mix(in srgb, var(--notification-warning-color) 20%, transparent);
 
     .toast-icon {
-      color: #ffaa00;
+      color: var(--notification-warning-color);
+    }
+
+    .message {
+      color: color-mix(in srgb, var(--notification-warning-color) 35%, white);
     }
   }
 
   &.info {
-    border-left-color: #00d4ff;
-    border-top: 1px solid rgba(0, 212, 255, 0.2);
-    border-bottom: 1px solid rgba(0, 212, 255, 0.2);
-    border-right: 1px solid rgba(0, 212, 255, 0.2);
-
-    .message {
-      color: #ccf6ff;
-    }
+    border-left-color: var(--notification-info-color);
+    border-top: 1px solid color-mix(in srgb, var(--notification-info-color) 20%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--notification-info-color) 20%, transparent);
+    border-right: 1px solid color-mix(in srgb, var(--notification-info-color) 20%, transparent);
+    box-shadow: 0 5px 15px color-mix(in srgb, var(--notification-info-color) 20%, transparent);
 
     .toast-icon {
-      color: #00d4ff;
+      color: var(--notification-info-color);
+    }
+
+    .message {
+      color: color-mix(in srgb, var(--notification-info-color) 45%, white);
     }
   }
 }
