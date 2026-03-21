@@ -1,8 +1,5 @@
 :host {
   display: block;
-  --accent: #00d4ff;
-  --link-color: #00d4ff;
-  --font-mono: 'Courier New', Courier, monospace;
 }
 
 .actions {
@@ -22,8 +19,8 @@
 
   &.link-btn.active {
     background: rgba(0, 212, 255, 0.2);
-    border-color: var(--link-color);
-    color: var(--link-color);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
   }
 }
 
@@ -48,10 +45,10 @@
   }
 
   .val {
-    font-family: var(--font-mono);
+    font-family: var(--font-mono), monospace;
     width: 35px;
     text-align: right;
     font-size: 1rem;
-    color: var(--accent);
+    color: var(--primary-color);
   }
 }

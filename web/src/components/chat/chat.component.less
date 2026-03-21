@@ -2,20 +2,13 @@
   display: block;
   height: 100%;
   overflow: hidden;
-  --bg-panel: #1e1e1e;
-  --accent-color: #00d4ff; /* Cyan (AI) */
-  --user-color: #00ff88; /* Green (User CMD) */
-  --sys-cmd-color: #ffaa00; /* Orange (System Logs) */
-  --button-color: #00d4ff; /* Orange (System Logs) */
-  --text-main: #e0e0e0;
-  --font-mono: 'Courier New', Courier, monospace;
 }
 
 .chat-wrapper {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--bg-panel);
+  background: var(--surface-panel);
   border: 1px solid #333;
   border-radius: 8px;
 }
@@ -43,7 +36,7 @@
 .message-row {
   display: flex;
   max-width: 90%;
-  font-family: var(--font-mono);
+  font-family: var(--font-mono), monospace;
   font-size: 0.9rem;
   line-height: 1.5;
 
@@ -69,9 +62,9 @@
     align-self: flex-end;
 
     .bubble {
-      background: rgba(0, 255, 136, 0.05);
-      border: 1px dashed var(--user-color);
-      color: var(--user-color);
+      background: var(--chat-user-command-bg);
+      border: 1px dashed var(--chat-user-command-color);
+      color: var(--chat-user-command-color);
       border-radius: 8px 0 8px 8px;
     }
   }
@@ -83,9 +76,9 @@
     width: 100%;
 
     .bubble {
-      background: rgba(255, 170, 0, 0.05);
-      border: 1px dashed var(--sys-cmd-color);
-      color: var(--sys-cmd-color);
+      background: var(--chat-system-command-bg);
+      border: 1px dashed var(--chat-system-command-color);
+      color: var(--chat-system-command-color);
       width: 100%;
       border-radius: 4px;
       font-size: 0.85rem;
@@ -98,9 +91,9 @@
     align-self: flex-end;
 
     .bubble {
-      background: #2b3a42;
-      color: white;
-      border: 1px solid #374a56;
+      background: var(--chat-user-message-bg);
+      color: var(--chat-user-message-text);
+      border: 1px solid var(--chat-user-message-border);
       border-radius: 8px 8px 0 8px;
     }
   }
@@ -111,14 +104,14 @@
     align-self: flex-start;
 
     .bubble {
-      background: #2a2a2a;
-      color: var(--text-main);
-      border-left: 3px solid var(--accent-color);
+      background: var(--chat-ai-message-bg);
+      color: var(--chat-ai-message-text);
+      border-left: 3px solid var(--chat-ai-accent-color);
       border-radius: 0 8px 8px 8px;
     }
 
     .cmd-prefix {
-      color: var(--accent-color);
+      color: var(--chat-ai-accent-color);
     }
   }
 }
@@ -136,18 +129,18 @@
     flex-grow: 1;
     background: #121212;
     border: 1px solid #444;
-    color: var(--button-color);
+    color: var(--primary-color);
     padding: 10px;
     border-radius: 4px;
     outline: none;
-    font-family: var(--font-mono);
+    font-family: var(--font-mono), monospace;
     resize: none;
     min-height: 42px;
     max-height: 150px;
     overflow-y: auto;
 
     &:focus {
-      border-color: var(--button-color);
+      border-color: var(--primary-color);
     }
 
     &::placeholder {
@@ -156,7 +149,7 @@
   }
 
   button {
-    background: var(--button-color);
+    background: var(--primary-color);
     color: #000;
     border: none;
     height: 42px;
@@ -164,7 +157,7 @@
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
-    font-family: var(--font-mono);
+    font-family: var(--font-mono), monospace;
 
     &:active {
       opacity: 0.8;

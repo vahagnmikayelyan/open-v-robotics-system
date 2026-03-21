@@ -3,7 +3,7 @@
   <div class="prompt-card" [ngClass]="config.type">
 
     <div class="icon-box">
-      <lucide-icon *ngIf="config.type === 'delete'" [img]="LucideIcons.AlertTriangle"></lucide-icon>
+      <lucide-icon *ngIf="config.type === 'error'" [img]="LucideIcons.AlertTriangle"></lucide-icon>
       <lucide-icon *ngIf="config.type === 'warning'" [img]="LucideIcons.MessageCircleWarningIcon"></lucide-icon>
       <lucide-icon *ngIf="config.type === 'info'" [img]="LucideIcons.Info"></lucide-icon>
       <lucide-icon *ngIf="config.type === 'question'" [img]="LucideIcons.HelpCircle"></lucide-icon>
@@ -13,7 +13,11 @@
     <div class="prompt-msg">{{ config.message }}</div>
 
     <div class="prompt-actions">
-      <button *ngFor="let btn of config.buttons" class="btn" [ngClass]="getBtnClass(btn)" (click)="onAction(btn)">
+      <button
+        *ngFor="let btn of config.buttons"
+        type="button"
+        [class]="'btn btn-' + btn.toLowerCase()"
+        (click)="onAction(btn)">
         {{ btn }}
       </button>
     </div>

@@ -9,7 +9,7 @@ export enum PromptButton {
   Ok = 'OK',
 }
 
-export type PromptType = 'delete' | 'warning' | 'info' | 'question';
+export type PromptType = 'error' | 'warning' | 'info' | 'question';
 
 export interface PromptConfig {
   type: PromptType;
@@ -26,30 +26,14 @@ export class PromptService {
 
   private responseSubject: Subject<PromptButton> | null = null;
 
-  open(type: PromptType, title: string, message: string): Observable<PromptButton> {
+  open(dialogType: PromptType, title: string, message: string, buttons: PromptButton[]): Observable<PromptButton> {
     if (this.responseSubject) {
       this.responseSubject.complete();
     }
 
     this.responseSubject = new Subject<PromptButton>();
 
-    let buttons: PromptButton[] = [];
-    switch (type) {
-      case 'delete':
-        buttons = [PromptButton.Cancel, PromptButton.Delete];
-        break;
-      case 'question':
-        buttons = [PromptButton.No, PromptButton.Yes];
-        break;
-      case 'warning':
-        buttons = [PromptButton.Cancel, PromptButton.Ok];
-        break;
-      case 'info':
-        buttons = [PromptButton.Ok];
-        break;
-    }
-
-    this.currentPrompt.set({ type, title, message, buttons });
+    this.currentPrompt.set({ type: dialogType, title, message, buttons });
 
     return this.responseSubject.asObservable();
   }

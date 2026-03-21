@@ -1,9 +1,5 @@
 :host {
   display: block;
-  --text-label: #888;
-  --text-val: #00d4ff;
-  --text-unit: #00d4ff;
-  --font-digit: 'Courier New', Courier, monospace;
 }
 
 .widget-content {
@@ -25,16 +21,16 @@
   }
 
   .value {
-    font-family: var(--font-digit);
+    font-family: var(--font-mono), monospace;
     font-size: 1.4rem;
     font-weight: bold;
     line-height: 1;
-    color: var(--text-val);
+    color: var(--primary-color);
   }
 
   .unit {
     font-size: 0.75rem;
-    color: var(--text-unit);
+    color: var(--primary-color);
   }
 }
 

@@ -1,21 +1,77 @@
 :root {
-  --bg-color: #121212;
-  --panel-bg: #1e1e1e;
-  --text-main: #e0e0e0;
-  --text-muted: #888;
-  --text-label: #888;
-  --accent-color: #00d4ff;
+  /* Palette */
+  --primary-color: #00d4ff;
+  --secondary-color: #00ff88;
   --success-color: #00ff88;
   --danger-color: #ff4444;
-  --border-radius: 8px;
+  --warning-color: #ffaa00;
+
+  /* Surfaces */
+  --background-color: #121212;
+  --surface-panel: #1e1e1e;
+  --surface-widget: rgba(255, 255, 255, 0.05);
+  --surface-button: #222;
+
+  /* Text */
+  --text-primary: #e0e0e0;
+  --text-muted: #888;
+  --text-label: #888;
+  --text-control: #ccc;
+
+  /* Borders */
+  --border-color: #444444;
+  --border-color-focus: var(--primary-color);
+
+  /* Typography */
+  --font-family-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: 'Courier New', Courier, monospace;
-  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --color-normal: #00ff88;
-  --color-warning: #ffaa00;
-  --color-critical: #ff4444;
-  --widget-bg: rgba(255, 255, 255, 0.05);
-  --widget-border-idle: #444444;
-  --widget-border-active: #00d4ff;
+
+  /* Shape */
+  --radius-md: 8px;
+
+  /* Slider / range (.range-input) */
+  --slider-track-background: #3a3a3a;
+  --slider-track-border: #555;
+  --slider-thumb-border: #1e1e1e;
+
+  /* Feature-specific */
+  --viewport-background: #000;
+  --camera-hud-color: rgba(0, 212, 255, 0.6);
+  --wheel-idle-color: #555;
+
+  /* Microphone widget */
+  --mic-recording-color: #ff4444;
+  --mic-playback-color: #00ff88;
+  --mic-idle-color: #ccc;
+  --mic-recording-bg: rgba(255, 68, 68, 0.08);
+  --mic-playback-bg: rgba(0, 255, 136, 0.08);
+
+  /* Chat — messages */
+  --chat-user-command-color: #00ff88;
+  --chat-user-command-bg: rgba(0, 255, 136, 0.05);
+  --chat-system-command-color: #ffaa00;
+  --chat-system-command-bg: rgba(255, 170, 0, 0.05);
+  --chat-user-message-bg: #2b3a42;
+  --chat-user-message-border: #374a56;
+  --chat-user-message-text: #ffffff;
+  --chat-ai-message-bg: #2a2a2a;
+  --chat-ai-message-text: #e0e0e0;
+  --chat-ai-accent-color: #00d4ff;
+
+  /* Notification toasts */
+  --notification-toast-background: rgba(15, 15, 15, 0.95);
+  --notification-toast-border-default: #ffffff;
+  --notification-success-color: #00ff88;
+  --notification-error-color: #ff4444;
+  --notification-warning-color: #ffaa00;
+  --notification-info-color: #00d4ff;
+
+  /* Prompt dialog */
+  --prompt-dialog-overlay-background: rgba(0, 0, 0, 0.7);
+  --prompt-dialog-error-color: #ff4444;
+  --prompt-dialog-warning-color: #ffaa00;
+  --prompt-dialog-question-color: #00d4ff;
+  --prompt-dialog-info-color: #00ff88;
 }
 
 * {
@@ -25,9 +81,9 @@
 }
 
 body {
-  background-color: var(--bg-color);
-  color: var(--text-main);
-  font-family: var(--font-ui);
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  font-family: var(--font-family-ui), sans-serif;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -42,10 +98,10 @@ body {
     height: 32px;
     padding: 0 10px;
     background: rgba(30, 30, 30, 0.8);
-    border: 1px solid #444;
+    border: 1px solid var(--border-color);
     border-radius: 6px;
-    color: #ccc;
-    font-family: 'Courier New', Courier, monospace;
+    color: var(--text-control);
+    font-family: var(--font-mono), monospace;
     font-size: 0.9rem;
     font-weight: bold;
     text-transform: uppercase;
@@ -74,19 +130,19 @@ body {
             font-size: 1.8rem;
             margin-right: 5px;
             margin-top: -4px;
-            color: #00d4ff;
+            color: var(--primary-color);
         }
 
         &:active {
-            border-color: #00d4ff;
+            border-color: var(--primary-color);
             &::before { color: #fff; }
         }
     }
 
     &.primary {
         background: rgba(0, 212, 255, 0.1);
-        border-color: #00d4ff;
-        color: #00d4ff;
+        border-color: var(--primary-color);
+        color: var(--primary-color);
         box-shadow: 0 0 10px rgba(0, 212, 255, 0.1);
 
         &:active {
@@ -98,8 +154,8 @@ body {
 
     &.danger {
         background: rgba(255, 68, 68, 0.1);
-        border-color: #ff4444;
-        color: #ff4444;
+        border-color: var(--danger-color);
+        color: var(--danger-color);
 
         &:active {
             background: rgba(255, 68, 68, 0.3);
@@ -122,7 +178,7 @@ body {
 
 /* --- Header / Status Bar --- */
 header {
-  background-color: var(--panel-bg);
+  background-color: var(--surface-panel);
   padding: 0.5rem 1rem;
   display: flex;
   justify-content: space-between;
@@ -139,16 +195,16 @@ header {
 }
 
 .widget {
-  background: var(--widget-bg);
-  border: 1px solid var(--widget-border-idle);
-  border-radius: 8px;
+  background: var(--surface-widget);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
   padding: 10px 12px;
   position: relative;
   transition: all 0.3s ease;
   margin-bottom: 10px;
 
   &.active {
-    border-color: var(--widget-border-active);
+    border-color: var(--border-color-focus);
     box-shadow: 0 0 8px rgba(0, 212, 255, 0.15);
   }
 
@@ -226,9 +282,9 @@ lucide-icon {
   &::-webkit-slider-runnable-track {
     width: 100%;
     height: 8px;
-    background: var(--track-bg);
+    background: var(--slider-track-background);
     border-radius: 5px;
-    border: 1px solid var(--track-border);
+    border: 1px solid var(--slider-track-border);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
     transition: all 0.2s;
   }
@@ -239,9 +295,9 @@ lucide-icon {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: var(--accent-color);
+    background: var(--primary-color);
     margin-top: -7px;
-    border: 1px solid var(--thumb-border);
+    border: 1px solid var(--slider-thumb-border);
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
     transition: transform 0.1s, background-color 0.1s, border-color 0.1s;
     background: #fff;
@@ -255,7 +311,7 @@ lucide-icon {
   &:active::-webkit-slider-thumb {
     transform: scale(1.1);
     background: #fff;
-    border-color: var(--accent-color);
+    border-color: var(--primary-color);
   }
 
   &:focus-visible::-webkit-slider-thumb {
@@ -265,9 +321,9 @@ lucide-icon {
   &::-moz-range-track {
     width: 100%;
     height: 10px;
-    background: var(--track-bg);
+    background: var(--slider-track-background);
     border-radius: 5px;
-    border: 1px solid var(--track-border);
+    border: 1px solid var(--slider-track-border);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
   }
 
@@ -275,13 +331,13 @@ lucide-icon {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: var(--accent-color);
-    border: 1px solid var(--thumb-border);
+    background: var(--primary-color);
+    border: 1px solid var(--slider-thumb-border);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
   }
 
   &::-moz-range-progress {
-    background-color: var(--accent-color);
+    background-color: var(--primary-color);
     height: 8px;
     border-radius: 5px 0 0 5px;
     opacity: 0.7;
@@ -294,7 +350,7 @@ lucide-icon {
 }
 
 ::-webkit-scrollbar-track {
-  background: #121212;
+  background: var(--background-color);
 }
 
 ::-webkit-scrollbar-thumb {
