@@ -4,7 +4,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--prompt-dialog-overlay-background);
   backdrop-filter: blur(4px);
   z-index: 9999;
   display: flex;
@@ -37,45 +37,45 @@
     stroke-width: 1.5px;
   }
 
-  &.delete {
-    border-color: #ff4444;
-    box-shadow: 0 0 20px rgba(255, 68, 68, 0.15);
+  &.error {
+    border-color: var(--prompt-dialog-error-color);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--prompt-dialog-error-color) 15%, transparent);
 
     lucide-icon {
-      color: #ff4444;
+      color: var(--prompt-dialog-error-color);
     }
   }
 
   &.warning {
-    border-color: #ffaa00;
-    box-shadow: 0 0 20px rgba(255, 170, 0, 0.15);
+    border-color: var(--prompt-dialog-warning-color);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--prompt-dialog-warning-color) 15%, transparent);
 
     lucide-icon {
-      color: #ffaa00;
+      color: var(--prompt-dialog-warning-color);
     }
   }
 
   &.question {
-    border-color: #00d4ff;
-    box-shadow: 0 0 20px rgba(0, 212, 255, 0.15);
+    border-color: var(--prompt-dialog-question-color);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--prompt-dialog-question-color) 15%, transparent);
 
     lucide-icon {
-      color: #00d4ff;
+      color: var(--prompt-dialog-question-color);
     }
   }
 
   &.info {
-    border-color: #00ff88;
-    box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
+    border-color: var(--prompt-dialog-info-color);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--prompt-dialog-info-color) 15%, transparent);
 
     lucide-icon {
-      color: #00ff88;
+      color: var(--prompt-dialog-info-color);
     }
   }
 }
 
 .prompt-title {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono), monospace;
   font-weight: bold;
   font-size: 1.2rem;
   color: var(--text-primary);
@@ -99,7 +99,7 @@
     flex: 1;
     padding: 12px 0;
     border-radius: 6px;
-    font-family: monospace;
+    font-family: var(--font-mono), monospace;
     font-weight: bold;
     font-size: 0.9rem;
     cursor: pointer;
@@ -109,43 +109,33 @@
     &:active {
       transform: scale(0.95);
     }
-
-    &.cancel {
-      background: #222;
-      color: #888;
-      border: 1px solid #444;
-    }
-
-    &.confirm {
-      background: #333;
-      color: #fff;
-      border: 1px solid #555;
-    }
   }
-}
 
-.prompt-card.delete .btn.confirm {
-  background: #ff4444;
-  color: #fff;
-  border-color: #ff0000;
-}
+  .btn-cancel,
+  .btn-no {
+    background: var(--surface-button);
+    color: var(--text-muted);
+    border-color: var(--border-color);
+  }
 
-.prompt-card.warning .btn.confirm {
-  background: #ffaa00;
-  color: #000;
-  border-color: #cc8800;
-}
+  .btn-delete {
+    background: var(--prompt-dialog-error-color);
+    color: #fff;
+    border-color: color-mix(in srgb, var(--prompt-dialog-error-color) 72%, black);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--prompt-dialog-error-color) 40%, transparent);
+  }
 
-.prompt-card.question .btn.confirm {
-  background: #00d4ff;
-  color: #000;
-  border-color: #0099cc;
-}
+  .btn-yes {
+    background: var(--prompt-dialog-question-color);
+    color: #000;
+    border-color: color-mix(in srgb, var(--prompt-dialog-question-color) 78%, black);
+  }
 
-.prompt-card.info .btn.confirm {
-  background: #00ff88;
-  color: #000;
-  border-color: #00cc66;
+  .btn-ok {
+    background: var(--prompt-dialog-info-color);
+    color: #000;
+    border-color: color-mix(in srgb, var(--prompt-dialog-info-color) 85%, black);
+  }
 }
 
 @keyframes fadeIn {
@@ -165,46 +155,5 @@
   to {
     transform: scale(1);
     opacity: 1;
-  }
-}
-
-.prompt-actions {
-  display: flex;
-  width: 100%;
-  gap: 10px;
-
-  .btn {
-    flex: 1;
-    padding: 12px 0;
-    border-radius: 6px;
-    font-family: monospace;
-    font-weight: bold;
-    font-size: 0.9rem;
-    cursor: pointer;
-    border: 1px solid transparent;
-    transition: all 0.2s;
-
-    &:active {
-      transform: scale(0.95);
-    }
-
-    &.btn-secondary {
-      background: #222;
-      color: #888;
-      border-color: #444;
-    }
-
-    &.btn-primary {
-      background: #00d4ff;
-      color: #000;
-      border-color: #0099cc;
-    }
-
-    &.btn-danger {
-      background: #ff4444;
-      color: #fff;
-      border-color: #cc0000;
-      box-shadow: 0 0 10px rgba(255, 68, 68, 0.4);
-    }
   }
 }

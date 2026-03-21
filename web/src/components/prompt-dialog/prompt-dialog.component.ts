@@ -22,19 +22,4 @@ export class PromptDialogComponent {
   onAction(btn: PromptButton) {
     this.promptService.close(btn);
   }
-
-  getBtnClass(btn: PromptButton): string {
-    switch (btn) {
-      case PromptButton.Delete:
-        return 'btn-danger';
-      case PromptButton.Yes:
-      case PromptButton.Ok:
-        return 'btn-primary';
-      case PromptButton.No:
-      case PromptButton.Cancel:
-        return 'btn-secondary';
-      default:
-        return 'btn-secondary';
-    }
-  }
 }
