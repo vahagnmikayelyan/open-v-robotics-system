@@ -1,26 +1,35 @@
-import { Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { NgFor, NgIf } from '@angular/common';
+import { LucideAngularModule, Plus, QrCode, Settings, Wrench } from 'lucide-angular';
 import { ApiService } from '../../services/api.service';
-import { LucideAngularModule, QrCode, Settings, Wrench, Zap, Plus } from 'lucide-angular';
+import { ProgramCardComponent } from '../../components/program-card/program-card.component';
 import { NotificationService } from '../../services/notification.service';
 import { UiLoaderComponent } from '../../components/ui-loader/ui-loader.component';
+import { PromptButton, PromptService } from '../../services/prompt.service';
 import * as QRCode from 'qrcode';
-import { NgIf } from '@angular/common';
+import { Program } from '../../models/models';
 
 @Component({
   selector: 'main-menu-page',
   standalone: true,
-  imports: [RouterLink, LucideAngularModule, NgIf, UiLoaderComponent],
+  imports: [RouterLink, LucideAngularModule, NgFor, NgIf, UiLoaderComponent, ProgramCardComponent],
   templateUrl: './main-menu-page.component.html',
   styleUrl: './main-menu-page.component.less',
 })
-export class MainMenuPageComponent {
+export class MainMenuPageComponent implements OnInit {
+  private router = inject(Router);
   private api = inject(ApiService);
   private notifications = inject(NotificationService);
-  readonly LucideIcons = { QrCode, Settings, Wrench, Zap, Plus };
+  private prompt = inject(PromptService);
+  readonly LucideIcons = { QrCode, Settings, Wrench, Plus };
   isConnectDialogOpen = signal(false);
   connectionString = signal<string>('');
   qrImageUrl = signal<string>('');
+
+  isLoading = signal(true);
+  totalModules = signal<number>(0);
+  programs = signal<Program[]>([]);
 
   async generateQR(text: string) {
     try {
@@ -34,6 +43,11 @@ export class MainMenuPageComponent {
       this.notifications.error('QR generation error');
       console.error('QR generation error:', err);
     }
+  }
+
+  async ngOnInit() {
+    await this.getModules();
+    await this.getPrograms();
   }
 
   async openConnectDialog() {
@@ -52,5 +66,55 @@ export class MainMenuPageComponent {
   closeConnectDialog() {
     this.isConnectDialogOpen.set(false);
     this.qrImageUrl.set('');
+  }
+
+  async getModules() {
+    try {
+      const availableModules = await this.api.get<string[]>('/modules');
+      this.totalModules.set(availableModules.length);
+    } catch (error: any) {
+      this.notifications.error(error.message);
+    }
+  }
+
+  async getPrograms() {
+    try {
+      this.isLoading.set(true);
+      const programs = await this.api.get<Program[]>('/programs');
+      this.programs.set(programs);
+    } catch (error: any) {
+      this.notifications.error(error.message);
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  startProgram(id: string) {
+    console.log('Selected program', id);
+    // ToDo implement
+  }
+
+  createProgram() {
+    this.router.navigate(['/program', 'new']);
+  }
+
+  editProgram(id: string) {
+    this.router.navigate(['/program', id]);
+  }
+
+  requestDeleteProgram(id: string) {
+    this.prompt
+      .open('error', 'Delete program?', 'Are you sure?', [PromptButton.Cancel, PromptButton.Delete])
+      .subscribe(async (button: PromptButton) => {
+        if (button === PromptButton.Delete) {
+          try {
+            await this.api.delete(`/programs/${id}`);
+            this.programs.update((progs) => progs.filter((p) => p.id !== id));
+            this.notifications.success('Program deleted successfully');
+          } catch (error: any) {
+            this.notifications.error(error.message);
+          }
+        }
+      });
   }
 }

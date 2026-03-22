@@ -21,3 +21,17 @@ export interface ModuleCommand {
   action: string;
   params: any[] | null;
 }
+
+export interface AiModel {
+    id: string;
+    name: string;
+}
+
+export interface Program {
+    id: string;
+    name: string;
+    systemInstruction: string;
+    aiModel: string;
+    modules: string[];
+}
+

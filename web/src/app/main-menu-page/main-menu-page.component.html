@@ -11,8 +11,30 @@
       <lucide-icon [img]="LucideIcons.Settings" class="icon"></lucide-icon>
     </button>
 
-    <button class="nav-btn primary" routerLink="/devtools">
+    <button class="nav-btn" routerLink="/devtools">
       <lucide-icon [img]="LucideIcons.Wrench" class="icon"></lucide-icon>
+    </button>
+  </div>
+
+  <div class="divider">SELECT PROGRAM</div>
+
+  <div *ngIf="isLoading()" class="loader-wrapper">
+    <ui-loader></ui-loader>
+  </div>
+
+  <div *ngIf="!isLoading()" class="programs-grid">
+    <program-card
+      *ngFor="let prog of programs()"
+      [program]="prog"
+      [totalModules]="totalModules()"
+      (select)="startProgram($event)"
+      (edit)="editProgram($event)"
+      (deleteRequest)="requestDeleteProgram($event)"
+    />
+
+    <button type="button" class="program-card add-new" (click)="createProgram()">
+      <lucide-icon [img]="LucideIcons.Plus" class="plus-icon"></lucide-icon>
+      <div class="tile-name">Add program</div>
     </button>
   </div>
 

@@ -1,0 +1,86 @@
+<form class="edit-container" #configForm="ngForm" (ngSubmit)="save(configForm)">
+
+  <div class="header">
+    <button type="button" class="nav-btn back" routerLink="/menu">CANCEL</button>
+    <span class="title">{{ !program().id ? 'NEW PROGRAM' : 'EDIT PROGRAM' }}</span>
+    <button type="submit" class="nav-btn primary save-btn" [disabled]="configForm.invalid">SAVE</button>
+  </div>
+
+  <div *ngIf="isLoading()" class="loader-wrapper">
+    <ui-loader></ui-loader>
+  </div>
+
+  <div *ngIf="!isLoading()" class="form-scroll">
+
+    <div class="form-group">
+      <label>PROGRAM NAME</label>
+      <input type="text"
+             name="progName"
+             [(ngModel)]="program().name"
+             required
+             #nameField="ngModel"
+             placeholder="e.g. Home Guard"
+             class="input-dark"
+             [class.error]="nameField.invalid && nameField.touched">
+      <div *ngIf="nameField.invalid && nameField.touched" class="error-msg">Name is required.</div>
+    </div>
+
+    <div class="form-group">
+      <label>SYSTEM INSTRUCTION</label>
+      <textarea name="progInstruction"
+                [(ngModel)]="program().systemInstruction"
+                required
+                #instructionField="ngModel"
+                rows="6"
+                placeholder="You are a helpful robot assistant..."
+                class="input-dark"
+                [class.error]="instructionField.invalid && instructionField.touched"></textarea>
+
+      <div *ngIf="instructionField.invalid && instructionField.touched" class="error-msg">Instruction cannot be empty.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>AI Model</label>
+      <div class="select-wrapper">
+        <select name="progAiModel"
+                [(ngModel)]="program().aiModel"
+                required
+                #aiModelField="ngModel"
+                class="input-dark"
+                [class.error]="aiModelField.invalid && aiModelField.touched">
+
+          <option value="" disabled *ngIf="!program().aiModel">Select an AI model...</option>
+
+          <option *ngFor="let model of aiModels" [value]="model.id">
+            {{ model.name }}
+          </option>
+        </select>
+        <span class="arrow">▼</span>
+      </div>
+
+      <div class="error-msg" *ngIf="aiModelField.invalid && aiModelField.touched">
+        Please select an AI model.
+      </div>
+    </div>
+
+    <div class="form-group" *ngIf="availableModules.length > 0">
+      <label>PROGRAM PERMISSIONS</label>
+    </div>
+
+    <div class="form-group row" *ngFor="let moduleId of availableModules">
+      <div class="lbl-grp">
+        <label>{{ dict[moduleId]?.name || moduleId }}</label>
+
+        <div class="sub">{{ dict[moduleId]?.desc || 'Generic system module' }}</div>
+      </div>
+
+      <label class="toggle-switch">
+        <input type="checkbox" [checked]="hasModule(moduleId)"
+               (change)="toggleModule(moduleId, $any($event.target).checked)">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+  </div>
+</form>

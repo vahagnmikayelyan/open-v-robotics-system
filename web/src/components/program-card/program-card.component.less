@@ -1,0 +1,114 @@
+.program-card {
+  background: linear-gradient(180deg, var(--surface-panel) 0%, var(--background-color) 100%);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  min-height: 150px;
+  transition: all 0.2s ease;
+  overflow: hidden;
+
+  &:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 5px 20px color-mix(in srgb, var(--primary-color) 10%, transparent);
+    transform: translateY(-2px);
+  }
+}
+
+.tile-main {
+  flex-grow: 1;
+  padding: 20px 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &:active {
+    background: color-mix(in srgb, var(--primary-color) 5%, transparent);
+  }
+
+  .tile-icon {
+    margin-bottom: 12px;
+    color: var(--primary-color);
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--primary-color) 60%, transparent));
+  }
+
+  .tile-name {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    text-align: center;
+    letter-spacing: 1px;
+  }
+
+  .tile-sub {
+    font-size: 0.75rem;
+    color: var(--primary-color);
+    margin-top: 5px;
+    font-family: var(--font-mono), monospace;
+    opacity: 0.8;
+  }
+}
+
+.tile-footer {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid color-mix(in srgb, var(--border-color) 50%, var(--background-color));
+  background: color-mix(in srgb, var(--background-color), black 30%);
+  padding: 10px 15px;
+
+  .perm-tag {
+    font-size: 0.65rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--primary-color) 5%, transparent);
+    color: var(--primary-color);
+    font-family: var(--font-mono), monospace;
+    font-weight: bold;
+    border: 1px solid color-mix(in srgb, var(--primary-color) 20%, transparent);
+    letter-spacing: 0.5px;
+
+    &.full {
+      background: color-mix(in srgb, var(--success-color) 10%, transparent);
+      color: var(--success-color);
+      border-color: color-mix(in srgb, var(--success-color) 30%, transparent);
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  background: var(--surface-button);
+  border: 1px solid var(--border-color);
+  color: var(--text-control);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &.edit:hover {
+    color: var(--text-primary);
+    border-color: var(--primary-color);
+    background: color-mix(in srgb, var(--primary-color) 20%, transparent);
+  }
+
+  &.delete:hover {
+    color: var(--text-primary);
+    border-color: var(--danger-color);
+    background: color-mix(in srgb, var(--danger-color) 20%, transparent);
+  }
+}

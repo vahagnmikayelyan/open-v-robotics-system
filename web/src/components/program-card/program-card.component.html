@@ -1,0 +1,18 @@
+<div class="program-card">
+  <div class="tile-main" (click)="onSelect()">
+    <lucide-icon [img]="LucideIcons.Zap" class="tile-icon"></lucide-icon>
+    <div class="tile-name">{{ program().name }}</div>
+    <div class="tile-sub">{{ program().aiModel }}</div>
+  </div>
+
+  <div class="tile-footer">
+    <div class="perm-tag" [class.full]="program().modules.length === this.totalModules()">
+      Modules: {{ program().modules.length }}/{{ totalModules() }}
+    </div>
+
+    <div class="actions">
+      <button type="button" class="action-btn edit" (click)="onEdit($event)">Edit</button>
+      <button type="button" class="action-btn delete" (click)="onDelete($event)">Delete</button>
+    </div>
+  </div>
+</div>
