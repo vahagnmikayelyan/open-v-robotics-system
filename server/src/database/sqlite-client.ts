@@ -9,6 +9,18 @@ const configsTableQuery = `
   )
 `;
 
+const programsTableQuery = `
+  CREATE TABLE IF NOT EXISTS programs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    aiModel TEXT,
+    systemInstruction TEXT,
+    modules TEXT DEFAULT '[]',
+    addTime DATETIME DEFAULT CURRENT_TIMESTAMP,
+    editTime DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+`;
+
 class SqliteClient {
   private readonly db;
 
@@ -28,6 +40,7 @@ class SqliteClient {
 
   init() {
     this.db.exec(configsTableQuery);
+    this.db.exec(programsTableQuery);
     console.log(`[DB] SQLite initialized. Tables verified.`);
   }
 
