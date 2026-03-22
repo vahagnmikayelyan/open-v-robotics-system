@@ -1,0 +1,38 @@
+<div class="screen-container"
+     (mousemove)="onMouseMove($event)"
+     (dblclick)="onDoubleClick()"
+
+     (mousedown)="startHold()"
+     (mouseup)="endHold()"
+     (mouseleave)="endHold()"
+
+     (touchstart)="startHold()"
+     (touchend)="endHold()"
+     (touchcancel)="endHold()">
+
+  <div class="buttery-level">
+    <battery-status [level]="batteryLevel()"></battery-status>
+  </div>
+
+  <div class="face-layer" [class.closing]="isBlinking()">
+
+    <div class="eye left">
+      <div class="eyelid top"></div>
+      <div class="eyelid bottom"></div>
+
+      <div class="pupil" [style.transform]="'translate(' + pupilOffset().x + 'px, ' + pupilOffset().y + 'px)'">
+        <div class="glint"></div>
+      </div>
+    </div>
+
+    <div class="eye right">
+      <div class="eyelid top"></div>
+      <div class="eyelid bottom"></div>
+      <div class="pupil" [style.transform]="'translate(' + pupilOffset().x + 'px, ' + pupilOffset().y + 'px)'">
+        <div class="glint"></div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

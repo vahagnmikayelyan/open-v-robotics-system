@@ -1,0 +1,116 @@
+:host {
+  display: block;
+}
+
+.battery-widget {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.9rem;
+
+  .value {
+    text-align: right;
+    font-weight: bold;
+  }
+
+  .battery-icon {
+    width: 30px;
+    height: 15px;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 2px;
+    position: relative;
+    padding: 1px;
+
+    &::after {
+      content: '';
+      position: absolute;
+      right: -6px;
+      top: 2px;
+      width: 3px;
+      height: 8px;
+    }
+  }
+
+  .battery-fill {
+    height: 100%;
+    border-radius: 1px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+    max-width: 100%;
+  }
+}
+
+.battery-widget.normal {
+  .battery-icon {
+    border-color: var(--success-color);
+  }
+
+  .battery-icon::after {
+    background: var(--success-color);
+  }
+
+  .battery-fill {
+    background-color: var(--success-color);
+    box-shadow: 0 0 5px rgba(0, 255, 136, 0.4);
+  }
+
+  .value {
+    color: var(--success-color);
+  }
+}
+
+.battery-widget.warning {
+  .battery-icon {
+    border-color: var(--warning-color);
+  }
+
+  .battery-icon::after {
+    background: var(--warning-color);
+  }
+
+  .battery-fill {
+    background-color: var(--warning-color);
+    box-shadow: 0 0 5px rgba(255, 170, 0, 0.4);
+  }
+
+  .value {
+    color: var(--warning-color);
+  }
+}
+
+.battery-widget.critical {
+  .battery-icon {
+    border-color: var(--danger-color);
+  }
+
+  .battery-icon::after {
+    background: var(--danger-color);
+  }
+
+  .battery-fill {
+    background-color: var(--danger-color);
+    box-shadow: 0 0 8px rgba(255, 68, 68, 0.6);
+    animation: pulse-red 1s infinite;
+  }
+
+  .value {
+    color: var(--danger-color);
+  }
+
+  .battery-icon {
+    border-color: var(--danger-color);
+  }
+}
+
+@keyframes pulse-red {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}

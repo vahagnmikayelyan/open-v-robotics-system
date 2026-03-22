@@ -1,0 +1,139 @@
+:host {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  background: var(--background-color);
+  overflow: hidden;
+  user-select: none;
+}
+
+.buttery-level {
+  position: absolute;
+  right: 15px;
+  top: 5px;
+}
+
+.screen-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: none !important;
+}
+
+.face-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15%;
+}
+
+.eye {
+  position: relative;
+  width: 28vw;
+  height: 28vw;
+  max-width: 220px;
+  max-height: 220px;
+  border-radius: 50%;
+  border: 3px solid var(--primary-color);
+  background: radial-gradient(circle at center, rgba(0, 212, 255, 0.2) 0%, rgba(0, 0, 0, 0.8) 80%);
+  box-shadow: 0 0 25px rgba(0, 212, 255, 0.5),
+  inset 0 0 30px rgba(0, 212, 255, 0.3);
+  overflow: hidden;
+
+  &.left {
+    transform: rotate(-2deg);
+  }
+
+  &.right {
+    transform: rotate(2deg);
+  }
+}
+
+.pupil {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40%;
+  height: 40%;
+  margin-top: -20%;
+  margin-left: -20%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fff 0%, var(--primary-color) 60%, #007aa3 100%);
+  box-shadow: 0 0 20px var(--primary-color);
+  transition: transform 0.1s ease-out;
+
+  .glint {
+    position: absolute;
+    top: 15%;
+    left: 20%;
+    width: 25%;
+    height: 25%;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    filter: blur(2px);
+  }
+}
+
+.eyelid {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  background: var(--background-color);
+  z-index: 10;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  &.top {
+    top: 0;
+    height: 60%;
+    border-bottom: 3px solid var(--primary-color);
+    transform: translateY(-105%);
+  }
+
+  &.bottom {
+    bottom: 0;
+    height: 50%;
+    border-top: 3px solid var(--primary-color);
+    transform: translateY(105%);
+  }
+}
+
+.face-layer.closing {
+  .eyelid.top {
+    transform: translateY(0%);
+  }
+
+  .eyelid.bottom {
+    transform: translateY(0%);
+    transition-duration: 0.25s;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

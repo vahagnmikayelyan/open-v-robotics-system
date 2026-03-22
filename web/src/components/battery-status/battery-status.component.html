@@ -1,0 +1,7 @@
+<div class="battery-widget" [class]="statusClass()">
+  <div class="battery-icon">
+    <div class="battery-fill" [style.width.%]="level()"></div>
+  </div>
+
+  <span class="value">{{ level() }}%</span>
+</div>
