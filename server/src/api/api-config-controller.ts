@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { Request, Response } from 'express';
 import { IConfig, IConfigController } from '../types/config.js';
+import { Logger } from '../services/logger.js';
 
 const ApiConfigController = (configController: IConfigController) => {
   const updateConfigSchema = z.object({
@@ -27,7 +28,7 @@ const ApiConfigController = (configController: IConfigController) => {
       return res.status(400).json({ errors: formattedErrors });
     }
 
-    console.error('[Config API Error]:', error.message);
+    Logger.errorLog(error.message, 'Config API');
     return res.status(400).json({ error: 'Wrong request' });
   };
 

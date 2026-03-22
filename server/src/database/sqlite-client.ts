@@ -1,6 +1,7 @@
 import * as fs from 'node:fs';
 import path from 'path';
 import Database from 'better-sqlite3';
+import { Logger } from '../services/logger.js';
 
 const configsTableQuery = `
   CREATE TABLE IF NOT EXISTS config (
@@ -41,7 +42,7 @@ class SqliteClient {
   init() {
     this.db.exec(configsTableQuery);
     this.db.exec(programsTableQuery);
-    console.log(`[DB] SQLite initialized. Tables verified.`);
+    Logger.debugLog('SQLite initialized', 'DB');
   }
 
   getInstance() {

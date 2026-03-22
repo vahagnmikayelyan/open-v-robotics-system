@@ -2,6 +2,7 @@ import os from 'os';
 import { Request, Response } from 'express';
 
 import config from '../config.js';
+import { Logger } from '../services/logger.js';
 
 const ApiUtilsController = () => {
   const getLocalIpAddress = () => {
@@ -25,7 +26,7 @@ const ApiUtilsController = () => {
         const ip = getLocalIpAddress();
         res.status(200).json({ ip });
       } catch (error: any) {
-        console.error('[Utils API Error]:', error.message);
+        Logger.errorLog(error.message, 'Utils API');
         res.status(400).json({ error: 'Failed to get connection info' });
       }
     },
@@ -35,7 +36,7 @@ const ApiUtilsController = () => {
         const models = config.availableAIModels || [];
         res.status(200).json(models);
       } catch (error: any) {
-        console.error('[Utils API Error]:', error.message);
+        Logger.errorLog(error.message, 'Utils API');
         res.status(400).json({ error: 'Failed to get AI models' });
       }
     },
@@ -45,7 +46,7 @@ const ApiUtilsController = () => {
         const modules = config.availableModules || [];
         res.status(200).json(modules);
       } catch (error: any) {
-        console.error('[Utils API Error]:', error.message);
+        Logger.errorLog(error.message, 'Utils API');
         res.status(400).json({ error: 'Failed to get available modules' });
       }
     },

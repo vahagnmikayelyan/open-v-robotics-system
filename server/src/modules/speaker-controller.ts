@@ -2,6 +2,7 @@ import { ChildProcessWithoutNullStreams, spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
+import { Logger } from '../services/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,7 +18,7 @@ class SpeakerController {
     const filePath = path.resolve(__dirname, '..', `../audio-test/audio-test-${channel}.wav`);
 
     if (!fs.existsSync(filePath)) {
-      console.error(`[Speaker] Error: File not found at ${filePath}`);
+      Logger.errorLog(`Error: File not found at ${filePath}`, 'Speaker');
       return;
     }
 
@@ -51,15 +52,15 @@ class SpeakerController {
     ]);
 
     this.playerProcess.stderr.on('data', (data) => {
-      console.error(`[pw-play] Audio Player Error: ${data.toString()}`);
+      Logger.errorLog(`Audio Player Error: ${data.toString()}`, 'Speaker - pw-play');
     });
 
     this.playerProcess.on('close', (code) => {
-      console.log(`[pw-play] Process exited with code ${code}`);
+      Logger.debugLog(`Process exited with code ${code}`, 'Speaker - pw-play');
     });
 
     this.playerProcess.stdin.on('error', (err) => {
-      console.error('[Speaker] Error stdin:', err);
+      Logger.debugLog('Error stdin', 'Speaker - pw-play', err);
     });
 
     return this.playerProcess.stdin;

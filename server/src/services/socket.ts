@@ -1,7 +1,7 @@
 import type { WebSocket } from 'ws';
+import { Logger } from './logger.js';
 
 class Socket {
-
   private events: Record<string, (data?: any) => void> = {};
   private ws: WebSocket;
 
@@ -18,10 +18,9 @@ class Socket {
   }
 
   handleMessage(message: string) {
-
     const data = JSON.parse(message);
 
-    console.log('handleMessage', data);
+    Logger.debugLog('Handle message', 'Socket', data);
 
     if (this.events[data.event]) {
       this.events[data.event](data.data);
