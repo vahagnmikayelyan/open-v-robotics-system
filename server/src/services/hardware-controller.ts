@@ -13,6 +13,7 @@ import ThermalSensor from '../modules/thermal-sensor.js';
 import CameraController from '../modules/camera-controller.js';
 import SpeakerController from '../modules/speaker-controller.js';
 import MicrophoneController from '../modules/microphone-controller.js';
+import { Logger } from './logger.js';
 
 class HardwareController implements IHardwareController {
   private readonly picoConnector: IHardwareConnector;
@@ -41,11 +42,10 @@ class HardwareController implements IHardwareController {
   }
 
   private onPicoReady() {
-    console.log('Pico connected successfully');
+    Logger.debugLog('Pico connected successfully', 'Pico');
   }
 
   runCommand(module: string, command: string, params: Record<string, unknown>) {
-    console.log(module, command, params);
     if (this.modules[module] && typeof this.modules[module][command] === 'function') {
       return params
         ? this.modules[module][command].apply(this.modules[module], params)

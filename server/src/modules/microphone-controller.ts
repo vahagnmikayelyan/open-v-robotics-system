@@ -3,6 +3,7 @@ import EventEmitter from 'node:events';
 import path from 'path';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
+import { Logger } from '../services/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,11 +18,10 @@ class MicrophoneController extends EventEmitter {
 
   startStream() {
     if (this.recordProcess) {
-      console.warn('[Microphone] Streaming already started.');
       return;
     }
 
-    console.log('[Microphone] Initialization streaming');
+    Logger.debugLog('Starting stream', 'Microphone');
 
     this.recordProcess = spawn('pw-record', [
       '--target',
@@ -54,17 +54,16 @@ class MicrophoneController extends EventEmitter {
       // Ignoring logs
     });
 
-    this.recordProcess.on('close', (code) => {
-      console.log(`[Microphone] Streaming stopped (Code: ${code})`);
+    this.recordProcess.on('close', (_) => {
       this.recordProcess = null;
     });
   }
 
   stop() {
     if (this.recordProcess) {
+      Logger.debugLog('Stoping stream', 'Microphone');
       this.recordProcess.kill();
       this.recordProcess = null;
-      console.log('[Microphone] Streaming canceled.');
     }
   }
 
@@ -72,7 +71,7 @@ class MicrophoneController extends EventEmitter {
     return new Promise((resolve, reject) => {
       const filePath = path.resolve(__dirname, '..', `../audio-test/audio-test-T.wav`);
 
-      console.log(`[Microphone] Starting test recording (5 seconds): ${filePath}`);
+      Logger.debugLog(`Starting test recording (5 seconds): ${filePath}`, 'Microphone');
 
       const recordingProcess = spawn('pw-record', [filePath]);
 
@@ -83,7 +82,6 @@ class MicrophoneController extends EventEmitter {
       });
 
       const timer = setTimeout(() => {
-        console.log('[Microphone] Stop recording after 5 second...');
         recordingProcess.kill('SIGTERM');
       }, 5000);
 
@@ -91,7 +89,7 @@ class MicrophoneController extends EventEmitter {
         clearTimeout(timer);
 
         if (fs.existsSync(filePath) && fs.statSync(filePath).size > 0) {
-          console.log(`[Microphone] Recorded file saved: ${filePath}`);
+          Logger.debugLog(`Recorded file saved: ${filePath}`, 'Microphone');
           resolve({ m: 'speaker', a: 'testMicrophone', r: 'ok' });
         } else {
           reject(new Error(`Recording error: ${errorOutput}`));

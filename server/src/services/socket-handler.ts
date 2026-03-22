@@ -2,6 +2,7 @@ import type { Server } from 'node:http';
 import { IHardwareController } from '../types/types.js';
 import { WebSocketServer } from 'ws';
 import Socket from './socket.js';
+import { Logger } from './logger.js';
 
 interface ICommand {
   module: string;
@@ -22,7 +23,7 @@ const SocketHandler = (server: Server, hardwareConnector: IHardwareController) =
     const socket = new Socket(ws);
 
     const init = () => {
-      console.log('Socket instance connected');
+      Logger.debugLog('Socket instance connected', 'Socket');
       socket.emit('init');
     };
 
@@ -42,7 +43,7 @@ const SocketHandler = (server: Server, hardwareConnector: IHardwareController) =
     });
 
     socket.on('disconnect', () => {
-      console.log('socket instance disconnect');
+      Logger.debugLog('Socket instance disconnect', 'Socket');
     });
 
     init();

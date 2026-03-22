@@ -1,7 +1,8 @@
-import EventEmitter from "events";
-import { SerialPort } from "serialport";
-import { ReadlineParser } from "@serialport/parser-readline";
-import { IHardwareConnector } from "../types/types.js";
+import EventEmitter from 'events';
+import { SerialPort } from 'serialport';
+import { ReadlineParser } from '@serialport/parser-readline';
+import { IHardwareConnector } from '../types/types.js';
+import { Logger } from './logger.js';
 
 class PicoUartConnector extends EventEmitter implements IHardwareConnector {
   private messageId: number = 0;
@@ -20,12 +21,12 @@ class PicoUartConnector extends EventEmitter implements IHardwareConnector {
 
   private setupListeners() {
     this.port.on('open', () => {
-      console.log('UART port opened');
+      Logger.debugLog('Port opened', 'UART');
       this.emit('ready');
     });
 
     this.parser.on('data', (line) => {
-      console.log(`[Pico RAW Log]: ${line}`);
+      Logger.debugLog('RAW log', 'UART', line);
       const trimmed = line.trim();
       if (!trimmed) return;
 
@@ -34,12 +35,12 @@ class PicoUartConnector extends EventEmitter implements IHardwareConnector {
         this.handleMessage(json);
       } catch (e) {
         // Logs non-JSON output (like print statements from your Pico)
-        console.log(`[Pico Log]: ${trimmed}`);
+        Logger.debugLog(`Error in parsing command - ${trimmed}`, 'UART');
       }
     });
 
     this.port.on('close', () => {
-      console.warn('UART port closed');
+      Logger.debugLog('Port closed', 'UART');
       // Reject all pending promises so the app doesn't hang
       for (const [id, handler] of this.handlers) {
         handler.reject(new Error(`Port closed. Command ${id} cancelled.`));
@@ -48,7 +49,7 @@ class PicoUartConnector extends EventEmitter implements IHardwareConnector {
     });
 
     this.port.on('error', (err) => {
-      console.error('[UART] Error:', err.message);
+      Logger.errorLog(`Error -  ${err.message}`, 'UART');
     });
   }
 
@@ -57,7 +58,7 @@ class PicoUartConnector extends EventEmitter implements IHardwareConnector {
 
     this.port.open((err) => {
       if (err) {
-        console.error('[UART] Open Fail: ', err.message);
+        Logger.errorLog(`Port open fail -  ${err.message}`, 'UART');
       }
     });
   }
@@ -71,18 +72,15 @@ class PicoUartConnector extends EventEmitter implements IHardwareConnector {
     const payload = JSON.stringify({ i: id, m: module, a: action, ...params }) + '\n';
 
     return new Promise((resolve, reject) => {
-
       this.handlers.set(id, { resolve, reject, module, action });
 
-      console.log('[UART] Send command', payload);
+      Logger.debugLog(`Send command - ${payload}`, 'UART');
 
       this.port.write(payload, (err) => {
         if (err) {
-          console.error(`[UART] Write Error for ID ${id}:`, err.message);
+          Logger.errorLog(`Write Error for ID ${id}:`, 'UART', err.message);
           this.handlers.delete(id);
           reject(err);
-        } else {
-          console.log(`[UART] Sent ID ${id}`);
         }
       });
     });
@@ -90,15 +88,14 @@ class PicoUartConnector extends EventEmitter implements IHardwareConnector {
 
   private handleMessage(message: any) {
     if (message.i === undefined) {
-      console.warn('[UART] Received message without ID:', message);
+      Logger.errorLog('Received message without ID', 'UART', message);
       return;
     }
 
     const handler = this.handlers.get(message.i);
     if (handler) {
-
       if (message.s === 'processing') {
-        console.log(`Command ${message.i} is still running...`);
+        Logger.debugLog(`Command ${message.i} is still running...`, 'UART');
         return; // Don't resolve yet
       }
 

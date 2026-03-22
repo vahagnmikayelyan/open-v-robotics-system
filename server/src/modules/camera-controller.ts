@@ -1,5 +1,6 @@
 import { ChildProcessWithoutNullStreams, spawn } from 'node:child_process';
 import EventEmitter from 'events';
+import { Logger } from '../services/logger.js';
 
 const SOI = Buffer.from([0xff, 0xd8]); // Start JPEG
 const EOI = Buffer.from([0xff, 0xd9]); // End JPEG
@@ -21,7 +22,7 @@ class CameraController extends EventEmitter {
   startStream() {
     if (this.isBusy || this.videoProcess) return;
 
-    console.log('Running Camera');
+    Logger.debugLog('Starting stream', 'Camera');
 
     this.videoProcess = spawn('rpicam-vid', [
       '--codec',
@@ -55,6 +56,7 @@ class CameraController extends EventEmitter {
   stopStream() {
     return new Promise((resolve) => {
       if (this.videoProcess) {
+        Logger.debugLog('Stoping stream', 'Camera');
         this.videoProcess.kill();
         this.videoProcess = null;
         this.buffer = Buffer.alloc(0); // Clear buffer
@@ -86,6 +88,8 @@ class CameraController extends EventEmitter {
 
   async takePhoto(width = 0, height = 0) {
     const videoProcessing = !!this.videoProcess;
+
+    Logger.debugLog('Take photo', 'Camera');
 
     await this.stopStream();
     this.isBusy = true;
