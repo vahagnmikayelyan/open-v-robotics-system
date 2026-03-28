@@ -6,7 +6,7 @@
     "start": "ng serve --host 0.0.0.0",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "typecheck": "tsc --noEmit"
   },
   "private": true,
   "dependencies": {

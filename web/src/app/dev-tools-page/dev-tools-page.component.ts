@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../environments/environment';
 import { UiSocketService } from '../../services/ui-socket.service';
-import { ChatMessage, ChatMessageType } from '../../models/models';
+import { ChatMessage, ChatMessageType, ModuleCommandParams } from '../../models/models';
 import { ChatComponent } from '../../components/chat/chat.component';
 import { UiSliderComponent } from '../../components/ui-slider/ui-slider.component';
 import { SensorTileComponent } from '../../components/sensor-tile/sensor-tile.component';
@@ -37,7 +37,7 @@ export class DevToolsPageComponent implements OnInit {
 
   messages = signal<ChatMessage[]>([]);
 
-  modulesUpdatesTimers: Record<string, { timerId: any | null; action: string; params: any[] | null }> = {
+  modulesUpdatesTimers: Record<string, { timerId: any | null; action: string; params: ModuleCommandParams }> = {
     power: { timerId: null, action: 'getValue', params: null },
     lightSensor: { timerId: null, action: 'getValue', params: null },
     distanceSensor: { timerId: null, action: 'getValue', params: null },
@@ -104,7 +104,7 @@ export class DevToolsPageComponent implements OnInit {
     }
   }
 
-  private runCommand(module: string, command: string, params: any[] | null = null) {
+  private runCommand(module: string, command: string, params: ModuleCommandParams = null) {
     const chatMessage = params ? `${module} -> ${command} (${JSON.stringify(params)})` : `${module} -> ${command}`;
     this.addMessage(chatMessage, ChatMessageType.userCommand);
     this.uiSocketService.sendCommand(module, command, params);
@@ -122,7 +122,7 @@ export class DevToolsPageComponent implements OnInit {
     }
   }
 
-  moduleCommand(module: string, action: string, params: any[] | null = null) {
+  moduleCommand(module: string, action: string, params: ModuleCommandParams) {
     this.runCommand(module, action, params);
   }
 }

@@ -9,11 +9,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 class MicrophoneController extends EventEmitter {
-  private recordProcess: ChildProcessWithoutNullStreams | null;
+  private recordProcess: ChildProcessWithoutNullStreams | null = null;
 
   constructor() {
     super();
-    this.recordProcess = null;
   }
 
   startStream() {
@@ -67,11 +66,11 @@ class MicrophoneController extends EventEmitter {
     }
   }
 
-  async testMicrophone(seconds: number = 5): Promise<any> {
+  async testMicrophone({ duration = 5 }: { duration: number }): Promise<any> {
     return new Promise((resolve, reject) => {
       const filePath = path.resolve(__dirname, '..', `../audio-test/audio-test-T.wav`);
 
-      Logger.debugLog(`Starting test recording (${seconds} seconds): ${filePath}`, 'Microphone');
+      Logger.debugLog(`Starting test recording (${duration} seconds): ${filePath}`, 'Microphone');
 
       const recordingProcess = spawn('pw-record', [
         '--target',
@@ -94,7 +93,7 @@ class MicrophoneController extends EventEmitter {
       const timer = setTimeout(() => {
         // SIGINT lets pw-record flush and finalize the WAV header before exiting
         recordingProcess.kill('SIGINT');
-      }, seconds * 1000);
+      }, duration * 1000);
 
       recordingProcess.on('close', (_) => {
         clearTimeout(timer);
@@ -103,12 +102,14 @@ class MicrophoneController extends EventEmitter {
           Logger.debugLog(`Recorded file saved: ${filePath}`, 'Microphone');
           resolve({ m: 'microphone', a: 'testMicrophone', r: 'ok' });
         } else {
+          Logger.errorLog(`Recording failed — pw-record output: ${errorOutput || '(none)'}`, 'Microphone');
           reject(new Error(`Recording failed — pw-record output: ${errorOutput || '(none)'}`));
         }
       });
 
       recordingProcess.on('error', (err) => {
         clearTimeout(timer);
+        Logger.errorLog(`Can't start pw-record: ${err.message}`, 'Microphone');
         reject(new Error(`Can't start pw-record: ${err.message}`));
       });
     });

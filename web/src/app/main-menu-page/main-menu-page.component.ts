@@ -89,7 +89,7 @@ export class MainMenuPageComponent implements OnInit {
     }
   }
 
-  startProgram(id: string) {
+  startProgram(id: number) {
     console.log('Selected program', id);
     // ToDo implement
   }
@@ -98,11 +98,11 @@ export class MainMenuPageComponent implements OnInit {
     this.router.navigate(['/program', 'new']);
   }
 
-  editProgram(id: string) {
+  editProgram(id: number) {
     this.router.navigate(['/program', id]);
   }
 
-  requestDeleteProgram(id: string) {
+  requestDeleteProgram(id: number) {
     this.prompt
       .open('error', 'Delete program?', 'Are you sure?', [PromptButton.Cancel, PromptButton.Delete])
       .subscribe(async (button: PromptButton) => {

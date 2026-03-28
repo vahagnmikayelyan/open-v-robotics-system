@@ -43,7 +43,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
 
   getVoltageLevel() {
     this.voltageTimer && clearTimeout(this.voltageTimer);
-    this.uiSocketService.sendCommand('power', 'getValue');
+    this.uiSocketService.sendCommand('power', 'getValue', null);
     this.voltageTimer = setTimeout(() => this.getVoltageLevel(), 30000);
   }
 

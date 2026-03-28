@@ -1,4 +1,4 @@
-import { IHardwareConnector } from '../types/types.js';
+import { IHardwareConnector } from '../types/hardware.js';
 
 class LightController {
   private readonly moduleName: string;
@@ -9,7 +9,7 @@ class LightController {
     this.connector = connector;
   }
 
-  light(leftPercent: number = 50, rightPercent: number = 50) {
+  light({ leftPercent = 50, rightPercent = 50 }: { leftPercent: number; rightPercent: number }) {
     return this.connector.sendCommand(this.moduleName, 'light', { l: leftPercent, r: rightPercent });
   }
 

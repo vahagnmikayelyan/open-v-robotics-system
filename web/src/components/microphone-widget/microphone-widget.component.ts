@@ -22,7 +22,7 @@ export class MicrophoneWidgetComponent {
   startLoopback() {
     if (this.status() !== 'idle') return;
 
-    this.command.emit({ module: 'microphone', action: 'testMicrophone', params: [this.duration()] });
+    this.command.emit({ module: 'microphone', action: 'testMicrophone', params: { duration: this.duration() } });
 
     this.status.set('recording');
     this.timeLeft.set(this.duration());
@@ -43,7 +43,7 @@ export class MicrophoneWidgetComponent {
   }
 
   private startSpeaker() {
-    this.command.emit({ module: 'speaker', action: 'testSpeaker', params: ['T'] });
+    this.command.emit({ module: 'speaker', action: 'testSpeaker', params: { channel: 'T' } });
     setTimeout(() => this.status.set('idle'), this.duration() * 1000);
   }
 }

@@ -2,7 +2,7 @@ import { Component, output, signal, ChangeDetectionStrategy } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, RotateCcw, RotateCw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-angular';
-import { ModuleCommand } from '../../models/models';
+import { ModuleCommandParams, ModuleCommand } from '../../models/models';
 
 interface WheelsState {
   fl: number;
@@ -43,8 +43,11 @@ export class MotorsWidgetComponent {
   }
 
   private sendCommand() {
-    const params = [this.wheelsState().fl, this.wheelsState().fr, this.wheelsState().bl, this.wheelsState().br];
-    this.command.emit({ module: 'drive', action: 'control', params });
+    this.command.emit({
+      module: 'drive',
+      action: 'control',
+      params: this.wheelsState() as unknown as ModuleCommandParams,
+    });
   }
 
   startWheel(id: string) {

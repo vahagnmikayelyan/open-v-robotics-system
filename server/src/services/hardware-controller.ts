@@ -1,4 +1,4 @@
-import { IHardwareConnector, IHardwareController } from '../types/types.js';
+import { IHardwareConnector, IHardwareController } from '../types/hardware.js';
 
 import PicoUartConnector from './pico-uart-connector.js';
 import DistanceSensor from '../modules/distance-sensor.js';
@@ -47,12 +47,10 @@ class HardwareController implements IHardwareController {
 
   runCommand(module: string, command: string, params: Record<string, unknown>) {
     if (this.modules[module] && typeof this.modules[module][command] === 'function') {
-      return params
-        ? this.modules[module][command].apply(this.modules[module], params)
-        : this.modules[module][command]();
+      return this.modules[module][command](params ? params : {});
     }
 
-    return null;
+    return Promise.reject('Wrong command');
   }
 }
 

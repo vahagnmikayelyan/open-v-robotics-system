@@ -1,6 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { environment } from '../environments/environment';
 import { WebsocketWrapper } from './websocket-wrapper';
+import { ModuleCommandParams } from '../models/models';
 
 @Injectable({ providedIn: 'root' })
 export class UiSocketService {
@@ -32,7 +33,7 @@ export class UiSocketService {
     this.wss?.send(event, data);
   }
 
-  sendCommand(module: string, command: string, params: any[] | null = null) {
+  sendCommand(module: string, command: string, params: ModuleCommandParams) {
     this.send('command', { module, command, params });
   }
 }

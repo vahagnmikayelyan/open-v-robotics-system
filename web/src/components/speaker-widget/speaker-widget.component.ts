@@ -22,7 +22,7 @@ export class SpeakerWidgetComponent {
     }
 
     this.activeChannel.set(channel);
-    this.command.emit({ module: 'speaker', action: 'testSpeaker', params: [channel] });
+    this.command.emit({ module: 'speaker', action: 'testSpeaker', params: { channel } });
     setTimeout(() => this.activeChannel.set(null), 1000);
   }
 }

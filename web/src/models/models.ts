@@ -16,22 +16,23 @@ export interface IConfig {
   value: unknown;
 }
 
+export type ModuleCommandParams = Record<string, unknown> | null;
+
 export interface ModuleCommand {
   module: string;
   action: string;
-  params: any[] | null;
+  params: ModuleCommandParams;
 }
 
 export interface AiModel {
-    id: string;
-    name: string;
+  id: string;
+  name: string;
 }
 
 export interface Program {
-    id: string;
-    name: string;
-    systemInstruction: string;
-    aiModel: string;
-    modules: string[];
+  id: number;
+  name: string;
+  systemInstruction: string;
+  aiModel: string;
+  modules: string[];
 }
-
