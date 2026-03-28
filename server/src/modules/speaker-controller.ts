@@ -13,33 +13,10 @@ class SpeakerController {
   constructor() {
     this.playerProcess = null;
   }
-
-  async testSpeaker(channel = 'L') {
-    const filePath = path.resolve(__dirname, '..', `../audio-test/audio-test-${channel}.wav`);
-
-    if (!fs.existsSync(filePath)) {
-      Logger.errorLog(`Error: File not found at ${filePath}`, 'Speaker');
-      return;
-    }
-
-    return new Promise((resolve, reject) => {
-      const play = spawn('pw-play', ['--target', 'echo_cancel_sink', filePath]);
-
-      play.on('close', (code) => {
-        if (code === 0) {
-          resolve({ m: 'speaker', a: 'testSpeaker', r: 'ok' });
-        } else {
-          reject(new Error(`pw-play exited with code ${code}`));
-        }
-      });
-    });
-  }
-
   startLiveStream() {
-    // Config: --format s16 (16-bit), --rate 24000 (standard for Gemini), --channels 1 (mono)
     this.playerProcess = spawn('pw-play', [
       '--target',
-      'echo_cancel_sink',
+      'robot_echo_cancel_sink',
       '--playback',
       '--raw',
       '--format',
@@ -64,6 +41,27 @@ class SpeakerController {
     });
 
     return this.playerProcess.stdin;
+  }
+
+  async testSpeaker(channel = 'L') {
+    const filePath = path.resolve(__dirname, '..', `../audio-test/audio-test-${channel}.wav`);
+
+    if (!fs.existsSync(filePath)) {
+      Logger.errorLog(`Error: File not found at ${filePath}`, 'Speaker');
+      return;
+    }
+
+    return new Promise((resolve, reject) => {
+      const play = spawn('pw-play', ['--target', 'robot_echo_cancel_sink', filePath]);
+
+      play.on('close', (code) => {
+        if (code === 0) {
+          resolve({ m: 'speaker', a: 'testSpeaker', r: 'ok' });
+        } else {
+          reject(new Error(`pw-play exited with code ${code}`));
+        }
+      });
+    });
   }
 
   stop() {

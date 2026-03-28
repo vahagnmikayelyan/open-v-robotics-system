@@ -15,14 +15,14 @@ export class MicrophoneWidgetComponent {
   readonly LucideIcons = { Mic, Circle, Volume2 };
 
   status = signal<'idle' | 'recording' | 'playback'>('idle');
-  duration = signal<number>(5);
+  duration = signal<number>(10);
   timeLeft = signal(0);
   command = output<ModuleCommand>();
 
   startLoopback() {
     if (this.status() !== 'idle') return;
 
-    this.command.emit({ module: 'microphone', action: 'testMicrophone', params: null });
+    this.command.emit({ module: 'microphone', action: 'testMicrophone', params: [this.duration()] });
 
     this.status.set('recording');
     this.timeLeft.set(this.duration());

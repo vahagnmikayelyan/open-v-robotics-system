@@ -34,6 +34,26 @@
 
     </div>
 
+    <div class="section-title">GEMINI LIVE</div>
+    <div class="card-group">
+
+      <div class="setting-row">
+        <div class="label-group">
+          <span class="lbl">Gemini API key</span>
+          <span class="sub">Google AI Studio / Gemini API</span>
+        </div>
+        <div class="value-group">
+          <input
+            type="text"
+            [(ngModel)]="configs().geminiLive_apiKey"
+            class="input-dark"
+            autocomplete="off"
+            placeholder="Paste API key">
+        </div>
+      </div>
+
+    </div>
+
     <div class="info-block">
       <div>System Version: v{{ platformVersion() }}</div>
     </div>

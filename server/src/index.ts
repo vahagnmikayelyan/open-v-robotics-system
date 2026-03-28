@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 import config from './config.js';
+import { defaultSettings } from './default-settings.js';
 
 import HardwareController from './services/hardware-controller.js';
 import SocketHandler from './services/socket-handler.js';
@@ -18,7 +19,7 @@ const server = createServer({}, app);
 
 const hardwareController = new HardwareController();
 
-const dbClient = new SqliteClient(path.join(baseDirectory, config.sqLiteDBPath));
+const dbClient = new SqliteClient(path.join(baseDirectory, config.sqLiteDBPath), defaultSettings);
 
 ApiHandler(app, dbClient.getInstance());
 SocketHandler(server, hardwareController);

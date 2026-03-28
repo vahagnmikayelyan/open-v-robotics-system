@@ -67,13 +67,23 @@ class MicrophoneController extends EventEmitter {
     }
   }
 
-  async testMicrophone(): Promise<any> {
+  async testMicrophone(seconds: number = 5): Promise<any> {
     return new Promise((resolve, reject) => {
       const filePath = path.resolve(__dirname, '..', `../audio-test/audio-test-T.wav`);
 
-      Logger.debugLog(`Starting test recording (5 seconds): ${filePath}`, 'Microphone');
+      Logger.debugLog(`Starting test recording (${seconds} seconds): ${filePath}`, 'Microphone');
 
-      const recordingProcess = spawn('pw-record', [filePath]);
+      const recordingProcess = spawn('pw-record', [
+        '--target',
+        'robot_echo_cancel_source',
+        '--format',
+        's16', // 16-bit (signed integer)
+        '--rate',
+        '16000', // 16 kHz
+        '--channels',
+        '1', // Mono
+        filePath,
+      ]);
 
       let errorOutput = '';
 
@@ -82,17 +92,18 @@ class MicrophoneController extends EventEmitter {
       });
 
       const timer = setTimeout(() => {
-        recordingProcess.kill('SIGTERM');
-      }, 5000);
+        // SIGINT lets pw-record flush and finalize the WAV header before exiting
+        recordingProcess.kill('SIGINT');
+      }, seconds * 1000);
 
       recordingProcess.on('close', (_) => {
         clearTimeout(timer);
 
         if (fs.existsSync(filePath) && fs.statSync(filePath).size > 0) {
           Logger.debugLog(`Recorded file saved: ${filePath}`, 'Microphone');
-          resolve({ m: 'speaker', a: 'testMicrophone', r: 'ok' });
+          resolve({ m: 'microphone', a: 'testMicrophone', r: 'ok' });
         } else {
-          reject(new Error(`Recording error: ${errorOutput}`));
+          reject(new Error(`Recording failed — pw-record output: ${errorOutput || '(none)'}`));
         }
       });
 

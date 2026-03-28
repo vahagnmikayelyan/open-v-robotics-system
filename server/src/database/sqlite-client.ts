@@ -25,7 +25,7 @@ const programsTableQuery = `
 class SqliteClient {
   private readonly db;
 
-  constructor(dbPath: string) {
+  constructor(dbPath: string, private readonly defaultConfig: Record<string, unknown>) {
     const dbDirectory = path.dirname(dbPath);
 
     if (!fs.existsSync(dbDirectory)) {
@@ -42,7 +42,17 @@ class SqliteClient {
   init() {
     this.db.exec(configsTableQuery);
     this.db.exec(programsTableQuery);
+    this.seedDefaultConfig();
     Logger.debugLog('SQLite initialized', 'DB');
+  }
+
+  private seedDefaultConfig() {
+    const stmt = this.db.prepare(
+      `INSERT OR IGNORE INTO config (key, value) VALUES (?, ?)`,
+    );
+    for (const key of Object.keys(this.defaultConfig)) {
+      stmt.run(key, JSON.stringify(this.defaultConfig[key]));
+    }
   }
 
   getInstance() {
