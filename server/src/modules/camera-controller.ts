@@ -86,7 +86,7 @@ class CameraController extends EventEmitter {
     }
   }
 
-  async takePhoto(width = 0, height = 0) {
+  async takePhoto({ width = 0, height = 0 }: { width: number; height: number }) {
     const videoProcessing = !!this.videoProcess;
 
     Logger.debugLog('Take photo', 'Camera');

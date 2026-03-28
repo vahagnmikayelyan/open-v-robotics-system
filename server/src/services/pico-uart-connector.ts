@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import { SerialPort } from 'serialport';
 import { ReadlineParser } from '@serialport/parser-readline';
-import { IHardwareConnector } from '../types/types.js';
+import { IHardwareConnector } from '../types/hardware.js';
 import { Logger } from './logger.js';
 
 class PicoUartConnector extends EventEmitter implements IHardwareConnector {

@@ -38,7 +38,11 @@ export class DualLedWidgetComponent {
   }
 
   private sendChanges() {
-    this.command.emit({ module: 'light', action: 'light', params: [this.leftLed(), this.rightLed()] });
+    this.command.emit({
+      module: 'light',
+      action: 'light',
+      params: { leftPercent: this.leftLed(), rightPercent: this.rightLed() },
+    });
   }
 
   // Icons Glow Effect

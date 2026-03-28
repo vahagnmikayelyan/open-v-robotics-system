@@ -13,9 +13,9 @@ export class ProgramCardComponent {
   program = input.required<Program>();
   totalModules = input(0);
 
-  select = output<string>();
-  edit = output<string>();
-  deleteRequest = output<string>();
+  select = output<number>();
+  edit = output<number>();
+  deleteRequest = output<number>();
 
   readonly LucideIcons = { Zap };
 

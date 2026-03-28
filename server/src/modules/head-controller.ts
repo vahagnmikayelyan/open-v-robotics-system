@@ -1,4 +1,4 @@
-import { IHardwareConnector } from '../types/types.js';
+import { IHardwareConnector } from '../types/hardware.js';
 
 class HeadController {
   private readonly moduleName: string;
@@ -9,20 +9,20 @@ class HeadController {
     this.connector = connector;
   }
 
-  rotate(angle = 0) {
+  rotate({ angle = 0 }: { angle: number }) {
     return this.connector.sendCommand(this.moduleName, 'rotate', { v: angle });
   }
 
   toCenter() {
-    return this.rotate(0);
+    return this.rotate({ angle: 0 });
   }
 
   toTop() {
-    return this.rotate(-40);
+    return this.rotate({ angle: -40 });
   }
 
   toBottom() {
-    return this.rotate(35);
+    return this.rotate({ angle: 35 });
   }
 }
 

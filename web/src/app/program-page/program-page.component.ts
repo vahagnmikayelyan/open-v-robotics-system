@@ -38,7 +38,7 @@ export class ProgramPageComponent implements OnInit {
   isLoading = signal(true);
 
   program = signal<Program>({
-    id: '',
+    id: 0,
     name: '',
     systemInstruction: '',
     aiModel: '',

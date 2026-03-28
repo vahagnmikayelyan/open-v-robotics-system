@@ -17,9 +17,9 @@ const baseDirectory = path.dirname(path.resolve(__filename, '..'));
 const app = express();
 const server = createServer({}, app);
 
-const hardwareController = new HardwareController();
-
 const dbClient = new SqliteClient(path.join(baseDirectory, config.sqLiteDBPath), defaultSettings);
+
+const hardwareController = new HardwareController();
 
 ApiHandler(app, dbClient.getInstance());
 SocketHandler(server, hardwareController);

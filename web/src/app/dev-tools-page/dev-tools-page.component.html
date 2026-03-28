@@ -31,10 +31,10 @@
       (isActiveChange)="changeModuleUpdates('inertialSensor', $event)"></imu-widget>
 
     <ui-slider label="Cooling Fan" [(value)]="fanSpeed" unit="%" [min]="0" [max]="100" [step]="5"
-               (valueChange)="moduleCommand('fan', 'changeSpeed', [$event])"></ui-slider>
+               (valueChange)="moduleCommand('fan', 'changeSpeed', { percent: $event })"></ui-slider>
 
     <ui-slider label="Head servo" [(value)]="servoAngle" unit="%" [min]="-40" [max]="35" [step]="5"
-               (valueChange)="moduleCommand('headServo', 'rotate', [$event])"></ui-slider>
+               (valueChange)="moduleCommand('headServo', 'rotate', { angle: $event })"></ui-slider>
 
     <motors-widget (command)="moduleCommand($event.module, $event.action, $event.params)"></motors-widget>
 

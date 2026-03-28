@@ -1,4 +1,4 @@
-import { IHardwareConnector } from '../types/types.js';
+import { IHardwareConnector } from '../types/hardware.js';
 
 class DistanceSensor {
   private readonly moduleName: string;

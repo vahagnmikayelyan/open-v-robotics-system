@@ -8,12 +8,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 class SpeakerController {
-  private playerProcess: ChildProcessWithoutNullStreams | null;
+  private playerProcess: ChildProcessWithoutNullStreams | null = null;
 
-  constructor() {
-    this.playerProcess = null;
-  }
+  constructor() {}
+
   startLiveStream() {
+    if (this.playerProcess) {
+      return null;
+    }
+
+    Logger.debugLog('Starting stream', 'Speaker');
+
     this.playerProcess = spawn('pw-play', [
       '--target',
       'robot_echo_cancel_sink',
@@ -40,10 +45,18 @@ class SpeakerController {
       Logger.debugLog('Error stdin', 'Speaker - pw-play', err);
     });
 
-    return this.playerProcess.stdin;
+    return !!this.playerProcess.stdin;
   }
 
-  async testSpeaker(channel = 'L') {
+  playStream(buffer: Buffer) {
+    if (!this.playerProcess) {
+      return null;
+    }
+
+    this.playerProcess.stdin.write(buffer);
+  }
+
+  async testSpeaker({ channel = 'L' }: { channel: string }) {
     const filePath = path.resolve(__dirname, '..', `../audio-test/audio-test-${channel}.wav`);
 
     if (!fs.existsSync(filePath)) {
@@ -58,6 +71,7 @@ class SpeakerController {
         if (code === 0) {
           resolve({ m: 'speaker', a: 'testSpeaker', r: 'ok' });
         } else {
+          Logger.errorLog(`pw-play exited with code ${code}`, 'Speaker');
           reject(new Error(`pw-play exited with code ${code}`));
         }
       });

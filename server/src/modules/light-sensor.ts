@@ -1,4 +1,4 @@
-import { IHardwareConnector } from '../types/types.js';
+import { IHardwareConnector } from '../types/hardware.js';
 
 class LightSensor {
   private readonly moduleName: string;

@@ -1,4 +1,4 @@
-import { IHardwareConnector } from '../types/types.js';
+import { IHardwareConnector } from '../types/hardware.js';
 
 class FanController {
   private readonly moduleName: string;
@@ -9,7 +9,7 @@ class FanController {
     this.connector = connector;
   }
 
-  changeSpeed(percent: number) {
+  changeSpeed({ percent }: { percent: number }) {
     return this.connector.sendCommand(this.moduleName, 'changeSpeed', { v: percent });
   }
 }
