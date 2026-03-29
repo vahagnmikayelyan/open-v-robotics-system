@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../environments/environment';
 import { UiSocketService } from '../../services/ui-socket.service';
-import { ChatMessage, ChatMessageType, ModuleCommandParams } from '../../models/models';
+import { IChatMessage, ChatMessageType, ModuleCommandParams } from '../../models/models';
 import { ChatComponent } from '../../components/chat/chat.component';
 import { UiSliderComponent } from '../../components/ui-slider/ui-slider.component';
 import { SensorTileComponent } from '../../components/sensor-tile/sensor-tile.component';
@@ -35,7 +35,7 @@ import { CameraWidgetComponent } from '../../components/camera-widget/camera-wid
 export class DevToolsPageComponent implements OnInit {
   private uiSocketService = inject(UiSocketService);
 
-  messages = signal<ChatMessage[]>([]);
+  messages = signal<IChatMessage[]>([]);
 
   modulesUpdatesTimers: Record<string, { timerId: any | null; action: string; params: ModuleCommandParams }> = {
     power: { timerId: null, action: 'getValue', params: null },
@@ -73,7 +73,7 @@ export class DevToolsPageComponent implements OnInit {
   }
 
   private addMessage(text: string, type: ChatMessageType) {
-    const newMessage: ChatMessage = { text, type, timestamp: new Date() };
+    const newMessage: IChatMessage = { text, type, timestamp: new Date() };
     this.messages.update((prev) => [...prev, newMessage]);
   }
 

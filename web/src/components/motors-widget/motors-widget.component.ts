@@ -2,7 +2,7 @@ import { Component, output, signal, ChangeDetectionStrategy } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, RotateCcw, RotateCw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-angular';
-import { ModuleCommandParams, ModuleCommand } from '../../models/models';
+import { ModuleCommandParams, IModuleCommand } from '../../models/models';
 
 interface WheelsState {
   fl: number;
@@ -36,7 +36,7 @@ export class MotorsWidgetComponent {
   currentAction = signal<string | null>(null);
   wheelsState = signal<WheelsState>({ ...defaultStates });
 
-  command = output<ModuleCommand>();
+  command = output<IModuleCommand>();
 
   private toState(frontLeft: number, frontRight: number, backLeft: number, backRight: number) {
     return { fl: frontLeft, fr: frontRight, bl: backLeft, br: backRight };

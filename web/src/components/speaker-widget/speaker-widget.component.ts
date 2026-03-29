@@ -1,6 +1,6 @@
 import { Component, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ModuleCommand } from '../../models/models';
+import { IModuleCommand } from '../../models/models';
 
 type SpeakerChannel = 'L' | 'R' | 'C';
 
@@ -14,7 +14,7 @@ type SpeakerChannel = 'L' | 'R' | 'C';
 })
 export class SpeakerWidgetComponent {
   activeChannel = signal<SpeakerChannel | null>(null);
-  command = output<ModuleCommand>();
+  command = output<IModuleCommand>();
 
   toggle(channel: SpeakerChannel) {
     if (this.activeChannel() !== null) {

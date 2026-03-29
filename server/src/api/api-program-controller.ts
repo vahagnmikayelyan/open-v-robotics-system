@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { Request, Response } from 'express';
 import { IProgram, IProgramController } from '../types/program.js';
-import config from '../config.js';
+import { allModules } from '../configs/modules.js';
 
 const programSchema = z.object({
   name: z.string().min(1, "Field 'name' is required"),
@@ -10,7 +10,7 @@ const programSchema = z.object({
   modules: z
     .array(
       z.string().superRefine((val, ctx) => {
-        if (!config.availableModules.includes(val)) {
+        if (!allModules.find((module) => module.id === val)) {
           // @ts-ignore
           ctx.addIssue({ code: 'invalid_type', message: `Module '${val}' not supported` });
         }

@@ -36,4 +36,8 @@ export class UiSocketService {
   sendCommand(module: string, command: string, params: ModuleCommandParams) {
     this.send('command', { module, command, params });
   }
+
+  runProgram(programId: number) {
+    this.send('runProgram', programId);
+  }
 }

@@ -1,8 +1,9 @@
 import os from 'os';
 import { Request, Response } from 'express';
 
-import config from '../config.js';
 import { Logger } from '../services/logger.js';
+import { availableAIModels } from '../configs/ai-models.js';
+import { allModules } from '../configs/modules.js';
 
 const ApiUtilsController = () => {
   const getLocalIpAddress = () => {
@@ -33,7 +34,7 @@ const ApiUtilsController = () => {
 
     getAiModels: async (_: Request, res: Response) => {
       try {
-        const models = config.availableAIModels || [];
+        const models = availableAIModels || [];
         res.status(200).json(models);
       } catch (error: any) {
         Logger.errorLog(error.message, 'Utils API');
@@ -43,8 +44,7 @@ const ApiUtilsController = () => {
 
     getAvailableModules: async (_: Request, res: Response) => {
       try {
-        const modules = config.availableModules || [];
-        res.status(200).json(modules);
+        res.status(200).json(allModules);
       } catch (error: any) {
         Logger.errorLog(error.message, 'Utils API');
         res.status(400).json({ error: 'Failed to get available modules' });

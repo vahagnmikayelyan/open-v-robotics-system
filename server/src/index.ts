@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 import config from './config.js';
-import { defaultSettings } from './default-settings.js';
+import { defaultSettings } from './configs/default-settings.js';
 
 import HardwareController from './services/hardware-controller.js';
 import SocketHandler from './services/socket-handler.js';

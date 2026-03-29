@@ -1,7 +1,7 @@
 import { Component, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Mic, Circle, Volume2 } from 'lucide-angular';
-import { ModuleCommand } from '../../models/models';
+import { IModuleCommand } from '../../models/models';
 
 @Component({
   selector: 'microphone-widget',
@@ -17,7 +17,7 @@ export class MicrophoneWidgetComponent {
   status = signal<'idle' | 'recording' | 'playback'>('idle');
   duration = signal<number>(10);
   timeLeft = signal(0);
-  command = output<ModuleCommand>();
+  command = output<IModuleCommand>();
 
   startLoopback() {
     if (this.status() !== 'idle') return;

@@ -5,10 +5,11 @@ import { LucideAngularModule, Plus, QrCode, Settings, Wrench } from 'lucide-angu
 import { ApiService } from '../../services/api.service';
 import { ProgramCardComponent } from '../../components/program-card/program-card.component';
 import { NotificationService } from '../../services/notification.service';
+import { UiSocketService } from '../../services/ui-socket.service';
 import { UiLoaderComponent } from '../../components/ui-loader/ui-loader.component';
 import { PromptButton, PromptService } from '../../services/prompt.service';
 import * as QRCode from 'qrcode';
-import { Program } from '../../models/models';
+import { IModule, IProgram } from '../../models/models';
 
 @Component({
   selector: 'main-menu-page',
@@ -22,6 +23,7 @@ export class MainMenuPageComponent implements OnInit {
   private api = inject(ApiService);
   private notifications = inject(NotificationService);
   private prompt = inject(PromptService);
+  private uiSocketService = inject(UiSocketService);
   readonly LucideIcons = { QrCode, Settings, Wrench, Plus };
   isConnectDialogOpen = signal(false);
   connectionString = signal<string>('');
@@ -29,7 +31,7 @@ export class MainMenuPageComponent implements OnInit {
 
   isLoading = signal(true);
   totalModules = signal<number>(0);
-  programs = signal<Program[]>([]);
+  programs = signal<IProgram[]>([]);
 
   async generateQR(text: string) {
     try {
@@ -70,7 +72,7 @@ export class MainMenuPageComponent implements OnInit {
 
   async getModules() {
     try {
-      const availableModules = await this.api.get<string[]>('/modules');
+      const availableModules = await this.api.get<IModule[]>('/modules');
       this.totalModules.set(availableModules.length);
     } catch (error: any) {
       this.notifications.error(error.message);
@@ -80,7 +82,7 @@ export class MainMenuPageComponent implements OnInit {
   async getPrograms() {
     try {
       this.isLoading.set(true);
-      const programs = await this.api.get<Program[]>('/programs');
+      const programs = await this.api.get<IProgram[]>('/programs');
       this.programs.set(programs);
     } catch (error: any) {
       this.notifications.error(error.message);
@@ -90,8 +92,8 @@ export class MainMenuPageComponent implements OnInit {
   }
 
   startProgram(id: number) {
-    console.log('Selected program', id);
-    // ToDo implement
+    this.uiSocketService.runProgram(id);
+    this.router.navigate(['/']);
   }
 
   createProgram() {

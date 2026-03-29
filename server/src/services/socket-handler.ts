@@ -42,6 +42,11 @@ const SocketHandler = (server: Server, hardwareConnector: IHardwareController) =
       }
     });
 
+    socket.on<number>('runProgram', (programId) => {
+      // Implement with system controller
+      console.log('runProgram', programId);
+    });
+
     socket.on('disconnect', () => {
       Logger.debugLog('Socket instance disconnect', 'Socket');
     });
