@@ -1,7 +1,7 @@
 import { Component, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ModuleCommand } from '../../models/models';
+import { IModuleCommand } from '../../models/models';
 
 @Component({
   selector: 'dual-led-widget',
@@ -16,7 +16,7 @@ export class DualLedWidgetComponent {
   rightLed = signal(0);
   isLinked = signal(true);
 
-  command = output<ModuleCommand>();
+  command = output<IModuleCommand>();
 
   updateLeft(v: number) {
     this.leftLed.set(v);

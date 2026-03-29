@@ -2,25 +2,10 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NgIf, NgFor } from '@angular/common';
-import { AiModel, Program } from '../../models/models';
+import { IAIModelConfig, IModule, IProgram } from '../../models/models';
 import { ApiService } from '../../services/api.service';
 import { UiLoaderComponent } from '../../components/ui-loader/ui-loader.component';
 import { NotificationService } from '../../services/notification.service';
-
-const MODULE_DICTIONARY: Record<string, { name: string; desc: string }> = {
-  distanceSensor: { name: 'Distance Sensor', desc: 'Detects obstacles and measures distance for collision avoidance.' },
-  drive: { name: 'Drive Motors', desc: 'Allows the AI to control the chassis and navigate.' },
-  fan: { name: 'Active Cooling', desc: 'Controls the fan for thermal management.' },
-  inertialSensor: { name: 'Inertial Sensor', desc: 'Provides tilt, acceleration, and rotation telemetry.' },
-  light: { name: 'Lights', desc: 'Controls external LEDs and visual indicators.' },
-  lightSensor: { name: 'Light Sensor', desc: 'Measures environmental illumination levels.' },
-  power: { name: 'Power Monitor', desc: 'Monitors battery level and power consumption.' },
-  headServo: { name: 'Head Servo', desc: 'Allows the AI to move the head for tracking.' },
-  thermalSensor: { name: 'Thermal Sensor', desc: 'Monitors system and environmental temperatures.' },
-  camera: { name: 'Camera', desc: 'Enables using Camera.' },
-  speaker: { name: 'Speakers', desc: 'Allows the AI to speak using stereo speakers.' },
-  microphone: { name: 'Microphone', desc: 'Enables microphones.' },
-};
 
 @Component({
   selector: 'program-page',
@@ -37,17 +22,17 @@ export class ProgramPageComponent implements OnInit {
 
   isLoading = signal(true);
 
-  program = signal<Program>({
+  program = signal<IProgram>({
     id: 0,
     name: '',
     systemInstruction: '',
     aiModel: '',
     modules: [],
   });
-  dict = MODULE_DICTIONARY;
 
-  aiModels: AiModel[] = [];
-  availableModules: string[] = [];
+  aiModels: IAIModelConfig[] = [];
+  availableModules: IModule[] = [];
+  requiredModules: Set<string> = new Set();
 
   constructor() {}
 
@@ -67,6 +52,35 @@ export class ProgramPageComponent implements OnInit {
     return this.program().modules.includes(moduleId);
   }
 
+  isRequiredModule(moduleId: string): boolean {
+    return this.requiredModules.has(moduleId);
+  }
+
+  onAIModelChange(modelId: string, updateState: boolean = true) {
+    const selectedModel = this.aiModels.find((model) => model.id === modelId);
+
+    if (selectedModel) {
+      this.requiredModules = new Set(selectedModel.requiredModules || []);
+
+      if (selectedModel.requiredModules?.length && updateState) {
+        this.notifications.info(
+          `Selected AI model required following modules - ${selectedModel.requiredModules.join(', ')}.
+          All required modules automatically enabled for current program.`,
+        );
+
+        const selectedModules = this.program().modules;
+
+        selectedModel.requiredModules.forEach((module) => {
+          if (!selectedModules.includes(module)) {
+            selectedModules.push(module);
+          }
+        });
+
+        this.program.update((value) => ({ ...value, modules: selectedModules }));
+      }
+    }
+  }
+
   toggleModule(moduleId: string, isChecked: boolean) {
     this.program.update((prog) => {
       let updatedModules = [...prog.modules];
@@ -83,7 +97,7 @@ export class ProgramPageComponent implements OnInit {
 
   async getAIModels() {
     try {
-      this.aiModels = await this.api.get<AiModel[]>('/models');
+      this.aiModels = await this.api.get<IAIModelConfig[]>('/models');
     } catch (error: any) {
       this.notifications.error(error.message);
     }
@@ -91,7 +105,7 @@ export class ProgramPageComponent implements OnInit {
 
   async getModules() {
     try {
-      this.availableModules = await this.api.get<string[]>('/modules');
+      this.availableModules = await this.api.get<IModule[]>('/modules');
     } catch (error: any) {
       this.notifications.error(error.message);
     }
@@ -99,8 +113,9 @@ export class ProgramPageComponent implements OnInit {
 
   async getProgram(id: string) {
     try {
-      const program = await this.api.get<Program>(`/programs/${id}`);
+      const program = await this.api.get<IProgram>(`/programs/${id}`);
       this.program.set(program);
+      this.onAIModelChange(program.aiModel, false);
     } catch (error: any) {
       this.notifications.error(error.message);
     } finally {
@@ -115,10 +130,10 @@ export class ProgramPageComponent implements OnInit {
 
     try {
       if (this.program().id) {
-        await this.api.put<Program, Program>(`/programs/${this.program().id}`, this.program());
+        await this.api.put<IProgram, IProgram>(`/programs/${this.program().id}`, this.program());
         this.notifications.success('Program updated successfully');
       } else {
-        await this.api.post<Program, Program>('/programs', this.program());
+        await this.api.post<IProgram, IProgram>('/programs', this.program());
         this.notifications.success('Program added successfully');
       }
 

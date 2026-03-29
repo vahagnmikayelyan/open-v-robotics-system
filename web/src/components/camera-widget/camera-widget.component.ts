@@ -1,7 +1,7 @@
 import { Component, signal, computed, ChangeDetectionStrategy, OnInit, output } from '@angular/core';
 import { UiSocketService } from '../../services/ui-socket.service';
 import { NgIf } from '@angular/common';
-import { ModuleCommand } from '../../models/models';
+import { IModuleCommand } from '../../models/models';
 
 @Component({
   selector: 'camera-widget',
@@ -15,7 +15,7 @@ export class CameraWidgetComponent implements OnInit {
   imageSrc = signal<string | null>(null);
   isStreaming = signal<boolean>(false);
 
-  command = output<ModuleCommand>();
+  command = output<IModuleCommand>();
 
   constructor(private uiSocketService: UiSocketService) {}
 

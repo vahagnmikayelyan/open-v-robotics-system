@@ -1,6 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { LucideAngularModule, Zap } from 'lucide-angular';
-import { Program } from '../../models/models';
+import { IProgram } from '../../models/models';
 
 @Component({
   selector: 'program-card',
@@ -10,7 +10,7 @@ import { Program } from '../../models/models';
   styleUrl: './program-card.component.less',
 })
 export class ProgramCardComponent {
-  program = input.required<Program>();
+  program = input.required<IProgram>();
   totalModules = input(0);
 
   select = output<number>();

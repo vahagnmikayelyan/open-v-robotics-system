@@ -5,7 +5,7 @@ export enum ChatMessageType {
   systemCommand = 'systemCommand',
 }
 
-export interface ChatMessage {
+export interface IChatMessage {
   text: string;
   type: ChatMessageType;
   timestamp?: Date;
@@ -18,21 +18,30 @@ export interface IConfig {
 
 export type ModuleCommandParams = Record<string, unknown> | null;
 
-export interface ModuleCommand {
+export interface IModuleCommand {
   module: string;
   action: string;
   params: ModuleCommandParams;
 }
 
-export interface AiModel {
+export interface IAIModelConfig {
   id: string;
   name: string;
+  vendor: string;
+  model: string;
+  requiredModules: string[];
 }
 
-export interface Program {
+export interface IProgram {
   id: number;
   name: string;
   systemInstruction: string;
   aiModel: string;
   modules: string[];
+}
+
+export interface IModule {
+  id: string;
+  name: string;
+  description: string;
 }

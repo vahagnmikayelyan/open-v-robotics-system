@@ -6,11 +6,11 @@ import {
   effect,
   viewChild,
   ElementRef,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ChatMessage } from '../../models/models';
+import { IChatMessage } from '../../models/models';
 
 @Component({
   selector: 'chat',
@@ -18,10 +18,10 @@ import { ChatMessage } from '../../models/models';
   imports: [CommonModule, FormsModule],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.less',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChatComponent {
-  messages = input.required<ChatMessage[]>();
+  messages = input.required<IChatMessage[]>();
   sendMessage = output<string>();
   command = output<string>();
   inputText = signal('');
