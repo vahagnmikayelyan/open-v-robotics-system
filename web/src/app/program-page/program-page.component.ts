@@ -27,12 +27,14 @@ export class ProgramPageComponent implements OnInit {
     name: '',
     systemInstruction: '',
     aiModel: '',
+    voice: '',
     modules: [],
   });
 
   aiModels: IAIModelConfig[] = [];
   availableModules: IModule[] = [];
   requiredModules: Set<string> = new Set();
+  aiVoices: string[] = [];
 
   constructor() {}
 
@@ -59,25 +61,44 @@ export class ProgramPageComponent implements OnInit {
   onAIModelChange(modelId: string, updateState: boolean = true) {
     const selectedModel = this.aiModels.find((model) => model.id === modelId);
 
-    if (selectedModel) {
-      this.requiredModules = new Set(selectedModel.requiredModules || []);
+    if (!selectedModel) {
+      return;
+    }
 
-      if (selectedModel.requiredModules?.length && updateState) {
-        this.notifications.info(
-          `Selected AI model required following modules - ${selectedModel.requiredModules.join(', ')}.
-          All required modules automatically enabled for current program.`,
-        );
+    this.requiredModules = new Set(selectedModel.requiredModules ?? []);
+    this.aiVoices = selectedModel.voices ?? [];
 
-        const selectedModules = this.program().modules;
+    if (!updateState) {
+      return;
+    }
 
+    this.program.update((value) => {
+      let modules = [...value.modules];
+      if (selectedModel.requiredModules?.length) {
         selectedModel.requiredModules.forEach((module) => {
-          if (!selectedModules.includes(module)) {
-            selectedModules.push(module);
+          if (!modules.includes(module)) {
+            modules.push(module);
           }
         });
-
-        this.program.update((value) => ({ ...value, modules: selectedModules }));
       }
+
+      let voice = value.voice ?? '';
+      if (this.aiVoices.length > 0) {
+        if (!voice || !this.aiVoices.includes(voice)) {
+          voice = selectedModel.defaultVoice;
+        }
+      } else {
+        voice = '';
+      }
+
+      return { ...value, modules, voice };
+    });
+
+    if (selectedModel.requiredModules?.length) {
+      this.notifications.info(
+        `Selected AI model required following modules - ${selectedModel.requiredModules.join(', ')}.
+          All required modules automatically enabled for current program.`,
+      );
     }
   }
 

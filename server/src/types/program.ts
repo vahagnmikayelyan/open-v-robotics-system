@@ -3,6 +3,7 @@ export interface IProgram {
   name: string;
   aiModel: string;
   systemInstruction: string;
+  voice: string;
   modules: string[];
   addTime: string;
   editTime: string;
@@ -10,7 +11,7 @@ export interface IProgram {
 
 export interface IProgramRepository {
   getAll: () => IProgram[];
-  getById: (id: number) => IProgram;
+  getById: (id: number) => IProgram | null;
   create: (program: IProgram) => IProgram;
   update: (id: number, program: IProgram) => boolean;
   delete: (id: number) => boolean;

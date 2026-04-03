@@ -17,6 +17,7 @@ const programsTableQuery = `
     aiModel TEXT,
     systemInstruction TEXT,
     modules TEXT DEFAULT '[]',
+    voice TEXT NOT NULL DEFAULT '',
     addTime DATETIME DEFAULT CURRENT_TIMESTAMP,
     editTime DATETIME DEFAULT CURRENT_TIMESTAMP
   );
@@ -25,7 +26,10 @@ const programsTableQuery = `
 class SqliteClient {
   private readonly db;
 
-  constructor(dbPath: string, private readonly defaultConfig: Record<string, unknown>) {
+  constructor(
+    dbPath: string,
+    private readonly defaultConfig: Record<string, unknown>,
+  ) {
     const dbDirectory = path.dirname(dbPath);
 
     if (!fs.existsSync(dbDirectory)) {
@@ -47,9 +51,7 @@ class SqliteClient {
   }
 
   private seedDefaultConfig() {
-    const stmt = this.db.prepare(
-      `INSERT OR IGNORE INTO config (key, value) VALUES (?, ?)`,
-    );
+    const stmt = this.db.prepare(`INSERT OR IGNORE INTO config (key, value) VALUES (?, ?)`);
     for (const key of Object.keys(this.defaultConfig)) {
       stmt.run(key, JSON.stringify(this.defaultConfig[key]));
     }
