@@ -13,6 +13,14 @@
       <span class="value">{{ speed() }}%</span>
     </div>
 
+    <div class="chassis-settings-row">
+      <label>DIR</label>
+      <button class="direction-toggle" [class.reverse]="direction() === -1" (click)="toggleDirection()">
+        {{ direction() === 1 ? 'FWD' : 'REV' }}
+      </button>
+      <span class="value direction-hint">Single wheel test direction</span>
+    </div>
+
     <div class="chassis-view">
       <div class="robot-body">
         <div class="front-indicator">FRONT</div>
@@ -63,17 +71,11 @@
         <lucide-icon [img]="LucideIcons.RotateCw"></lucide-icon>
       </button>
 
-      <button class="d-btn" (mousedown)="spinLeft()" (mouseup)="stop()" (mouseleave)="stop()"
-              (touchstart)="spinLeft()" (touchend)="stop()">
-        <lucide-icon [img]="LucideIcons.ArrowLeft"></lucide-icon>
-      </button>
+      <button class="d-btn disabled"></button>
 
       <button class="d-btn stop-btn" (click)="stop(true)">STOP</button>
 
-      <button class="d-btn" (mousedown)="spinRight()" (mouseup)="stop()" (mouseleave)="stop()"
-              (touchstart)="spinRight()" (touchend)="stop()">
-        <lucide-icon [img]="LucideIcons.ArrowRight"></lucide-icon>
-      </button>
+      <button class="d-btn disabled"></button>
 
       <button class="d-btn disabled"></button>
 
@@ -83,6 +85,50 @@
       </button>
 
       <button class="d-btn disabled"></button>
+    </div>
+
+    <div class="distance-section">
+      <div class="section-label">DISTANCE CONTROL</div>
+
+      <div class="chassis-settings-row">
+        <label>DIST</label>
+        <input type="range" class="range-input" min="50" max="2000" step="50" [ngModel]="distance()"
+               (ngModelChange)="distance.set($event)">
+        <span class="value">{{ distance() }}mm</span>
+      </div>
+
+      <div class="distance-buttons">
+        <button class="dist-btn forward" (click)="moveDistance(1)">
+          <lucide-icon [img]="LucideIcons.ArrowUp"></lucide-icon>
+          Forward
+        </button>
+        <button class="dist-btn backward" (click)="moveDistance(-1)">
+          <lucide-icon [img]="LucideIcons.ArrowDown"></lucide-icon>
+          Backward
+        </button>
+      </div>
+    </div>
+
+    <div class="distance-section">
+      <div class="section-label">ROTATION CONTROL</div>
+
+      <div class="chassis-settings-row">
+        <label>ANGLE</label>
+        <input type="range" class="range-input" min="10" max="720" step="10" [ngModel]="angle()"
+               (ngModelChange)="angle.set($event)">
+        <span class="value">{{ angle() }}&deg;</span>
+      </div>
+
+      <div class="distance-buttons">
+        <button class="dist-btn rotate-left" (click)="rotateByAngle(-1)">
+          <lucide-icon [img]="LucideIcons.RotateCcw"></lucide-icon>
+          Left {{ angle() }}&deg;
+        </button>
+        <button class="dist-btn rotate-right" (click)="rotateByAngle(1)">
+          <lucide-icon [img]="LucideIcons.RotateCw"></lucide-icon>
+          Right {{ angle() }}&deg;
+        </button>
+      </div>
     </div>
 
   </div>

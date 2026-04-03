@@ -40,6 +40,10 @@ MOTOR_BR_IN2_PIN = 21
 
 MOTOR_PWM_FREQ = 1000
 
+WHEEL_DIAMETER_MM = 65
+# Max RPM of motors at 100% PWM duty (calibrate for your motors)
+MOTOR_MAX_RPM = 93.5
+
 # --- PWM ---
 # Servo
 SERVO_HEAD_PIN = 8

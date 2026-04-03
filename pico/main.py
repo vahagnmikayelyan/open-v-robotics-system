@@ -23,9 +23,9 @@ class HardwareManager:
 
         # Init modules
         self.distance_sensor = DistanceSensor(self.response_queue)
-        self.drive = DriveController(self.response_queue)
         self.fan = FanController(self.response_queue)
         self.inertial_sensor = InertialSensor(self.response_queue)
+        self.drive = DriveController(self.response_queue, self.inertial_sensor)
         self.light = LightController(self.response_queue)
         self.light_sensor = LightSensor(self.response_queue)
         self.power = PowerMonitor(self.response_queue)

@@ -27,5 +27,9 @@ class InertialSensor:
             if action == "get":
                 acc = self.sensor.acceleration # (x, y, z)
                 gyro = self.sensor.gyro         # (x, y, z)
-
                 await self.response_queue.put({"i": id, "a": list(acc), "g": list(gyro)})
+
+    def read_gyro_raw_z(self):
+        # self.sensor.gyro returns a tuple containing (X, Y, Z) velocities
+        # We access index [2] to get only the Z axis (Yaw rotation)
+        return self.sensor.gyro[2]

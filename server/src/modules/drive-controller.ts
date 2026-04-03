@@ -17,20 +17,12 @@ class DriveController {
     return this.connector.sendCommand(this.moduleName, 'stop');
   }
 
-  goForward({ distance }: { distance: number }) {
-    return this.connector.sendCommand(this.moduleName, 'move', { v: distance });
+  moveDistance({ speed, distance }: { speed: number; distance: number }) {
+    return this.connector.sendCommand(this.moduleName, 'move_distance', { s: Math.abs(speed), v: distance });
   }
 
-  goBack({ distance }: { distance: number }) {
-    return this.connector.sendCommand(this.moduleName, 'back', { v: distance });
-  }
-
-  spinLeft({ angle }: { angle: number }) {
-    return this.connector.sendCommand(this.moduleName, 'spin_left', { v: angle });
-  }
-
-  spinRight({ angle }: { angle: number }) {
-    return this.connector.sendCommand(this.moduleName, 'spin_right', { v: angle });
+  rotateAngle({ speed, angle }: { speed: number; angle: number }) {
+    return this.connector.sendCommand(this.moduleName, 'rotate_angle', { s: Math.abs(speed), v: angle });
   }
 }
 

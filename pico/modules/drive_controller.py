@@ -2,6 +2,8 @@ from machine import Pin, PWM
 from queues import Queue
 
 import uasyncio as asyncio
+import math
+import time
 import config
 
 class Motor:
@@ -44,11 +46,12 @@ class Motor:
         self.pwm_b.duty_u16(65535)
 
 class DriveController:
-    def __init__(self, response_queue):
+    def __init__(self, response_queue, inertial_sensor):
         print("Initialization Drive controller")
 
         self.queue = Queue()
         self.response_queue = response_queue
+        self.inertial_sensor = inertial_sensor
         self.current_task = None
 
         self.fl = Motor(config.MOTOR_FL_IN1_PIN, config.MOTOR_FL_IN2_PIN)
@@ -57,25 +60,15 @@ class DriveController:
         self.br = Motor(config.MOTOR_BR_IN1_PIN, config.MOTOR_BR_IN2_PIN)
 
     def add_command(self, cmd):
-        action = cmd.get("a")
-
-        if action == "stop":
-            if self.current_task:
-                self.current_task.cancel()
-
-            while not self.queue.empty():
-                self.queue.get_nowait()
-
-            print("EMERGENCY STOP: Queue cleared, task cancelled")
-        else:
-            self.queue.put_nowait(cmd)
+        self.queue.put_nowait(cmd)
 
     async def run(self):
         while True:
             cmd = await self.queue.get()
             action = cmd.get("a")
             cmd_id = cmd.get("i")
-            val = cmd.get("v", 50)
+            speed = cmd.get("s", 50)
+            value = cmd.get("v", 0)
             fl_speed = cmd.get("fl", 50)
             fr_speed = cmd.get("fr", 50)
             bl_speed = cmd.get("bl", 50)
@@ -84,38 +77,40 @@ class DriveController:
             if action == "stop":
                 if self.current_task:
                     self.current_task.cancel()
-                self.stop_hardware();
+                self.stop()
                 await self.response_queue.put({"i": cmd_id, "s": "ok"})
             elif action == "control":
-                if self.current_task: 
+                if self.current_task:
                     self.current_task.cancel()
                 self.current_task = asyncio.create_task(self.control_task(fl_speed, fr_speed, bl_speed, br_speed))
-            elif action == "move":
-                if self.current_task: 
+            elif action == "move_distance":
+                if self.current_task:
                     self.current_task.cancel()
-                self.current_task = asyncio.create_task(self.move_forward_task(val, cmd_id))
-            elif action == "back":
-                if self.current_task: 
+                self.current_task = asyncio.create_task(self.move_distance_task(speed, value, cmd_id))
+            elif action == "rotate_angle":
+                if self.current_task:
                     self.current_task.cancel()
-                self.current_task = asyncio.create_task(self.move_back_task(val, cmd_id))
-            elif action == "spin_left":
-                if self.current_task: 
-                    self.current_task.cancel()
-                self.current_task = asyncio.create_task(self.spin_left(val, cmd_id))
-            elif action == "spin_right":
-                if self.current_task: 
-                    self.current_task.cancel()
-                self.current_task = asyncio.create_task(self.spin_right(val, cmd_id))
+                self.current_task = asyncio.create_task(self.rotate_angle_task(speed, value, cmd_id))
 
     def set_speed(self, left_speed, right_speed):
         self.fl.drive(left_speed)
         self.bl.drive(left_speed)
-
         self.fr.drive(right_speed)
         self.br.drive(right_speed)
 
     def stop(self):
-        self.set_speed(0, 0)
+        self.fl.stop()
+        self.bl.stop()
+        self.fr.stop()
+        self.br.stop()
+
+    def calculate_time_for_distance(self, speed_percent, distance_mm):
+        wheel_circumference_mm = math.pi * config.WHEEL_DIAMETER_MM
+        if speed_percent <= 0:
+            return 0
+        rpm = (speed_percent / 100) * config.MOTOR_MAX_RPM
+        linear_speed_mm_s = (rpm / 60) * wheel_circumference_mm
+        return distance_mm / linear_speed_mm_s
 
     async def control_task(self, fl_speed, fr_speed, bl_speed, br_speed):
         try:
@@ -124,67 +119,73 @@ class DriveController:
             self.bl.drive(bl_speed)
             self.br.drive(br_speed)
         except asyncio.CancelledError:
-            self.stop_hardware()
-
-    async def move_forward_task(self, speed, cmd_id):
-        try:
-            print(f"Moving forward: {speed}")
-            self.set_hardware_speed(speed, speed)
-
-            await asyncio.sleep(2) 
-
-            self.stop_hardware()
-
-            await self.response_queue.put({"i": cmd_id, "s": "ok"})
-        except asyncio.CancelledError:
-            self.stop_hardware()
-            await self.response_queue.put({"i": cmd_id, "s": "ok"})
-
-    async def move_back_task(self, speed, cmd_id):
-        try:
-            print(f"Moving forward: {speed}")
-            self.set_hardware_speed(-speed, -speed)
-
-            await asyncio.sleep(2)
-            self.stop_hardware()
-
-            await self.response_queue.put({"i": cmd_id, "s": "ok"})
-        except asyncio.CancelledError:
-            self.stop_hardware()
+            self.stop()
             await self.response_queue.put({"i": cmd_id, "s": "stopped"})
 
-    def set_hardware_speed(self, left, right):
-        self.fl.drive(left)
-        self.bl.drive(left)
-        self.fr.drive(right)
-        self.br.drive(right)
+    async def move_distance_task(self, speed, distance_mm, cmd_id):
+        try:
+            abs_distance = abs(distance_mm)
+            travel_time = self.calculate_time_for_distance(speed, abs_distance)
+            if travel_time <= 0:
+                await self.response_queue.put({"i": cmd_id, "s": "ok"})
+                return
 
-    def stop_hardware(self):
-        self.fl.stop()
-        self.bl.stop()
-        self.fr.stop()
-        self.br.stop()
+            direction = 1 if distance_mm >= 0 else -1
+            motor_speed = speed * direction
 
-    def move_forward(self, speed=50):
-        self.set_speed(speed, speed)
+            self.set_speed(motor_speed, motor_speed)
+            await asyncio.sleep(travel_time)
+            self.stop()
+            await self.response_queue.put({"i": cmd_id, "s": "ok"})
+        except asyncio.CancelledError:
+            self.stop()
+            await self.response_queue.put({"i": cmd_id, "s": "stopped"})
 
-    def move_backward(self, speed=50):
-        self.set_speed(-speed, -speed)
+    async def rotate_angle_task(self, speed, angle, cmd_id):
+        try:
+            # Preparation: determine target angle and rotation direction
+            target_angle = abs(angle)
+            direction = 1 if angle > 0 else -1
 
-    async def spin_left(self, speed=50, cmd_id = 0):
-        self.set_hardware_speed(-speed, speed)
-        await asyncio.sleep(2) 
-        self.stop_hardware()
-        await self.response_queue.put({"i": cmd_id, "s": "ok"})
+            # Short zero-calibration right before movement (takes 0.1 sec)
+            # This captures the immediate sensor drift/noise while the robot is stationary
+            offset = 0
+            for _ in range(10):
+                offset += self.inertial_sensor.read_gyro_raw_z()
+                await asyncio.sleep_ms(10)
 
-    async def spin_right(self, speed=50, cmd_id = 0):
-        self.set_hardware_speed(speed, -speed)
-        await asyncio.sleep(2) 
-        self.stop_hardware()
-        await self.response_queue.put({"i": cmd_id, "s": "ok"})
+            gyro_bias = offset / 10
 
-    def turn_left(self, speed=50):
-        self.set_speed(speed * 0.2, speed)
+            current_angle = 0
+            last_time = time.ticks_us()
 
-    def turn_right(self, speed=50):
-        self.set_speed(speed, speed * 0.2)
+            # Start motors for a skid-steer tank turn
+            self.set_speed(speed * direction, -speed * direction)
+
+            # Tracking loop
+            # We subtract ~7 degrees from the target to compensate for the TT motors' inertia
+            # Adjust this threshold if the robot overshoots or undershoots
+            stop_threshold = target_angle
+
+            while abs(current_angle) < stop_threshold:
+                now = time.ticks_us()
+
+                # Calculate delta time (dt) in seconds using Pico's high-res timer
+                dt = time.ticks_diff(now, last_time) / 1000000.0
+                last_time = now
+
+                # Read the raw Z-axis speed and subtract our calculated bias
+                gyro_speed = self.inertial_sensor.read_gyro_raw_z() - gyro_bias
+
+                # Integrate angular velocity to get the current angle
+                current_angle += gyro_speed * dt
+
+                # Yield control back to the event loop (high polling rate for accuracy)
+                await asyncio.sleep_ms(5)
+
+            # Target reached, stop the motors immediately
+            self.stop()
+            await self.response_queue.put({"i": cmd_id, "s": "ok"})
+        except asyncio.CancelledError:
+            self.stop()
+            await self.response_queue.put({"i": cmd_id, "s": "stopped"})
