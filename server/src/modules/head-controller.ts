@@ -18,11 +18,11 @@ class HeadController {
   }
 
   toTop() {
-    return this.rotate({ angle: -40 });
+    return this.rotate({ angle: 35 });
   }
 
   toBottom() {
-    return this.rotate({ angle: 35 });
+    return this.rotate({ angle: -40 });
   }
 }
 

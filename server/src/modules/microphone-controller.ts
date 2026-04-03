@@ -58,7 +58,7 @@ class MicrophoneController extends EventEmitter {
     });
   }
 
-  stop() {
+  stopStream() {
     if (this.recordProcess) {
       Logger.debugLog('Stoping stream', 'Microphone');
       this.recordProcess.kill();

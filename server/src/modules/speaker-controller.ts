@@ -12,7 +12,7 @@ class SpeakerController {
 
   constructor() {}
 
-  startLiveStream() {
+  startStream() {
     if (this.playerProcess) {
       return null;
     }
@@ -34,15 +34,15 @@ class SpeakerController {
     ]);
 
     this.playerProcess.stderr.on('data', (data) => {
-      Logger.errorLog(`Audio Player Error: ${data.toString()}`, 'Speaker - pw-play');
+      Logger.errorLog(`Audio Player Error: ${data.toString()}`, 'Speaker');
     });
 
     this.playerProcess.on('close', (code) => {
-      Logger.debugLog(`Process exited with code ${code}`, 'Speaker - pw-play');
+      Logger.debugLog(`Process exited with code ${code}`, 'Speaker');
     });
 
     this.playerProcess.stdin.on('error', (err) => {
-      Logger.debugLog('Error stdin', 'Speaker - pw-play', err);
+      Logger.debugLog('Error stdin', 'Speaker', err);
     });
 
     return !!this.playerProcess.stdin;
@@ -54,6 +54,14 @@ class SpeakerController {
     }
 
     this.playerProcess.stdin.write(buffer);
+  }
+
+  stopStream() {
+    if (this.playerProcess) {
+      Logger.debugLog('Stoping stream', 'Speaker');
+      this.playerProcess.kill();
+      this.playerProcess = null;
+    }
   }
 
   async testSpeaker({ channel = 'L' }: { channel: string }) {
@@ -76,13 +84,6 @@ class SpeakerController {
         }
       });
     });
-  }
-
-  stop() {
-    if (this.playerProcess) {
-      this.playerProcess.kill();
-      this.playerProcess = null;
-    }
   }
 }
 
