@@ -30,6 +30,8 @@ export interface IAIModelConfig {
   vendor: string;
   model: string;
   requiredModules: string[];
+  voices: string[];
+  defaultVoice: string;
 }
 
 export interface IProgram {
@@ -37,6 +39,7 @@ export interface IProgram {
   name: string;
   systemInstruction: string;
   aiModel: string;
+  voice: string;
   modules: string[];
 }
 

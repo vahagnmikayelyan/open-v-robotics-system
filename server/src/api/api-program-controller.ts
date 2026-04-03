@@ -2,30 +2,51 @@ import { z } from 'zod';
 import { Request, Response } from 'express';
 import { IProgram, IProgramController } from '../types/program.js';
 import { allModules } from '../configs/modules.js';
+import { availableAIModels } from '../configs/ai-models.js';
 
-const programSchema = z.object({
-  name: z.string().min(1, "Field 'name' is required"),
-  aiModel: z.string(),
-  systemInstruction: z.string(),
-  modules: z
-    .array(
-      z.string().superRefine((val, ctx) => {
-        if (!allModules.find((module) => module.id === val)) {
-          // @ts-ignore
-          ctx.addIssue({ code: 'invalid_type', message: `Module '${val}' not supported` });
-        }
-      }),
-    )
-    .default([]),
-});
+const programSchema = z
+  .object({
+    name: z.string().min(1, "Field 'name' is required"),
+    aiModel: z.string().min(1, "Field 'aiModel' is required"),
+    systemInstruction: z.string(),
+    voice: z.string().default(''),
+    modules: z
+      .array(
+        z.string().superRefine((val, ctx) => {
+          if (!allModules.some((module) => module.id === val)) {
+            ctx.addIssue(`Module '${val}' is not a supported module`);
+          }
+        }),
+      )
+      .default([]),
+  })
+  .superRefine((data, ctx) => {
+    const model = availableAIModels.find((m) => m.id === data.aiModel);
+    if (!model) {
+      ctx.addIssue({
+        code: 'custom',
+        message: `Unknown AI model '${data.aiModel}'`,
+        path: ['aiModel'],
+      });
+      return;
+    }
+    if (model.voices.length > 0) {
+      if (!data.voice || !model.voices.includes(data.voice)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Select a voice from the list for this AI model',
+          path: ['voice'],
+        });
+      }
+    }
+  });
 
 const ApiProgramController = (programsController: IProgramController) => {
   const handleError = (res: Response, error: any) => {
     if (error instanceof z.ZodError) {
-      // @ts-ignore
-      const formattedErrors = error.errors.map((err) => ({
-        field: err.path.join('.'),
-        message: err.message,
+      const formattedErrors = error.issues.map((issue) => ({
+        field: issue.path.join('.'),
+        message: issue.message,
       }));
       return res.status(400).json({ errors: formattedErrors });
     }

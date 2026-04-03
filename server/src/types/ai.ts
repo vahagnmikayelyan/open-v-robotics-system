@@ -5,4 +5,8 @@ export interface IAIModelConfig {
   apiKeySetting: string;
   model: string;
   requiredModules: string[];
+  // Empty array when model not support voice interactions, for text-only models
+  voices: string[];
+  // Empty string when model not support voice interactions, for text-only models
+  defaultVoice: string;
 }

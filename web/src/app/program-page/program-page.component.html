@@ -65,6 +65,27 @@
       </div>
     </div>
 
+    <div class="form-group" *ngIf="aiVoices.length > 0">
+      <label>VOICE</label>
+      <div class="select-wrapper">
+        <select
+          name="progVoice"
+          [(ngModel)]="program().voice"
+          required
+          #voiceField="ngModel"
+          class="input-dark"
+          [class.error]="voiceField.invalid && voiceField.touched">
+
+          <option value="" disabled *ngIf="!program().voice">Select a voice...</option>
+          <option *ngFor="let v of aiVoices" [value]="v">{{ v }}</option>
+        </select>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="error-msg" *ngIf="voiceField.invalid && voiceField.touched">
+        Please select a voice for this model.
+      </div>
+    </div>
+
     <div class="form-group" *ngIf="availableModules.length > 0">
       <label>PROGRAM PERMISSIONS</label>
     </div>
