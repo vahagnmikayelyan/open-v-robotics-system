@@ -10,6 +10,13 @@
      (touchend)="endHold()"
      (touchcancel)="endHold()">
 
+  <div class="program-bar" (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()">
+    <span class="program-label" [class.idle]="!runningProgram()">
+        {{ runningProgram() ? runningProgram()?.name : 'No program running' }}
+    </span>
+    <button *ngIf="runningProgram()" type="button" class="stop-btn" (click)="stopRunningProgram()">Stop</button>
+  </div>
+
   <div class="buttery-level">
     <battery-status [level]="batteryLevel()"></battery-status>
   </div>

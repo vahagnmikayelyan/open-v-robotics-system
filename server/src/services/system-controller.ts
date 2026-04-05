@@ -1,6 +1,6 @@
 import { IHardwareController } from '../types/hardware.js';
 import { ISystemController } from '../types/system.js';
-import { IProgramController } from '../types/program.js';
+import { IProgram, IProgramController } from '../types/program.js';
 import SqliteClient from '../database/sqlite-client.js';
 import ProgramController from './program-controller.js';
 import ProgramRepository from '../repositories/sqlite/program-repository.js';
@@ -21,6 +21,7 @@ class SystemController extends EventEmitter implements ISystemController {
   private configController: IConfigController;
   private aiController: IAIModelController | null = null;
   private allowedModules: Set<string> = new Set();
+  private runningProgram: IProgram | null = null;
 
   constructor(dbClient: SqliteClient['db'], hardwareController: IHardwareController) {
     super();
@@ -38,6 +39,8 @@ class SystemController extends EventEmitter implements ISystemController {
       this.hardwareController.modules['microphone'].stopStream();
       this.hardwareController.modules['speaker'].stopStream();
     }
+
+    this.updateProgramState(null);
 
     try {
       const program = this.programController.getProgram(programId);
@@ -91,13 +94,34 @@ class SystemController extends EventEmitter implements ISystemController {
       }
 
       await this.aiController.connect();
+
+      this.updateProgramState(program);
     } catch (e) {
-      Logger.errorLog('Program not found', 'System');
+      Logger.errorLog('Program start failed', 'System', e);
     }
+  }
+
+  getRunningProgram(): IProgram | null {
+    return this.runningProgram;
+  }
+
+  stopRunningProgram() {
+    Logger.debugLog('Stopping program', 'System');
+    if (this.aiController) {
+      this.aiController.destroy();
+      this.hardwareController.modules['microphone'].stopStream();
+      this.hardwareController.modules['speaker'].stopStream();
+    }
+    this.updateProgramState(null);
   }
 
   sendText(text: string) {
     this.aiController && this.aiController.sendText(text);
+  }
+
+  private updateProgramState(program: IProgram | null) {
+    this.runningProgram = program;
+    this.emit('programChange', program);
   }
 
   private onAISystemMessage(message: unknown) {

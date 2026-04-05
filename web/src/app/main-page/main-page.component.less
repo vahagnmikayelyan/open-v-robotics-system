@@ -7,6 +7,52 @@
   user-select: none;
 }
 
+.program-bar {
+  position: absolute;
+  left: 12px;
+  top: 0;
+  right: 120px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  pointer-events: auto;
+}
+
+.program-label {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &.idle {
+    color: var(--text-muted);
+  }
+}
+
+.stop-btn {
+  flex-shrink: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--danger-color);
+  background: color-mix(in srgb, var(--danger-color) 12%, transparent);
+  color: var(--danger-color);
+  cursor: pointer;
+  text-transform: uppercase;
+
+  &:hover {
+    background: color-mix(in srgb, var(--danger-color) 22%, transparent);
+  }
+}
+
 .buttery-level {
   position: absolute;
   right: 15px;
