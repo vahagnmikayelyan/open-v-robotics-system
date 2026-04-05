@@ -134,4 +134,8 @@ export class DevToolsPageComponent implements OnInit {
     this.uiSocketService.sendMessage(message);
     this.addMessage(message, ChatMessageType.user);
   }
+
+  clearChat() {
+    this.messages.set([]);
+  }
 }

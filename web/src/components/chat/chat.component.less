@@ -148,19 +148,45 @@
     }
   }
 
+  .input-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
   button {
-    background: var(--primary-color);
-    color: #000;
-    border: none;
+    box-sizing: border-box;
+    width: 42px;
+    min-width: 42px;
     height: 42px;
-    padding: 0 20px;
+    padding: 0;
     border-radius: 4px;
     cursor: pointer;
-    font-weight: bold;
-    font-family: var(--font-mono), monospace;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
     &:active {
       opacity: 0.8;
+    }
+  }
+
+  .btn-send {
+    background: var(--primary-color);
+    color: #000;
+    border: 1px solid var(--primary-color);
+  }
+
+  .btn-clear {
+    background: var(--surface-button);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+
+    &:hover {
+      color: var(--text-primary);
+      border-color: var(--text-muted);
     }
   }
 }
