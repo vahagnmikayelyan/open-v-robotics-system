@@ -21,7 +21,14 @@
       (ngModelChange)="inputText.set($event)"
       (input)="adjustHeight(msgInput)"
       (keydown)="onKeydown($event, msgInput)"></textarea>
-    <button (click)="onSend(msgInput)">SEND</button>
+    <div class="input-actions">
+      <button type="button" class="btn-clear" (click)="onClear()" title="Clear chat" aria-label="Clear chat">
+        <lucide-icon [img]="LucideIcons.Trash2"></lucide-icon>
+      </button>
+      <button type="button" class="btn-send" (click)="onSend(msgInput)" title="Send" aria-label="Send message">
+        <lucide-icon [img]="LucideIcons.Send"></lucide-icon>
+      </button>
+    </div>
   </div>
 
 </div>
