@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { environment } from '../environments/environment';
 import { WebsocketWrapper } from './websocket-wrapper';
-import { ModuleCommandParams } from '../models/models';
+import { IProgram, ModuleCommandParams } from '../models/models';
 
 @Injectable({ providedIn: 'root' })
 export class UiSocketService {
@@ -14,6 +14,7 @@ export class UiSocketService {
   public onCommandResult = new EventEmitter<any>();
   public onCameraData = new EventEmitter<string>();
   public onAIMessage = new EventEmitter<string>();
+  public onProgramChange = new EventEmitter<IProgram | null>();
 
   private wss: WebsocketWrapper | undefined;
 
@@ -29,6 +30,7 @@ export class UiSocketService {
     this.wss.on('commandResult', (data: any) => this.onCommandResult.emit(data));
     this.wss.on('cameraData', (data: string) => this.onCameraData.emit(data));
     this.wss.on('aiMessage', (data: string) => this.onAIMessage.emit(data));
+    this.wss.on('programChange', (data: IProgram | null) => this.onProgramChange.emit(data));
   }
 
   private send(event: string, data: any = null) {
@@ -45,5 +47,13 @@ export class UiSocketService {
 
   runProgram(programId: number) {
     this.send('runProgram', programId);
+  }
+
+  stopRunningProgram() {
+    this.send('stopRunningProgram');
+  }
+
+  getRunningProgram() {
+    this.send('getRunningProgram');
   }
 }

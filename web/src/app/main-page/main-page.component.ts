@@ -1,21 +1,26 @@
-import { Component, inject, signal, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, signal, OnDestroy, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { UiSocketService } from '../../services/ui-socket.service';
 import { BatteryStatusComponent } from '../../components/battery-status/battery-status.component';
+import { IProgram } from '../../models/models';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'main-page',
   standalone: true,
-  imports: [BatteryStatusComponent],
+  imports: [BatteryStatusComponent, NgIf],
   templateUrl: './main-page.component.html',
   styleUrl: './main-page.component.less',
 })
 export class MainPageComponent implements OnInit, OnDestroy {
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   pupilOffset = signal({ x: 0, y: 0 });
   isBlinking = signal(false);
   batteryLevel = signal(0);
+  runningProgram = signal<IProgram | null>(null);
 
   private blinkTimer: any;
   private idleTimer: any;
@@ -25,8 +30,13 @@ export class MainPageComponent implements OnInit, OnDestroy {
   constructor(private uiSocketService: UiSocketService) {}
 
   ngOnInit() {
+    this.uiSocketService.onProgramChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
+      this.runningProgram.set(state);
+    });
+
     this.uiSocketService.onInit.subscribe(() => {
       this.getVoltageLevel();
+      this.uiSocketService.getRunningProgram();
     });
 
     this.uiSocketService.onCommandResult.subscribe((commandResult) => {
@@ -39,6 +49,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
 
     this.startBlinkingLoop();
     this.getVoltageLevel();
+    this.uiSocketService.getRunningProgram();
   }
 
   getVoltageLevel() {
@@ -77,6 +88,10 @@ export class MainPageComponent implements OnInit, OnDestroy {
 
   onDoubleClick() {
     this.router.navigate(['/menu']);
+  }
+
+  stopRunningProgram() {
+    this.uiSocketService.stopRunningProgram();
   }
 
   private startBlinkingLoop() {

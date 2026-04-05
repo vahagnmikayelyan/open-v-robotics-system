@@ -4,6 +4,7 @@ import { WebSocketServer } from 'ws';
 import Socket from './socket.js';
 import { Logger } from './logger.js';
 import { ISystemController } from '../types/system.js';
+import { IProgram } from '../types/program.js';
 
 interface ICommand {
   module: string;
@@ -40,6 +41,10 @@ const SocketHandler = (server: Server, hardwareConnector: IHardwareController, s
       socket.emit('aiMessage', message);
     });
 
+    systemController.on('programChange', (state: IProgram) => {
+      socket.emit('programChange', state);
+    });
+
     socket.on<ICommand>('command', ({ module, command, params }) => {
       // ToDo need optimization and standardization for all modules
       if (module === 'camera') {
@@ -53,6 +58,14 @@ const SocketHandler = (server: Server, hardwareConnector: IHardwareController, s
 
     socket.on<number>('runProgram', (programId) => {
       systemController.runProgram(programId);
+    });
+
+    socket.on('getRunningProgram', () => {
+      socket.emit('programChange', systemController.getRunningProgram());
+    });
+
+    socket.on('stopRunningProgram', () => {
+      systemController.stopRunningProgram();
     });
 
     socket.on<string>('message', (text) => {
