@@ -48,7 +48,7 @@
   </div>
 
   <div class="panel">
-    <chat [messages]="messages()"></chat>
+    <chat [messages]="messages()" (sendMessage)="sendUserMessage($event)"></chat>
   </div>
 
 </div>

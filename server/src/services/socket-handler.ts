@@ -3,6 +3,7 @@ import { IHardwareController } from '../types/hardware.js';
 import { WebSocketServer } from 'ws';
 import Socket from './socket.js';
 import { Logger } from './logger.js';
+import { ISystemController } from '../types/system.js';
 
 interface ICommand {
   module: string;
@@ -10,7 +11,7 @@ interface ICommand {
   params: Record<string, unknown>;
 }
 
-const SocketHandler = (server: Server, hardwareConnector: IHardwareController) => {
+const SocketHandler = (server: Server, hardwareConnector: IHardwareController, systemController: ISystemController) => {
   const wss = new WebSocketServer({ clientTracking: false, noServer: true, path: '/socket' });
 
   server.on('upgrade', (request, socket, head) => {
@@ -31,6 +32,14 @@ const SocketHandler = (server: Server, hardwareConnector: IHardwareController) =
       socket.emit('cameraData', 'data:image/jpg;base64,' + frame.toString('base64'));
     });
 
+    systemController.on('AISystemMessage', (message: string) => {
+      socket.emit('aiMessage', message);
+    });
+
+    systemController.on('AITextMessage', (message: string) => {
+      socket.emit('aiMessage', message);
+    });
+
     socket.on<ICommand>('command', ({ module, command, params }) => {
       // ToDo need optimization and standardization for all modules
       if (module === 'camera') {
@@ -43,8 +52,11 @@ const SocketHandler = (server: Server, hardwareConnector: IHardwareController) =
     });
 
     socket.on<number>('runProgram', (programId) => {
-      // Implement with system controller
-      console.log('runProgram', programId);
+      systemController.runProgram(programId);
+    });
+
+    socket.on<string>('message', (text) => {
+      systemController.sendText(text);
     });
 
     socket.on('disconnect', () => {
