@@ -69,6 +69,10 @@ export class DevToolsPageComponent implements OnInit {
       this.handleCommandResult(message);
     });
 
+    this.uiSocketService.onAIMessage.subscribe((message) => {
+      this.addMessage(message, ChatMessageType.system);
+    });
+
     this.platformVersion.set(environment.version);
   }
 
@@ -124,5 +128,10 @@ export class DevToolsPageComponent implements OnInit {
 
   moduleCommand(module: string, action: string, params: ModuleCommandParams) {
     this.runCommand(module, action, params);
+  }
+
+  sendUserMessage(message: string) {
+    this.uiSocketService.sendMessage(message);
+    this.addMessage(message, ChatMessageType.user);
   }
 }
