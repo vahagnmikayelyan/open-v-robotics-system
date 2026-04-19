@@ -26,17 +26,22 @@ class ThermalSensor:
         while True:
             cmd = await self.queue.get()
             action = cmd.get("a")
-            id = cmd.get("i")
+            cmd_id = cmd.get("i")
 
-            if action == "get" and self.roms:
-                temp = await self.read_temp_async()
-                await self.response_queue.put({"i": id, "v": temp})
+            if action == "get":
+                if not self.roms:
+                    await self.response_queue.put({"i": cmd_id, "e": "No DS18B20 sensor found"})
+                else:
+                    temp = await self.read_temp_async(cmd_id)
+                    if temp is not None:
+                        await self.response_queue.put({"i": cmd_id, "v": temp})
 
-    async def read_temp_async(self):
+    async def read_temp_async(self, cmd_id):
         try:
             self.sensor.convert_temp()
-            await asyncio.sleep_ms(750) 
+            await asyncio.sleep_ms(750)
 
             return self.sensor.read_temp(self.roms[0])
         except Exception as e:
-            return f"Error: {str(e)}"
+            await self.response_queue.put({"i": cmd_id, "e": str(e)})
+            return None

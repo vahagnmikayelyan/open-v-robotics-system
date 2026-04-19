@@ -96,11 +96,17 @@ class PicoUartConnector extends EventEmitter implements IHardwareConnector {
     if (handler) {
       if (message.s === 'processing') {
         Logger.debugLog(`Command ${message.i} is still running...`, 'UART');
-        return; // Don't resolve yet
+        return;
       }
 
       this.handlers.delete(message.i);
-      handler.resolve({ ...message, module: handler.module, action: handler.action });
+
+      if (message.e) {
+        Logger.errorLog(`Command ${message.i} failed: ${message.e}`, 'UART');
+        handler.reject(new Error(message.e));
+      } else {
+        handler.resolve({ ...message, module: handler.module, action: handler.action });
+      }
     }
   }
 }

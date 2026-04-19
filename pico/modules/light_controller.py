@@ -2,7 +2,6 @@ from machine import Pin, PWM
 from queues import Queue
 
 import config
-import time
 
 """
 HARDWARE LOGIC (INVERTED):
@@ -38,14 +37,14 @@ class Led:
 class LightController:
     def __init__(self, response_queue):
         print("Initializing Light Controller")
-        
+
         self.queue = Queue()
         self.response_queue = response_queue
 
         # Initialize individual LEDs using pins from config
         self.left = Led(config.LED_LEFT_PIN, config.LED_PWM_FREQ)
         self.right = Led(config.LED_RIGHT_PIN, config.LED_PWM_FREQ)
-        
+
         # Ensure everything is off at startup
         self.off()
 
@@ -58,19 +57,20 @@ class LightController:
             action = cmd.get("a")
             left_val = cmd.get("l", 50)
             right_val = cmd.get("r", 50)
-            id = cmd.get("i")
+            cmd_id = cmd.get("i")
 
-            if action == "light":
-                self.on(left_val, right_val)
-                await self.response_queue.put({"i": id, "s": "ok"})
-
-            if action == "turnOn":
-                self.on(50, 50)
-                await self.response_queue.put({"i": id, "s": "ok"})
-
-            if action == "turnOff":
-                self.off()
-                await self.response_queue.put({"i": id, "s": "ok"})
+            try:
+                if action == "light":
+                    self.on(left_val, right_val)
+                    await self.response_queue.put({"i": cmd_id, "s": "ok"})
+                elif action == "turnOn":
+                    self.on(50, 50)
+                    await self.response_queue.put({"i": cmd_id, "s": "ok"})
+                elif action == "turnOff":
+                    self.off()
+                    await self.response_queue.put({"i": cmd_id, "s": "ok"})
+            except Exception as e:
+                await self.response_queue.put({"i": cmd_id, "e": str(e)})
 
     def on(self, left_percent=100, right_percent=100):
         self.left.on(left_percent)

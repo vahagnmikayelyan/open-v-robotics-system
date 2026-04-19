@@ -22,12 +22,15 @@ class InertialSensor:
         while True:
             cmd = await self.queue.get()
             action = cmd.get("a")
-            id = cmd.get("i")
+            cmd_id = cmd.get("i")
 
             if action == "get":
-                acc = self.sensor.acceleration # (x, y, z)
-                gyro = self.sensor.gyro         # (x, y, z)
-                await self.response_queue.put({"i": id, "a": list(acc), "g": list(gyro)})
+                try:
+                    acc = self.sensor.acceleration # (x, y, z)
+                    gyro = self.sensor.gyro        # (x, y, z)
+                    await self.response_queue.put({"i": cmd_id, "a": list(acc), "g": list(gyro)})
+                except Exception as e:
+                    await self.response_queue.put({"i": cmd_id, "e": str(e)})
 
     def read_gyro_raw_z(self):
         # self.sensor.gyro returns a tuple containing (X, Y, Z) velocities

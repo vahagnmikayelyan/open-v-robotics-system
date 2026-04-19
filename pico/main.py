@@ -52,6 +52,10 @@ class HardwareManager:
                 if chunk:
                     buffer += chunk
 
+                    if len(buffer) > 4096:
+                        print("UART buffer overflow, resetting")
+                        buffer = b""
+
                     while b'\n' in buffer:
                         line, buffer = buffer.split(b'\n', 1)
                         line = line.strip()
