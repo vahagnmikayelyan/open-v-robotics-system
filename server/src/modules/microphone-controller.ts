@@ -15,12 +15,12 @@ class MicrophoneController extends EventEmitter {
     super();
   }
 
-  startStream() {
+  startStream(sampleRate: number = 16000) {
     if (this.recordProcess) {
       return;
     }
 
-    Logger.debugLog('Starting stream', 'Microphone');
+    Logger.debugLog(`Starting stream at ${sampleRate} Hz`, 'Microphone');
 
     this.recordProcess = spawn('pw-record', [
       '--target',
@@ -29,7 +29,7 @@ class MicrophoneController extends EventEmitter {
       '--format',
       's16', // 16-bit (signed integer)
       '--rate',
-      '16000', // 16 kHz
+      String(sampleRate), // default 16 kHz
       '--channels',
       '1', // Mono
       '-', // stream to stdout
