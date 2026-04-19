@@ -1,4 +1,14 @@
 import EventEmitter from 'events';
+import { IToolDeclaration } from './tool.js';
+
+export interface IAIControllerParams {
+  model: string;
+  apiKey: string;
+  voice: string;
+  systemInstruction: string;
+  tools: IToolDeclaration[];
+  language?: string;
+}
 
 export interface IAIModelController extends EventEmitter {
   connect: () => Promise<boolean>;
@@ -16,6 +26,7 @@ export interface IAIModelConfig {
   apiKeySetting: string;
   model: string;
   requiredModules: string[];
+  micSampleRate: number;
   // Empty array when model not support voice interactions, for text-only models
   voices: string[];
   // Empty string when model not support voice interactions, for text-only models

@@ -1,17 +1,8 @@
 import { WebSocket } from 'ws';
 import EventEmitter from 'events';
-import { IAIModelController } from '../../types/ai.js';
+import { IAIControllerParams, IAIModelController } from '../../types/ai.js';
 import { IToolDeclaration } from '../../types/tool.js';
 import { Logger } from '../../services/logger.js';
-
-interface IGeminiAiParams {
-  model: string;
-  apiKey: string;
-  voice: string;
-  language: string;
-  systemInstruction: string;
-  tools: IToolDeclaration[];
-}
 
 class GeminiLiveAI extends EventEmitter implements IAIModelController {
   private readonly url: string;
@@ -28,7 +19,7 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
 
   private ws: WebSocket | null = null;
 
-  constructor({ model, apiKey, voice, language, systemInstruction, tools }: IGeminiAiParams) {
+  constructor({ model, apiKey, voice, language, systemInstruction, tools }: IAIControllerParams) {
     super();
 
     this.url = `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=${apiKey}`;
@@ -36,7 +27,7 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
 
     this.model = model;
     this.voice = voice;
-    this.language = language;
+    this.language = language ?? '';
     this.systemInstruction = systemInstruction;
     this.tools = tools;
   }
@@ -149,9 +140,7 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
   }
 
   sendImage(imageBytesOrBase64: Buffer | string, mimeType = 'image/jpeg') {
-    const base64Data = Buffer.isBuffer(imageBytesOrBase64)
-      ? imageBytesOrBase64.toString('base64')
-      : imageBytesOrBase64;
+    const base64Data = Buffer.isBuffer(imageBytesOrBase64) ? imageBytesOrBase64.toString('base64') : imageBytesOrBase64;
 
     this.sendData({
       clientContent: {

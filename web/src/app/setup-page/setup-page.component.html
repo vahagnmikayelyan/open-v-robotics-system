@@ -54,6 +54,26 @@
 
     </div>
 
+    <div class="section-title">OPENAI REALTIME</div>
+    <div class="card-group">
+
+      <div class="setting-row">
+        <div class="label-group">
+          <span class="lbl">OpenAI API key</span>
+          <span class="sub">platform.openai.com / API keys</span>
+        </div>
+        <div class="value-group">
+          <input
+            type="text"
+            [(ngModel)]="configs().openaiRealtime_apiKey"
+            class="input-dark"
+            autocomplete="off"
+            placeholder="Paste API key">
+        </div>
+      </div>
+
+    </div>
+
     <div class="info-block">
       <div>System Version: v{{ platformVersion() }}</div>
     </div>

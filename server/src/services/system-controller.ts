@@ -8,7 +8,7 @@ import { IAIModelController } from '../types/ai.js';
 import { IToolDeclaration } from '../types/tool.js';
 import { toolsDeclarations } from '../configs/tools-declarations.js';
 import { Logger } from './logger.js';
-import GeminiLiveAI from '../ai/gemini/gemini-live-ai.js';
+import { createAIController } from '../ai/ai-registry.js';
 import EventEmitter from 'events';
 import { IConfigController } from '../types/config.js';
 import ConfigController from './config-controller.js';
@@ -64,7 +64,7 @@ class SystemController extends EventEmitter implements ISystemController {
         return Promise.reject('AI model not configured');
       }
 
-      this.aiController = new GeminiLiveAI({
+      this.aiController = createAIController(aiModel.vendor, {
         model: aiModel.model,
         apiKey: apiKeyConfig as string,
         systemInstruction: program.systemInstruction,
@@ -90,7 +90,7 @@ class SystemController extends EventEmitter implements ISystemController {
           this.aiController && this.aiController.sendAudio(audioChunk);
         });
 
-        this.hardwareController.modules['microphone'].startStream();
+        this.hardwareController.modules['microphone'].startStream(aiModel.micSampleRate);
       }
 
       await this.aiController.connect();
