@@ -45,6 +45,10 @@ const SocketHandler = (server: Server, hardwareConnector: IHardwareController, s
       socket.emit('programChange', state);
     });
 
+    systemController.on('systemError', (message: string) => {
+      socket.emit('systemError', message);
+    });
+
     socket.on<ICommand>('command', ({ module, command, params }) => {
       // ToDo need optimization and standardization for all modules
       if (module === 'camera') {

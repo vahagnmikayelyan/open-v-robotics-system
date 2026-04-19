@@ -98,6 +98,18 @@ class SystemController extends EventEmitter implements ISystemController {
       this.updateProgramState(program);
     } catch (e) {
       Logger.errorLog('Program start failed', 'System', e);
+
+      if (this.aiController) {
+        this.aiController.destroy();
+        this.aiController = null;
+      }
+
+      this.hardwareController.modules['microphone'].stopStream();
+      this.hardwareController.modules['speaker'].stopStream();
+      this.updateProgramState(null);
+
+      const errorMessage = e instanceof Error ? e.message : String(e);
+      this.emit('systemError', `Program start failed: ${errorMessage}`);
     }
   }
 
@@ -148,12 +160,15 @@ class SystemController extends EventEmitter implements ISystemController {
           executionResult = { status: 'error', error: 'Access denied' };
         } else {
           try {
-            const result = (await this.hardwareController.runCommand(
-              parts[0],
-              parts[1],
-              call.args ?? {},
-            )) as Promise<object>;
-            executionResult = { ...result, status: 'success' };
+            const result = await this.hardwareController.runCommand(parts[0], parts[1], call.args ?? {});
+
+            // Camera returns a Buffer (JPEG) — send it as image to AI separately
+            if (parts[0] === 'camera' && parts[1] === 'takePhoto') {
+              this.aiController?.sendImage(result as Buffer);
+              executionResult = { status: 'success', message: 'Photo captured and sent' };
+            } else {
+              executionResult = { ...(result as object), status: 'success' };
+            }
           } catch (e) {
             const errorMessage = e instanceof Error ? e.message : 'Error in execution command';
             executionResult = { status: 'error', error: errorMessage };

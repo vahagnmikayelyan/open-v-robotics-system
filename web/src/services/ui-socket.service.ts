@@ -16,6 +16,7 @@ export class UiSocketService {
   public onCameraData = new EventEmitter<string>();
   public onAIMessage = new EventEmitter<string>();
   public onProgramChange = new EventEmitter<IProgram | null>();
+  public onSystemError = new EventEmitter<string>();
 
   private wss: WebsocketWrapper | undefined;
 
@@ -35,6 +36,7 @@ export class UiSocketService {
     this.wss.on('cameraData', (data: string) => this.onCameraData.emit(data));
     this.wss.on('aiMessage', (data: string) => this.onAIMessage.emit(data));
     this.wss.on('programChange', (data: IProgram | null) => this.onProgramChange.emit(data));
+    this.wss.on('systemError', (data: string) => this.onSystemError.emit(data));
   }
 
   private send(event: string, data: any = null) {

@@ -1,4 +1,5 @@
-import { Component, signal, computed, ChangeDetectionStrategy, OnInit, output } from '@angular/core';
+import { Component, DestroyRef, inject, signal, computed, ChangeDetectionStrategy, OnInit, output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UiSocketService } from '../../services/ui-socket.service';
 import { NgIf } from '@angular/common';
 import { IModuleCommand } from '../../models/models';
@@ -17,10 +18,12 @@ export class CameraWidgetComponent implements OnInit {
 
   command = output<IModuleCommand>();
 
+  private destroyRef = inject(DestroyRef);
+
   constructor(private uiSocketService: UiSocketService) {}
 
   ngOnInit() {
-    this.uiSocketService.onCameraData.subscribe((data) => {
+    this.uiSocketService.onCameraData.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((data) => {
       this.imageSrc.set(data);
     });
   }

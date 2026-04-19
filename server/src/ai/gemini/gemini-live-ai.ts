@@ -139,17 +139,24 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
   }
 
   sendAudio(pcmOrBase64: Buffer | string, mimeType = 'audio/pcm;rate=16000') {
+    const base64Data = Buffer.isBuffer(pcmOrBase64) ? pcmOrBase64.toString('base64') : pcmOrBase64;
+
     this.sendData({
       realtimeInput: {
-        mediaChunks: [{ mimeType: mimeType, data: pcmOrBase64 }],
+        mediaChunks: [{ mimeType: mimeType, data: base64Data }],
       },
     });
   }
 
   sendImage(imageBytesOrBase64: Buffer | string, mimeType = 'image/jpeg') {
+    const base64Data = Buffer.isBuffer(imageBytesOrBase64)
+      ? imageBytesOrBase64.toString('base64')
+      : imageBytesOrBase64;
+
     this.sendData({
-      realtimeInput: {
-        mediaChunks: [{ mimeType: mimeType, data: imageBytesOrBase64 }],
+      clientContent: {
+        turns: [{ role: 'user', parts: [{ inlineData: { mimeType, data: base64Data } }] }],
+        turnComplete: true,
       },
     });
   }
