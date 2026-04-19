@@ -20,27 +20,23 @@ class PowerMonitor:
         while True:
             cmd = await self.queue.get()
             action = cmd.get("a")
-            id = cmd.get("i")
+            cmd_id = cmd.get("i")
 
             if action == "get":
-                voltage, percentage = self.get_battery_status()
-                await self.response_queue.put({"i": id, "v": voltage, "p": percentage})
-
-    def get_battery_status(self):
-        voltage = self.get_voltage()
-        percentage = self.calculate_percentage(voltage)
-        return round(voltage, 2), percentage
+                try:
+                    voltage = self.get_voltage()
+                    percentage = self.calculate_percentage(voltage)
+                    await self.response_queue.put({"i": cmd_id, "v": round(voltage, 2), "p": percentage})
+                except Exception as e:
+                    await self.response_queue.put({"i": cmd_id, "e": str(e)})
 
     def get_voltage(self):
-        try:
-            data = self.i2c.readfrom_mem(self.device_addr, 0x02, 2)
-            raw_value = (data[0] << 8) | data[1]
-            value_shifted = raw_value >> 3
-            voltage = value_shifted * 0.004
-            
-            return voltage
-        except:
-            return 0.0
+        data = self.i2c.readfrom_mem(self.device_addr, 0x02, 2)
+        raw_value = (data[0] << 8) | data[1]
+        value_shifted = raw_value >> 3
+        voltage = value_shifted * 0.004
+
+        return voltage
 
     def calculate_percentage(self, voltage):
         min_v = 6.4

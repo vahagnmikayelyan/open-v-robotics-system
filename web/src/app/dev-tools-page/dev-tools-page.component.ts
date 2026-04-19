@@ -69,6 +69,10 @@ export class DevToolsPageComponent implements OnInit {
       this.handleCommandResult(message);
     });
 
+    this.uiSocketService.onCommandError.subscribe(({ module, command, error }) => {
+      this.addMessage(`ERROR [${module}.${command}]: ${error}`, ChatMessageType.systemCommand);
+    });
+
     this.uiSocketService.onAIMessage.subscribe((message) => {
       this.addMessage(message, ChatMessageType.system);
     });

@@ -155,7 +155,8 @@ class SystemController extends EventEmitter implements ISystemController {
             )) as Promise<object>;
             executionResult = { ...result, status: 'success' };
           } catch (e) {
-            executionResult = { status: 'error', error: 'Error in execution command' };
+            const errorMessage = e instanceof Error ? e.message : 'Error in execution command';
+            executionResult = { status: 'error', error: errorMessage };
           }
         }
       } else {

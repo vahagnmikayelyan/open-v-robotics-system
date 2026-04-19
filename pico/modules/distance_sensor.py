@@ -7,17 +7,16 @@ import config
 class DistanceSensor:
     def __init__(self, response_queue):
         print("Initialization Distance sensor")
-        
+
         self.queue = Queue()
         self.response_queue = response_queue
-
-        self.i2c = I2C(config.TOF_LIDAR_I2C_ID, sda=Pin(config.TOF_LIDAR_SDA_PIN), scl=Pin(config.TOF_LIDAR_SCL_PIN))
+        self.sensor = None
 
         try:
+            self.i2c = I2C(config.TOF_LIDAR_I2C_ID, sda=Pin(config.TOF_LIDAR_SDA_PIN), scl=Pin(config.TOF_LIDAR_SCL_PIN))
             self.sensor = VL53L1X(self.i2c)
         except Exception as e:
             print(f"Error in initialization Distance sensor: {e}")
-            self.sensor = None
 
     def add_command(self, cmd):
         self.queue.put_nowait(cmd)
@@ -26,15 +25,14 @@ class DistanceSensor:
         while True:
             cmd = await self.queue.get()
             action = cmd.get("a")
-            id = cmd.get("i")
+            cmd_id = cmd.get("i")
 
             if action == "get":
-                await self.response_queue.put({"i": id, "v": self.get_distance()})
+                if not self.sensor:
+                    await self.response_queue.put({"i": cmd_id, "e": "Distance sensor not initialized"})
+                    continue
 
-    def get_distance(self):
-        if self.sensor:
-            try:
-                return self.sensor.read()
-            except:
-                return None
-        return None
+                try:
+                    await self.response_queue.put({"i": cmd_id, "v": self.sensor.read()})
+                except Exception as e:
+                    await self.response_queue.put({"i": cmd_id, "e": str(e)})

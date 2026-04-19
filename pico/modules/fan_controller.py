@@ -23,12 +23,15 @@ class FanController:
         while True:
             cmd = await self.queue.get()
             action = cmd.get("a")
-            id = cmd.get("i")
+            cmd_id = cmd.get("i")
             val = cmd.get("v", 50)
 
-            if action == "changeSpeed":
-                self.setSpeed(val)
-                await self.response_queue.put({"i": id, "s": "ok"})
+            try:
+                if action == "changeSpeed":
+                    self.setSpeed(val)
+                    await self.response_queue.put({"i": cmd_id, "s": "ok"})
+            except Exception as e:
+                await self.response_queue.put({"i": cmd_id, "e": str(e)})
 
     def setSpeed(self, percentage):
         if percentage < 0: percentage = 0

@@ -50,9 +50,14 @@ const SocketHandler = (server: Server, hardwareConnector: IHardwareController, s
       if (module === 'camera') {
         hardwareConnector.runCommand(module, command, params);
       } else {
-        hardwareConnector.runCommand(module, command, params).then((response: unknown) => {
-          response && socket.emit('commandResult', response);
-        });
+        hardwareConnector
+          .runCommand(module, command, params)
+          .then((response: unknown) => {
+            response && socket.emit('commandResult', response);
+          })
+          .catch((err: Error) => {
+            socket.emit('commandError', { module, command, error: err.message });
+          });
       }
     });
 
