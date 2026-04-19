@@ -154,18 +154,19 @@ export const toolsDeclarations: IToolDeclaration[] = [
   {
     module: 'camera',
     name: 'camera_takePhoto',
-    description: 'Capture a still JPEG (temporarily stops stream if active). Omit width/height or use 0 for defaults.',
+    description:
+      'Capture a still JPEG photo using camera module. Default resolution is 1280x720. Maximum resolution is 4608x2592 (12MP). Omit width/height or use 0 for defaults.',
     parameters: [
       {
         name: 'width',
         type: 'integer',
-        description: 'Photo width in pixels; omit or 0 for default',
+        description: 'Photo width in pixels (default 1280, max 4608); omit or 0 for default',
         isRequired: false,
       },
       {
         name: 'height',
         type: 'integer',
-        description: 'Photo height in pixels; omit or 0 for default',
+        description: 'Photo height in pixels (default 720, max 2592); omit or 0 for default',
         isRequired: false,
       },
     ],

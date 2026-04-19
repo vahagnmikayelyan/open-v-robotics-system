@@ -114,6 +114,25 @@
       color: var(--chat-ai-accent-color);
     }
   }
+
+  /* --- 5. System Error --- */
+
+  &.systemError {
+    align-self: flex-start;
+    width: 100%;
+
+    .bubble {
+      background: var(--chat-error-bg);
+      border: 1px solid var(--chat-error-color);
+      color: var(--chat-error-color);
+      width: 100%;
+      border-radius: 4px;
+    }
+
+    .cmd-prefix {
+      color: var(--chat-error-color);
+    }
+  }
 }
 
 /* --- Input Area --- */

@@ -3,6 +3,7 @@ export enum ChatMessageType {
   system = 'system',
   userCommand = 'userCommand',
   systemCommand = 'systemCommand',
+  systemError = 'systemError',
 }
 
 export interface IChatMessage {

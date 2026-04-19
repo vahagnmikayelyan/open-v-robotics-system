@@ -34,12 +34,12 @@ export class MainPageComponent implements OnInit, OnDestroy {
       this.runningProgram.set(state);
     });
 
-    this.uiSocketService.onInit.subscribe(() => {
+    this.uiSocketService.onInit.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.getVoltageLevel();
       this.uiSocketService.getRunningProgram();
     });
 
-    this.uiSocketService.onCommandResult.subscribe((commandResult) => {
+    this.uiSocketService.onCommandResult.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((commandResult) => {
       try {
         if (commandResult && commandResult.hasOwnProperty('module') && commandResult.module === 'power') {
           this.batteryLevel.set(commandResult.p);

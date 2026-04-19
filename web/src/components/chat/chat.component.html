@@ -6,6 +6,7 @@
         <span *ngIf="msg.type === 'userCommand'" class="cmd-prefix">&gt;_</span>
         <span *ngIf="msg.type === 'systemCommand'" class="cmd-prefix">#</span>
         <span *ngIf="msg.type === 'system'" class="cmd-prefix">AI:</span>
+        <span *ngIf="msg.type === 'systemError'" class="cmd-prefix">ERROR:</span>
         <span class="text-content">{{ msg.text }}</span>
       </div>
 

@@ -1,4 +1,5 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../environments/environment';
@@ -32,8 +33,9 @@ import { CameraWidgetComponent } from '../../components/camera-widget/camera-wid
   templateUrl: './dev-tools-page.component.html',
   styleUrl: './dev-tools-page.component.less',
 })
-export class DevToolsPageComponent implements OnInit {
+export class DevToolsPageComponent implements OnInit, OnDestroy {
   private uiSocketService = inject(UiSocketService);
+  private destroyRef = inject(DestroyRef);
 
   messages = signal<IChatMessage[]>([]);
 
@@ -60,24 +62,37 @@ export class DevToolsPageComponent implements OnInit {
   platformVersion = signal<string>('');
 
   ngOnInit() {
-    this.uiSocketService.onInit.subscribe(() => {
+    this.uiSocketService.onInit.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.addMessage('Init', ChatMessageType.systemCommand);
     });
 
-    this.uiSocketService.onCommandResult.subscribe((message) => {
+    this.uiSocketService.onCommandResult.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((message) => {
       this.addMessage(JSON.stringify(message), ChatMessageType.systemCommand);
       this.handleCommandResult(message);
     });
 
-    this.uiSocketService.onCommandError.subscribe(({ module, command, error }) => {
+    this.uiSocketService.onCommandError.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(({ module, command, error }) => {
       this.addMessage(`ERROR [${module}.${command}]: ${error}`, ChatMessageType.systemCommand);
     });
 
-    this.uiSocketService.onAIMessage.subscribe((message) => {
+    this.uiSocketService.onAIMessage.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((message) => {
       this.addMessage(message, ChatMessageType.system);
     });
 
+    this.uiSocketService.onSystemError.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((message) => {
+      this.addMessage(message, ChatMessageType.systemError);
+    });
+
     this.platformVersion.set(environment.version);
+  }
+
+  ngOnDestroy() {
+    for (const key of Object.keys(this.modulesUpdatesTimers)) {
+      if (this.modulesUpdatesTimers[key].timerId) {
+        clearInterval(this.modulesUpdatesTimers[key].timerId);
+        this.modulesUpdatesTimers[key].timerId = null;
+      }
+    }
   }
 
   private addMessage(text: string, type: ChatMessageType) {
