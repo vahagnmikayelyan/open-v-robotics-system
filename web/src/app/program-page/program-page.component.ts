@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NgIf, NgFor, UpperCasePipe } from '@angular/common';
-import { IAIModelConfig, IModule, IModuleCategory, IModulesResponse, IProgram } from '../../models/models';
+import { IAIModelConfig, IModule, IModuleCategory, IProgram } from '../../models/models';
 import { ApiService } from '../../services/api.service';
 import { UiLoaderComponent } from '../../components/ui-loader/ui-loader.component';
 import { NotificationService } from '../../services/notification.service';
@@ -127,9 +127,9 @@ export class ProgramPageComponent implements OnInit {
 
   async getModules() {
     try {
-      const response = await this.api.get<IModulesResponse>('/modules');
-      this.moduleCategories = response.categories.sort((a, b) => a.order - b.order);
-      this.availableModules = response.modules;
+      const categories = await this.api.get<IModuleCategory[]>('/categories');
+      this.moduleCategories = categories.sort((a, b) => a.order - b.order);
+      this.availableModules = await this.api.get<IModule[]>('/modules');
     } catch (error: any) {
       this.notifications.error(error.message);
     }
