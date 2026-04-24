@@ -1,4 +1,4 @@
-import { IHardwareController } from '../types/hardware.js';
+import { IModuleController } from '../types/hardware.js';
 import { ISystemController } from '../types/system.js';
 import { IProgram, IProgramController } from '../types/program.js';
 import SqliteClient from '../database/sqlite-client.js';
@@ -6,7 +6,7 @@ import ProgramController from './program-controller.js';
 import ProgramRepository from '../repositories/sqlite/program-repository.js';
 import { IAIModelController } from '../types/ai.js';
 import { IToolDeclaration } from '../types/tool.js';
-import { toolsDeclarations } from '../configs/tools-declarations.js';
+import { getAllToolDeclarations } from '../modules/module-registry.js';
 import { Logger } from './logger.js';
 import { createAIController } from '../ai/ai-registry.js';
 import EventEmitter from 'events';
@@ -16,17 +16,17 @@ import ConfigRepository from '../repositories/sqlite/config-repository.js';
 import { availableAIModels } from '../configs/ai-models.js';
 
 class SystemController extends EventEmitter implements ISystemController {
-  private hardwareController: IHardwareController;
+  private moduleController: IModuleController;
   private programController: IProgramController;
   private configController: IConfigController;
   private aiController: IAIModelController | null = null;
   private allowedModules: Set<string> = new Set();
   private runningProgram: IProgram | null = null;
 
-  constructor(dbClient: SqliteClient['db'], hardwareController: IHardwareController) {
+  constructor(dbClient: SqliteClient['db'], moduleController: IModuleController) {
     super();
 
-    this.hardwareController = hardwareController;
+    this.moduleController = moduleController;
     this.programController = new ProgramController(new ProgramRepository(dbClient));
     this.configController = new ConfigController(new ConfigRepository(dbClient));
   }
@@ -36,8 +36,8 @@ class SystemController extends EventEmitter implements ISystemController {
 
     if (this.aiController) {
       this.aiController.destroy();
-      this.hardwareController.modules['microphone'].stopStream();
-      this.hardwareController.modules['speaker'].stopStream();
+      this.moduleController.modules['microphone'].stopStream();
+      this.moduleController.modules['speaker'].stopStream();
     }
 
     this.updateProgramState(null);
@@ -55,7 +55,7 @@ class SystemController extends EventEmitter implements ISystemController {
         return Promise.reject('AI model not found');
       }
 
-      const tools: IToolDeclaration[] = toolsDeclarations.filter((tool) => this.allowedModules.has(tool.module));
+      const tools: IToolDeclaration[] = getAllToolDeclarations().filter((tool) => this.allowedModules.has(tool.module));
 
       const apiKeyConfig = this.configController.getConfig(aiModel.apiKeySetting, '');
 
@@ -81,16 +81,16 @@ class SystemController extends EventEmitter implements ISystemController {
 
       // Enable speaker if program allowed use speaker
       if (this.allowedModules.has('speaker')) {
-        this.hardwareController.modules['speaker'].startStream();
+        this.moduleController.modules['speaker'].startStream();
       }
 
       // Enable microphone if program allowed use microphone
       if (this.allowedModules.has('microphone')) {
-        this.hardwareController.modules['microphone'].on('audioChunk', (audioChunk: Buffer) => {
+        this.moduleController.modules['microphone'].on('audioChunk', (audioChunk: Buffer) => {
           this.aiController && this.aiController.sendAudio(audioChunk);
         });
 
-        this.hardwareController.modules['microphone'].startStream(aiModel.micSampleRate);
+        this.moduleController.modules['microphone'].startStream(aiModel.micSampleRate);
       }
 
       await this.aiController.connect();
@@ -104,8 +104,8 @@ class SystemController extends EventEmitter implements ISystemController {
         this.aiController = null;
       }
 
-      this.hardwareController.modules['microphone'].stopStream();
-      this.hardwareController.modules['speaker'].stopStream();
+      this.moduleController.modules['microphone'].stopStream();
+      this.moduleController.modules['speaker'].stopStream();
       this.updateProgramState(null);
 
       const errorMessage = e instanceof Error ? e.message : String(e);
@@ -121,8 +121,8 @@ class SystemController extends EventEmitter implements ISystemController {
     Logger.debugLog('Stopping program', 'System');
     if (this.aiController) {
       this.aiController.destroy();
-      this.hardwareController.modules['microphone'].stopStream();
-      this.hardwareController.modules['speaker'].stopStream();
+      this.moduleController.modules['microphone'].stopStream();
+      this.moduleController.modules['speaker'].stopStream();
     }
     this.updateProgramState(null);
   }
@@ -160,7 +160,7 @@ class SystemController extends EventEmitter implements ISystemController {
           executionResult = { status: 'error', error: 'Access denied' };
         } else {
           try {
-            const result = await this.hardwareController.runCommand(parts[0], parts[1], call.args ?? {});
+            const result = await this.moduleController.runCommand(parts[0], parts[1], call.args ?? {});
 
             // Camera returns a Buffer (JPEG) — send it as image to AI separately
             if (parts[0] === 'camera' && parts[1] === 'takePhoto') {
@@ -199,7 +199,7 @@ class SystemController extends EventEmitter implements ISystemController {
     const buffer = typeof data.base64Data === 'string' ? Buffer.from(data.base64Data, 'base64') : data.base64Data;
 
     // Writing audio data to PipeWire
-    this.hardwareController.modules['speaker'].playStream(buffer);
+    this.moduleController.modules['speaker'].playStream(buffer);
   }
 }
 

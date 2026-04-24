@@ -3,6 +3,14 @@ export interface IConfig {
   value: unknown;
 }
 
+import { IConfigItem } from './module.js';
+
+export interface IConfigGroup {
+  id: string;
+  name: string;
+  configs: IConfigItem[];
+}
+
 export interface IConfigRepository {
   getAll: () => IConfig[];
   getValue: (key: string, defaultValue?: unknown) => IConfig['value'];

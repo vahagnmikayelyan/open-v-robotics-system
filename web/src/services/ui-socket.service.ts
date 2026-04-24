@@ -17,6 +17,7 @@ export class UiSocketService {
   public onAIMessage = new EventEmitter<string>();
   public onProgramChange = new EventEmitter<IProgram | null>();
   public onSystemError = new EventEmitter<string>();
+  public onModuleEvent = new EventEmitter<{ module: string; command: string; params: Record<string, unknown> }>();
 
   private wss: WebsocketWrapper | undefined;
 
@@ -37,6 +38,9 @@ export class UiSocketService {
     this.wss.on('aiMessage', (data: string) => this.onAIMessage.emit(data));
     this.wss.on('programChange', (data: IProgram | null) => this.onProgramChange.emit(data));
     this.wss.on('systemError', (data: string) => this.onSystemError.emit(data));
+    this.wss.on('moduleEvent', (data: { module: string; command: string; params: Record<string, unknown> }) =>
+      this.onModuleEvent.emit(data),
+    );
   }
 
   private send(event: string, data: any = null) {

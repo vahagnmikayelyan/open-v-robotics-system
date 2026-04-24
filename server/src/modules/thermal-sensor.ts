@@ -1,17 +1,29 @@
-import { IHardwareConnector } from '../types/hardware.js';
+import { defineModule, IModuleDeps } from '../types/module.js';
+
+export default defineModule({
+  id: 'thermalSensor',
+  name: 'Thermal Sensor',
+  description: 'Monitors system and environmental temperatures.',
+  category: 'sensor',
+
+  tools: [
+    {
+      module: 'thermalSensor',
+      name: 'thermalSensor_getValue',
+      description: 'Read temperature from the thermal sensor in °C',
+      parameters: [],
+    },
+  ],
+
+  create(deps: IModuleDeps) {
+    return new ThermalSensor(deps);
+  },
+});
 
 class ThermalSensor {
-  private readonly moduleName: string;
-  private readonly connector: IHardwareConnector;
-
-  constructor(moduleName: string, connector: IHardwareConnector) {
-    this.moduleName = moduleName;
-    this.connector = connector;
-  }
+  constructor(private deps: IModuleDeps) {}
 
   getValue() {
-    return this.connector.sendCommand(this.moduleName, 'get');
+    return this.deps.picoConnector.sendCommand(this.deps.moduleId, 'get');
   }
 }
-
-export default ThermalSensor;

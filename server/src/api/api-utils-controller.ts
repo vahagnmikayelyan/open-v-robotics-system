@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 
 import { Logger } from '../services/logger.js';
 import { availableAIModels } from '../configs/ai-models.js';
-import { allModules } from '../configs/modules.js';
+import { getAllModuleMetadata, moduleCategories } from '../modules/module-registry.js';
 
 const ApiUtilsController = () => {
   const getLocalIpAddress = () => {
@@ -44,7 +44,7 @@ const ApiUtilsController = () => {
 
     getAvailableModules: async (_: Request, res: Response) => {
       try {
-        res.status(200).json(allModules);
+        res.status(200).json({ categories: moduleCategories, modules: getAllModuleMetadata() });
       } catch (error: any) {
         Logger.errorLog(error.message, 'Utils API');
         res.status(400).json({ error: 'Failed to get available modules' });

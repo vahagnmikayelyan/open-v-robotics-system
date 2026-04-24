@@ -2,6 +2,8 @@ import { z } from 'zod';
 import { Request, Response } from 'express';
 import { IConfig, IConfigController } from '../types/config.js';
 import { Logger } from '../services/logger.js';
+import { systemConfigGroups } from '../configs/system-configs.js';
+import { getModuleConfigGroups } from '../modules/module-registry.js';
 
 const ApiConfigController = (configController: IConfigController) => {
   const updateConfigSchema = z.object({
@@ -36,7 +38,8 @@ const ApiConfigController = (configController: IConfigController) => {
     getConfigs: async (_: Request, res: Response) => {
       try {
         const configs = configController.getAll();
-        res.status(200).json(configs);
+        const schema = [...systemConfigGroups, ...getModuleConfigGroups()];
+        res.status(200).json({ configs, schema });
       } catch (error) {
         handleError(res, error);
       }

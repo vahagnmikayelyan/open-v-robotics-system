@@ -50,6 +50,10 @@ export class MainPageComponent implements OnInit, OnDestroy {
     this.startBlinkingLoop();
     this.getVoltageLevel();
     this.uiSocketService.getRunningProgram();
+
+    this.uiSocketService.onModuleEvent.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
+      console.log('Module event:', event);
+    });
   }
 
   getVoltageLevel() {

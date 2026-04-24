@@ -3,10 +3,24 @@ import EventEmitter from 'node:events';
 import path from 'path';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
+import { defineModule, IModuleDeps } from '../types/module.js';
 import { Logger } from '../services/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+export default defineModule({
+  id: 'microphone',
+  name: 'Microphone',
+  description: 'Enables microphones.',
+  category: 'media',
+
+  tools: [],
+
+  create(_deps: IModuleDeps) {
+    return new MicrophoneController();
+  },
+});
 
 class MicrophoneController extends EventEmitter {
   private recordProcess: ChildProcessWithoutNullStreams | null = null;
@@ -115,5 +129,3 @@ class MicrophoneController extends EventEmitter {
     });
   }
 }
-
-export default MicrophoneController;

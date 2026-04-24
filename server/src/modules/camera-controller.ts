@@ -1,6 +1,41 @@
 import { ChildProcessWithoutNullStreams, spawn } from 'node:child_process';
 import EventEmitter from 'events';
+import { defineModule, IModuleDeps } from '../types/module.js';
 import { Logger } from '../services/logger.js';
+
+export default defineModule({
+  id: 'camera',
+  name: 'Camera',
+  description: 'Enables using Camera.',
+  category: 'media',
+
+  tools: [
+    {
+      module: 'camera',
+      name: 'camera_takePhoto',
+      description:
+        'Capture a still JPEG photo using camera module. Default resolution is 1280x720. Maximum resolution is 4608x2592 (12MP). Omit width/height or use 0 for defaults.',
+      parameters: [
+        {
+          name: 'width',
+          type: 'integer',
+          description: 'Photo width in pixels (default 1280, max 4608); omit or 0 for default',
+          isRequired: false,
+        },
+        {
+          name: 'height',
+          type: 'integer',
+          description: 'Photo height in pixels (default 720, max 2592); omit or 0 for default',
+          isRequired: false,
+        },
+      ],
+    },
+  ],
+
+  create(_deps: IModuleDeps) {
+    return new CameraController();
+  },
+});
 
 const SOI = Buffer.from([0xff, 0xd8]); // Start JPEG
 const EOI = Buffer.from([0xff, 0xd9]); // End JPEG
@@ -135,5 +170,3 @@ class CameraController extends EventEmitter {
     });
   }
 }
-
-export default CameraController;

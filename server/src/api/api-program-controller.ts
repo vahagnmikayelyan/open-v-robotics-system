@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { Request, Response } from 'express';
 import { IProgram, IProgramController } from '../types/program.js';
-import { allModules } from '../configs/modules.js';
+import { getAllModuleMetadata } from '../modules/module-registry.js';
 import { availableAIModels } from '../configs/ai-models.js';
 
 const programSchema = z
@@ -13,7 +13,7 @@ const programSchema = z
     modules: z
       .array(
         z.string().superRefine((val, ctx) => {
-          if (!allModules.some((module) => module.id === val)) {
+          if (!getAllModuleMetadata().some((module) => module.id === val)) {
             ctx.addIssue(`Module '${val}' is not a supported module`);
           }
         }),

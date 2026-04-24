@@ -1,17 +1,29 @@
-import { IHardwareConnector } from '../types/hardware.js';
+import { defineModule, IModuleDeps } from '../types/module.js';
+
+export default defineModule({
+  id: 'power',
+  name: 'Power Monitor',
+  description: 'Monitors battery level and power consumption.',
+  category: 'sensor',
+
+  tools: [
+    {
+      module: 'power',
+      name: 'power_getValue',
+      description: 'Get battery voltage and charge percentage estimate',
+      parameters: [],
+    },
+  ],
+
+  create(deps: IModuleDeps) {
+    return new PowerMonitor(deps);
+  },
+});
 
 class PowerMonitor {
-  private readonly moduleName: string;
-  private readonly connector: IHardwareConnector;
-
-  constructor(moduleName: string, connector: IHardwareConnector) {
-    this.moduleName = moduleName;
-    this.connector = connector;
-  }
+  constructor(private deps: IModuleDeps) {}
 
   getValue() {
-    return this.connector.sendCommand(this.moduleName, 'get');
+    return this.deps.picoConnector.sendCommand(this.deps.moduleId, 'get');
   }
 }
-
-export default PowerMonitor;

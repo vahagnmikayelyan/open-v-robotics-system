@@ -1,5 +1,5 @@
 import type { Server } from 'node:http';
-import { IHardwareController } from '../types/hardware.js';
+import { IModuleController } from '../types/hardware.js';
 import { WebSocketServer } from 'ws';
 import Socket from './socket.js';
 import { Logger } from './logger.js';
@@ -12,7 +12,7 @@ interface ICommand {
   params: Record<string, unknown>;
 }
 
-const SocketHandler = (server: Server, hardwareConnector: IHardwareController, systemController: ISystemController) => {
+const SocketHandler = (server: Server, moduleController: IModuleController, systemController: ISystemController) => {
   const wss = new WebSocketServer({ clientTracking: false, noServer: true, path: '/socket' });
 
   server.on('upgrade', (request, socket, head) => {
@@ -29,8 +29,12 @@ const SocketHandler = (server: Server, hardwareConnector: IHardwareController, s
       socket.emit('init');
     };
 
-    hardwareConnector.modules['camera'].on('frame', (frame: Buffer) => {
+    moduleController.modules['camera'].on('frame', (frame: Buffer) => {
       socket.emit('cameraData', 'data:image/jpg;base64,' + frame.toString('base64'));
+    });
+
+    moduleController.on('moduleEvent', (data: { module: string; command: string; params: Record<string, unknown> }) => {
+      socket.emit('moduleEvent', data);
     });
 
     systemController.on('AISystemMessage', (message: string) => {
@@ -52,9 +56,9 @@ const SocketHandler = (server: Server, hardwareConnector: IHardwareController, s
     socket.on<ICommand>('command', ({ module, command, params }) => {
       // ToDo need optimization and standardization for all modules
       if (module === 'camera') {
-        hardwareConnector.runCommand(module, command, params);
+        moduleController.runCommand(module, command, params);
       } else {
-        hardwareConnector
+        moduleController
           .runCommand(module, command, params)
           .then((response: unknown) => {
             response && socket.emit('commandResult', response);

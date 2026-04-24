@@ -86,21 +86,24 @@
       </div>
     </div>
 
-    <div class="form-group" *ngIf="availableModules.length > 0">
-      <label>PROGRAM PERMISSIONS</label>
-    </div>
-
-    <div class="form-group row" *ngFor="let module of availableModules">
-      <div class="lbl-grp">
-        <label>{{ module.name }}</label>
-        <div class="sub">{{ module.description }}</div>
+    <div *ngFor="let cat of moduleCategories" class="category-section">
+      <div class="category-header" *ngIf="getModulesByCategory(cat.id).length > 0">
+        <label>{{ cat.label | uppercase }}</label>
+        <div class="sub">{{ cat.description }}</div>
       </div>
 
-      <label class="toggle-switch">
-        <input type="checkbox" [checked]="hasModule(module.id)" [disabled]="isRequiredModule(module.id)"
-               (change)="toggleModule(module.id, $any($event.target).checked)">
-        <span class="slider"></span>
-      </label>
+      <div class="form-group row" *ngFor="let module of getModulesByCategory(cat.id)">
+        <div class="lbl-grp">
+          <label>{{ module.name }}</label>
+          <div class="sub">{{ module.description }}</div>
+        </div>
+
+        <label class="toggle-switch">
+          <input type="checkbox" [checked]="hasModule(module.id)" [disabled]="isRequiredModule(module.id)"
+                 (change)="toggleModule(module.id, $any($event.target).checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
     </div>
 
   </div>
