@@ -44,10 +44,19 @@ const ApiUtilsController = () => {
 
     getAvailableModules: async (_: Request, res: Response) => {
       try {
-        res.status(200).json({ categories: moduleCategories, modules: getAllModuleMetadata() });
+        res.status(200).json(getAllModuleMetadata());
       } catch (error: any) {
         Logger.errorLog(error.message, 'Utils API');
         res.status(400).json({ error: 'Failed to get available modules' });
+      }
+    },
+
+    getModuleCategories: async (_: Request, res: Response) => {
+      try {
+        res.status(200).json(moduleCategories);
+      } catch (error: any) {
+        Logger.errorLog(error.message, 'Utils API');
+        res.status(400).json({ error: 'Failed to get module categories' });
       }
     },
   };

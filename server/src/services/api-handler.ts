@@ -36,6 +36,7 @@ const ApiHandler = (app: Express, dbClient: any) => {
   router.get('/utils/connection', apiUtilsController.getConnectionInfo);
   router.get('/models', apiUtilsController.getAiModels);
   router.get('/modules', apiUtilsController.getAvailableModules);
+  router.get('/categories', apiUtilsController.getModuleCategories);
 
   // Programs
   router.get('/programs', apiProgramController.getPrograms);

@@ -78,8 +78,3 @@ export interface IModuleCategory {
   description: string;
   order: number;
 }
-
-export interface IModulesResponse {
-  categories: IModuleCategory[];
-  modules: IModule[];
-}
