@@ -1,16 +1,55 @@
-import { IHardwareConnector } from '../types/hardware.js';
+import { defineModule, IModuleDeps } from '../types/module.js';
+
+export default defineModule({
+  id: 'headServo',
+  name: 'Head Servo',
+  description: 'Allows the AI to move the head for tracking.',
+  category: 'actuator',
+
+  tools: [
+    {
+      module: 'headServo',
+      name: 'headServo_rotate',
+      description: 'Move head to angle in degrees relative to center (0). Typical range about 35 (up) to -45 (down).',
+      parameters: [
+        {
+          name: 'angle',
+          type: 'integer',
+          description: 'Target angle in degrees relative to center',
+          isRequired: true,
+        },
+      ],
+    },
+    {
+      module: 'headServo',
+      name: 'headServo_toCenter',
+      description: 'Center the head (0 degrees)',
+      parameters: [],
+    },
+    {
+      module: 'headServo',
+      name: 'headServo_toTop',
+      description: 'Tilt head to upper preset',
+      parameters: [],
+    },
+    {
+      module: 'headServo',
+      name: 'headServo_toBottom',
+      description: 'Tilt head to lower preset',
+      parameters: [],
+    },
+  ],
+
+  create(deps: IModuleDeps) {
+    return new HeadController(deps);
+  },
+});
 
 class HeadController {
-  private readonly moduleName: string;
-  private readonly connector: IHardwareConnector;
-
-  constructor(moduleName: string, connector: IHardwareConnector) {
-    this.moduleName = moduleName;
-    this.connector = connector;
-  }
+  constructor(private deps: IModuleDeps) {}
 
   rotate({ angle = 0 }: { angle: number }) {
-    return this.connector.sendCommand(this.moduleName, 'rotate', { v: angle });
+    return this.deps.picoConnector.sendCommand(this.deps.moduleId, 'rotate', { v: angle });
   }
 
   toCenter() {
@@ -25,5 +64,3 @@ class HeadController {
     return this.rotate({ angle: -40 });
   }
 }
-
-export default HeadController;

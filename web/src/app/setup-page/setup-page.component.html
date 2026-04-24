@@ -8,71 +8,28 @@
 
   <div class="settings-scroll">
 
-    <div class="section-title">GENERAL</div>
-    <div class="card-group">
-
-      <div class="setting-row">
-        <div class="label-group">
-          <span class="lbl">Robot Name</span>
-          <span class="sub">Using in AI models</span>
-        </div>
-        <div class="value-group">
-          <input type="text" [(ngModel)]="configs().general_robotName" class="input-dark">
-        </div>
+    <ng-container *ngFor="let group of schema()">
+      <div class="section-title">{{ group.name }}</div>
+      <div class="card-group">
+        <ng-container *ngFor="let req of group.configs">
+          <div class="setting-row">
+            <div class="label-group">
+              <span class="lbl">{{ req.label }}</span>
+              <span class="sub" *ngIf="req.hint">{{ req.hint }}</span>
+            </div>
+            <div class="value-group">
+              <ng-container *ngIf="req.type === 'range'; else textInput">
+                <div class="value-display">{{ configs()[req.key] || 0 }}%</div>
+                <input type="range" [(ngModel)]="configs()[req.key]" [attr.min]="req.min || 0" [attr.max]="req.max || 100" class="range-input">
+              </ng-container>
+              <ng-template #textInput>
+                <input [type]="req.type || 'text'" [(ngModel)]="configs()[req.key]" class="input-dark" autocomplete="off">
+              </ng-template>
+            </div>
+          </div>
+        </ng-container>
       </div>
-
-      <div class="setting-row">
-        <div class="label-group">
-          <span class="lbl">Global Speed Limit</span>
-          <span class="sub">Safety cap (50%-100%)</span>
-        </div>
-        <div class="value-group">
-          <div class="value-display">{{ configs().general_maxSpeedLimit }}%</div>
-          <input type="range" [(ngModel)]="configs().general_maxSpeedLimit" min="10" max="100" class="range-input">
-        </div>
-      </div>
-
-    </div>
-
-    <div class="section-title">GEMINI LIVE</div>
-    <div class="card-group">
-
-      <div class="setting-row">
-        <div class="label-group">
-          <span class="lbl">Gemini API key</span>
-          <span class="sub">Google AI Studio / Gemini API</span>
-        </div>
-        <div class="value-group">
-          <input
-            type="text"
-            [(ngModel)]="configs().geminiLive_apiKey"
-            class="input-dark"
-            autocomplete="off"
-            placeholder="Paste API key">
-        </div>
-      </div>
-
-    </div>
-
-    <div class="section-title">OPENAI REALTIME</div>
-    <div class="card-group">
-
-      <div class="setting-row">
-        <div class="label-group">
-          <span class="lbl">OpenAI API key</span>
-          <span class="sub">platform.openai.com / API keys</span>
-        </div>
-        <div class="value-group">
-          <input
-            type="text"
-            [(ngModel)]="configs().openaiRealtime_apiKey"
-            class="input-dark"
-            autocomplete="off"
-            placeholder="Paste API key">
-        </div>
-      </div>
-
-    </div>
+    </ng-container>
 
     <div class="info-block">
       <div>System Version: v{{ platformVersion() }}</div>

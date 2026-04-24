@@ -17,6 +17,26 @@ export interface IConfig {
   value: unknown;
 }
 
+export interface IConfigItem {
+  key: string;
+  label: string;
+  hint?: string;
+  type?: 'text' | 'number' | 'range' | 'password';
+  min?: number;
+  max?: number;
+}
+
+export interface IConfigGroup {
+  id: string;
+  name: string;
+  configs: IConfigItem[];
+}
+
+export interface IConfigResponse {
+  configs: IConfig[];
+  schema: IConfigGroup[];
+}
+
 export type ModuleCommandParams = Record<string, unknown> | null;
 
 export interface IModuleCommand {
@@ -48,4 +68,18 @@ export interface IModule {
   id: string;
   name: string;
   description: string;
+  category: 'sensor' | 'actuator' | 'media' | 'service';
+  moduleConfigs: IConfigItem[];
+}
+
+export interface IModuleCategory {
+  id: string;
+  label: string;
+  description: string;
+  order: number;
+}
+
+export interface IModulesResponse {
+  categories: IModuleCategory[];
+  modules: IModule[];
 }

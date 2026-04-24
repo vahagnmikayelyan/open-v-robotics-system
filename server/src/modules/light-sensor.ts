@@ -1,17 +1,29 @@
-import { IHardwareConnector } from '../types/hardware.js';
+import { defineModule, IModuleDeps } from '../types/module.js';
+
+export default defineModule({
+  id: 'lightSensor',
+  name: 'Light Sensor',
+  description: 'Measures environmental illumination levels.',
+  category: 'sensor',
+
+  tools: [
+    {
+      module: 'lightSensor',
+      name: 'lightSensor_getValue',
+      description: 'Read ambient light raw ADC and estimated brightness percentage',
+      parameters: [],
+    },
+  ],
+
+  create(deps: IModuleDeps) {
+    return new LightSensor(deps);
+  },
+});
 
 class LightSensor {
-  private readonly moduleName: string;
-  private readonly connector: IHardwareConnector;
-
-  constructor(moduleName: string, connector: IHardwareConnector) {
-    this.moduleName = moduleName;
-    this.connector = connector;
-  }
+  constructor(private deps: IModuleDeps) {}
 
   getValue() {
-    return this.connector.sendCommand(this.moduleName, 'get');
+    return this.deps.picoConnector.sendCommand(this.deps.moduleId, 'get');
   }
 }
-
-export default LightSensor;

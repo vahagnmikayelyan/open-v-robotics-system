@@ -1,8 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { NgIf, NgFor } from '@angular/common';
-import { IAIModelConfig, IModule, IProgram } from '../../models/models';
+import { NgIf, NgFor, UpperCasePipe } from '@angular/common';
+import { IAIModelConfig, IModule, IModuleCategory, IModulesResponse, IProgram } from '../../models/models';
 import { ApiService } from '../../services/api.service';
 import { UiLoaderComponent } from '../../components/ui-loader/ui-loader.component';
 import { NotificationService } from '../../services/notification.service';
@@ -10,7 +10,7 @@ import { NotificationService } from '../../services/notification.service';
 @Component({
   selector: 'program-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, UiLoaderComponent, NgIf, NgFor],
+  imports: [FormsModule, RouterLink, UiLoaderComponent, NgIf, NgFor, UpperCasePipe],
   templateUrl: './program-page.component.html',
   styleUrl: './program-page.component.less',
 })
@@ -32,6 +32,7 @@ export class ProgramPageComponent implements OnInit {
   });
 
   aiModels: IAIModelConfig[] = [];
+  moduleCategories: IModuleCategory[] = [];
   availableModules: IModule[] = [];
   requiredModules: Set<string> = new Set();
   aiVoices: string[] = [];
@@ -126,10 +127,16 @@ export class ProgramPageComponent implements OnInit {
 
   async getModules() {
     try {
-      this.availableModules = await this.api.get<IModule[]>('/modules');
+      const response = await this.api.get<IModulesResponse>('/modules');
+      this.moduleCategories = response.categories.sort((a, b) => a.order - b.order);
+      this.availableModules = response.modules;
     } catch (error: any) {
       this.notifications.error(error.message);
     }
+  }
+
+  getModulesByCategory(categoryId: string): IModule[] {
+    return this.availableModules.filter((m) => m.category === categoryId);
   }
 
   async getProgram(id: string) {

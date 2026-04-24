@@ -1,17 +1,29 @@
-import { IHardwareConnector } from '../types/hardware.js';
+import { defineModule, IModuleDeps } from '../types/module.js';
+
+export default defineModule({
+  id: 'distanceSensor',
+  name: 'Distance Sensor',
+  description: 'Detects obstacles and measures distance for collision avoidance.',
+  category: 'sensor',
+
+  tools: [
+    {
+      module: 'distanceSensor',
+      name: 'distanceSensor_getValue',
+      description: 'Get distance to obstacle in millimeters',
+      parameters: [],
+    },
+  ],
+
+  create(deps: IModuleDeps) {
+    return new DistanceSensor(deps);
+  },
+});
 
 class DistanceSensor {
-  private readonly moduleName: string;
-  private readonly connector: IHardwareConnector;
-
-  constructor(moduleName: string, connector: IHardwareConnector) {
-    this.moduleName = moduleName;
-    this.connector = connector;
-  }
+  constructor(private deps: IModuleDeps) {}
 
   getValue() {
-    return this.connector.sendCommand(this.moduleName, 'get');
+    return this.deps.picoConnector.sendCommand(this.deps.moduleId, 'get');
   }
 }
-
-export default DistanceSensor;

@@ -2,10 +2,24 @@ import { ChildProcessWithoutNullStreams, spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
+import { defineModule, IModuleDeps } from '../types/module.js';
 import { Logger } from '../services/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+export default defineModule({
+  id: 'speaker',
+  name: 'Speakers',
+  description: 'Allows the AI to speak using stereo speakers.',
+  category: 'media',
+
+  tools: [],
+
+  create(_deps: IModuleDeps) {
+    return new SpeakerController();
+  },
+});
 
 class SpeakerController {
   private playerProcess: ChildProcessWithoutNullStreams | null = null;
@@ -86,5 +100,3 @@ class SpeakerController {
     });
   }
 }
-
-export default SpeakerController;

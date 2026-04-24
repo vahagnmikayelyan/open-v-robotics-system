@@ -5,7 +5,8 @@ export interface IHardwareConnector extends EventEmitter {
   sendCommand(moduleName: string, command: string, payload?: Record<string, unknown>): Promise<unknown>;
 }
 
-export interface IHardwareController {
+export interface IModuleController {
   modules: Record<string, any>;
   runCommand(moduleName: string, command: string, payload?: Record<string, unknown>): Promise<unknown>;
+  on(event: string, listener: (...args: any[]) => void): this;
 }

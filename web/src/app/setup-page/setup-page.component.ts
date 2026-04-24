@@ -1,15 +1,16 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { NotificationService } from '../../services/notification.service';
-import { IConfig } from '../../models/models';
+import { IConfig, IConfigGroup, IConfigResponse } from '../../models/models';
 import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'setup-page',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './setup-page.component.html',
   styleUrl: './setup-page.component.less',
 })
@@ -18,7 +19,8 @@ export class SetupPageComponent implements OnInit {
   private notifications = inject(NotificationService);
 
   platformVersion = signal<string>('');
-  configs = signal<Record<IConfig['key'], IConfig['value']>>({});
+  configs = signal<Record<string, unknown>>({});
+  schema = signal<IConfigGroup[]>([]);
 
   ngOnInit() {
     this.getConfigs();
@@ -27,12 +29,13 @@ export class SetupPageComponent implements OnInit {
 
   async getConfigs() {
     try {
-      const configs = await this.api.get<IConfig[]>('/config');
-      const uiConfigs = configs.reduce((acc: Record<IConfig['key'], IConfig['value']>, item) => {
+      const response = await this.api.get<IConfigResponse>('/config');
+      const uiConfigs = response.configs.reduce((acc: Record<string, unknown>, item) => {
         acc[item.key] = item.value;
         return acc;
       }, {});
       this.configs.set(uiConfigs);
+      this.schema.set(response.schema);
     } catch (error: any) {
       this.notifications.error(error.message);
     }
