@@ -42,4 +42,8 @@
 
   </div>
 
+  <div class="media-overlay" *ngIf="displayMedia() as media" (dblclick)="onDoubleClick()">
+    <img *ngIf="media.type === 'image'" [src]="media.url" class="fullscreen-image" />
+  </div>
+
 </div>

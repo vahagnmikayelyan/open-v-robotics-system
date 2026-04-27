@@ -14,6 +14,7 @@ import thermalSensor from './thermal-sensor.js';
 import cameraController from './camera-controller.js';
 import speakerController from './speaker-controller.js';
 import microphoneController from './microphone-controller.js';
+import imageGenerator from './image-generator.js';
 
 export const moduleCategories: IModuleCategory[] = [
   {
@@ -50,6 +51,7 @@ export const moduleRegistry: IModuleDefinition[] = [
   cameraController,
   speakerController,
   microphoneController,
+  imageGenerator,
 ];
 
 /** Module metadata for REST API GET /api/modules and UI */

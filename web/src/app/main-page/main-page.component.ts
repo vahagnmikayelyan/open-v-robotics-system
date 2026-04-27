@@ -21,6 +21,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
   isBlinking = signal(false);
   batteryLevel = signal(0);
   runningProgram = signal<IProgram | null>(null);
+  displayMedia = signal<{ type: 'image' | 'video' | 'map'; url: string } | null>(null);
 
   private blinkTimer: any;
   private idleTimer: any;
@@ -53,6 +54,12 @@ export class MainPageComponent implements OnInit, OnDestroy {
 
     this.uiSocketService.onModuleEvent.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
       console.log('Module event:', event);
+      if (event.command === 'showImage') {
+        const url = event.params['url'] as string;
+        this.displayMedia.set({ type: 'image', url });
+      } else if (event.command === 'clearScreen') {
+        this.displayMedia.set(null);
+      }
     });
   }
 

@@ -11,6 +11,8 @@ import SystemController from './services/system-controller.js';
 import SocketHandler from './services/socket-handler.js';
 import SqliteClient from './database/sqlite-client.js';
 import ApiHandler from './services/api-handler.js';
+import ConfigController from './services/config-controller.js';
+import ConfigRepository from './repositories/sqlite/config-repository.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const baseDirectory = path.dirname(path.resolve(__filename, '..'));
@@ -20,8 +22,9 @@ const server = createServer({}, app);
 
 const dbClient = new SqliteClient(path.join(baseDirectory, config.sqLiteDBPath), defaultSettings);
 
-const moduleController = new ModuleController();
-const systemController = new SystemController(dbClient.getInstance(), moduleController);
+const configController = new ConfigController(new ConfigRepository(dbClient.getInstance()));
+const moduleController = new ModuleController(configController);
+const systemController = new SystemController(dbClient.getInstance(), moduleController, configController);
 
 ApiHandler(app, dbClient.getInstance());
 SocketHandler(server, moduleController, systemController);
