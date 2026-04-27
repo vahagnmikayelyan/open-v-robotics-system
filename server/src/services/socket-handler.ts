@@ -37,6 +37,10 @@ const SocketHandler = (server: Server, moduleController: IModuleController, syst
       socket.emit('moduleEvent', data);
     });
 
+    moduleController.on('systemError', (message: string) => {
+      socket.emit('systemError', message);
+    });
+
     systemController.on('AISystemMessage', (message: string) => {
       socket.emit('aiMessage', message);
     });

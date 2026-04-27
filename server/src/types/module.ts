@@ -22,6 +22,7 @@ export interface IModuleDeps {
   picoConnector: IHardwareConnector;
   getConfig: (key: string) => unknown;
   emitToUI: (command: string, params?: Record<string, unknown>) => void;
+  emitSystemError: (message: string) => void;
 }
 
 export interface IModuleDefinition {

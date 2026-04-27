@@ -23,12 +23,12 @@ class SystemController extends EventEmitter implements ISystemController {
   private allowedModules: Set<string> = new Set();
   private runningProgram: IProgram | null = null;
 
-  constructor(dbClient: SqliteClient['db'], moduleController: IModuleController) {
+  constructor(dbClient: SqliteClient['db'], moduleController: IModuleController, configController: ConfigController) {
     super();
 
     this.moduleController = moduleController;
+    this.configController = configController;
     this.programController = new ProgramController(new ProgramRepository(dbClient));
-    this.configController = new ConfigController(new ConfigRepository(dbClient));
   }
 
   async runProgram(programId: number) {
