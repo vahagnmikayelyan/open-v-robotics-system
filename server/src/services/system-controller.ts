@@ -12,7 +12,6 @@ import { createAIController } from '../ai/ai-registry.js';
 import EventEmitter from 'events';
 import { IConfigController } from '../types/config.js';
 import ConfigController from './config-controller.js';
-import ConfigRepository from '../repositories/sqlite/config-repository.js';
 import { availableAIModels } from '../configs/ai-models.js';
 
 class SystemController extends EventEmitter implements ISystemController {
