@@ -397,3 +397,75 @@ pm2 startup
 | `pm2 logs --err` | View only error logs |
 | `pm2 flush` | Clear the log history |
 | `pm2 restart all` | Force restart the backend |
+
+
+## Enabling Kiosk Mode
+
+Kiosk mode launches Chromium in full-screen on boot, pointed at the local server — no taskbar, no cursor, no browser chrome.
+
+> This setup was tested on **Raspberry Pi 5** running **Debian GNU/Linux 13 (trixie)** with **LightDM** display manager and **labwc** Wayland compositor (the default Raspberry Pi OS desktop stack).
+
+### Prerequisites
+
+Chromium is pre-installed on Raspberry Pi OS. Verify it is present:
+
+```bash
+which chromium
+# Expected: /usr/bin/chromium
+```
+
+> **Note:** Raspberry Pi OS enables desktop auto-login by default — no configuration needed.
+
+### 1. Configure labwc Autostart
+
+labwc reads `~/.config/labwc/autostart` on session start. Edit or create it:
+
+```bash
+nano ~/.config/labwc/autostart
+```
+
+Paste the following content:
+
+```bash
+# Prevent display from going blank or sleeping
+wlopm --on HDMI-A-1 2>/dev/null || true
+
+# Wait for PM2 Node.js server to be ready on port 3000
+sleep 8
+
+# Launch Chromium in kiosk mode (Wayland native)
+/usr/bin/chromium \
+  --noerrdialogs \
+  --disable-infobars \
+  --kiosk \
+  --no-first-run \
+  --disable-session-crashed-bubble \
+  --disable-restore-session-state \
+  --ozone-platform=wayland \
+  --enable-features=OverlayScrollbar \
+  --disable-pinch \
+  --overscroll-history-navigation=0 \
+  --autoplay-policy=no-user-gesture-required \
+  --disable-sync \
+  --password-store=basic \
+  --use-mock-keychain \
+  --no-default-browser-check \
+  --disable-features=PasswordLeakDetection \
+  http://localhost:3000 &
+```
+
+Save and close (`Ctrl + O`, `Enter`, `Ctrl + X`).
+
+> **Why these flags?**
+> - `--ozone-platform=wayland` — runs Chromium natively under Wayland (no XWayland)
+> - `--disable-sync`, `--password-store=basic`, `--use-mock-keychain` — suppresses the Chrome password pairing/keyring dialog on first launch
+> - `--disable-pinch`, `--overscroll-history-navigation=0` — prevents accidental swipe navigation on touchscreens
+> - `sleep 8` — gives PM2 time to fully start the Node.js server before Chromium opens
+
+### 2. Reboot
+
+```bash
+sudo reboot
+```
+
+> **Tip:** To exit kiosk mode temporarily, press `Alt + F4` to close Chromium.
