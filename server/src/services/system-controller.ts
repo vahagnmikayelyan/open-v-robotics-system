@@ -54,7 +54,9 @@ class SystemController extends EventEmitter implements ISystemController {
         return Promise.reject('AI model not found');
       }
 
-      const tools: IToolDeclaration[] = getAllToolDeclarations().filter((tool) => this.allowedModules.has(tool.module));
+      this.moduleController.setActiveProgramConfigs(program.moduleConfigs || {});
+
+      const tools: IToolDeclaration[] = getAllToolDeclarations(this.allowedModules, program.moduleConfigs || {});
 
       const apiKeyConfig = this.configController.getConfig(aiModel.apiKeySetting, '');
 

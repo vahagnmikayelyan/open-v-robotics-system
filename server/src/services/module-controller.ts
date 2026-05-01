@@ -8,6 +8,7 @@ import ConfigController from './config-controller.js';
 
 class ModuleController extends EventEmitter implements IModuleController {
   private readonly picoConnector: IHardwareConnector;
+  private activeProgramConfigs: Record<string, unknown> = {};
   modules: Record<string, any>;
 
   constructor(private configController: ConfigController) {
@@ -21,6 +22,7 @@ class ModuleController extends EventEmitter implements IModuleController {
         moduleId: def.id,
         picoConnector: this.picoConnector,
         getConfig: (key: string) => this.configController.getConfig(key),
+        getProgramConfig: (key: string) => this.activeProgramConfigs[`${def.id}_${key}`],
         emitToUI: (command: string, params?: Record<string, unknown>) => {
           this.emit('moduleEvent', { module: def.id, command, params: params ?? {} });
         },
@@ -37,6 +39,10 @@ class ModuleController extends EventEmitter implements IModuleController {
     });
 
     this.picoConnector.init();
+  }
+
+  setActiveProgramConfigs(configs: Record<string, unknown>) {
+    this.activeProgramConfigs = configs;
   }
 
   runCommand(module: string, command: string, params: Record<string, unknown>) {

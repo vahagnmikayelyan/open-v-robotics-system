@@ -8,6 +8,7 @@ interface IDbProgramRow {
   systemInstruction: string;
   voice: string;
   modules: string;
+  moduleConfigs: string;
   addTime: string;
   editTime: string;
 }
@@ -20,6 +21,7 @@ function rowToProgram(row: IDbProgramRow): IProgram {
     systemInstruction: row.systemInstruction,
     voice: row.voice,
     modules: JSON.parse(row.modules || '[]') as string[],
+    moduleConfigs: JSON.parse(row.moduleConfigs || '{}') as Record<string, unknown>,
     addTime: row.addTime,
     editTime: row.editTime,
   };
@@ -44,20 +46,22 @@ class ProgramRepository implements IProgramRepository {
   }
 
   create(data: IProgram) {
-    const insert = this.db.prepare(`INSERT INTO programs (name, aiModel, systemInstruction, modules, voice)
-                                    VALUES (?, ?, ?, ?, ?)`);
+    const insert = this.db.prepare(`INSERT INTO programs (name, aiModel, systemInstruction, modules, moduleConfigs, voice)
+                                    VALUES (?, ?, ?, ?, ?, ?)`);
     const modulesJson = JSON.stringify(data.modules || []);
-    const result = insert.run(data.name, data.aiModel, data.systemInstruction, modulesJson, data.voice);
+    const moduleConfigsJson = JSON.stringify(data.moduleConfigs || {});
+    const result = insert.run(data.name, data.aiModel, data.systemInstruction, modulesJson, moduleConfigsJson, data.voice);
 
     return { ...data, id: Number(result.lastInsertRowid) };
   }
 
   update(id: number, data: IProgram) {
     const updateStmt = this.db.prepare(
-      `UPDATE programs SET name = ?, aiModel = ?, systemInstruction = ?, modules = ?, voice = ? WHERE id = ?`,
+      `UPDATE programs SET name = ?, aiModel = ?, systemInstruction = ?, modules = ?, moduleConfigs = ?, voice = ? WHERE id = ?`,
     );
     const modulesJson = JSON.stringify(data.modules || []);
-    const result = updateStmt.run(data.name, data.aiModel, data.systemInstruction, modulesJson, data.voice, id);
+    const moduleConfigsJson = JSON.stringify(data.moduleConfigs || {});
+    const result = updateStmt.run(data.name, data.aiModel, data.systemInstruction, modulesJson, moduleConfigsJson, data.voice, id);
     return result.changes > 0;
   }
 

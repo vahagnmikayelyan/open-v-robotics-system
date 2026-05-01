@@ -5,6 +5,7 @@ export interface IProgram {
   systemInstruction: string;
   voice: string;
   modules: string[];
+  moduleConfigs: Record<string, unknown>;
   addTime: string;
   editTime: string;
 }

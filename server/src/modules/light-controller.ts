@@ -6,7 +6,7 @@ export default defineModule({
   description: 'Controls external LEDs and visual indicators.',
   category: 'actuator',
 
-  tools: [
+  getTools: () => [
     {
       module: 'light',
       name: 'light_turnOn',

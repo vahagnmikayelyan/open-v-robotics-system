@@ -2,15 +2,26 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NgIf, NgFor, UpperCasePipe } from '@angular/common';
+import { LucideAngularModule, Settings } from 'lucide-angular';
 import { IAIModelConfig, IModule, IModuleCategory, IProgram } from '../../models/models';
 import { ApiService } from '../../services/api.service';
 import { UiLoaderComponent } from '../../components/ui-loader/ui-loader.component';
+import { ConfigFieldComponent } from '../../components/config-field/config-field.component';
 import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'program-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, UiLoaderComponent, NgIf, NgFor, UpperCasePipe],
+  imports: [
+    FormsModule,
+    RouterLink,
+    UiLoaderComponent,
+    ConfigFieldComponent,
+    NgIf,
+    NgFor,
+    UpperCasePipe,
+    LucideAngularModule,
+  ],
   templateUrl: './program-page.component.html',
   styleUrl: './program-page.component.less',
 })
@@ -29,6 +40,7 @@ export class ProgramPageComponent implements OnInit {
     aiModel: '',
     voice: '',
     modules: [],
+    moduleConfigs: {},
   });
 
   aiModels: IAIModelConfig[] = [];
@@ -36,6 +48,9 @@ export class ProgramPageComponent implements OnInit {
   availableModules: IModule[] = [];
   requiredModules: Set<string> = new Set();
   aiVoices: string[] = [];
+  expandedSettings = signal<Set<string>>(new Set());
+
+  readonly LucideIcons = { Settings };
 
   constructor() {}
 
@@ -106,14 +121,39 @@ export class ProgramPageComponent implements OnInit {
   toggleModule(moduleId: string, isChecked: boolean) {
     this.program.update((prog) => {
       let updatedModules = [...prog.modules];
+      let moduleConfigs = { ...prog.moduleConfigs };
 
       if (isChecked && !updatedModules.includes(moduleId)) {
         updatedModules.push(moduleId);
+
+        // Initialize default configs if module has them and they aren't set
+        const module = this.availableModules.find((m) => m.id === moduleId);
+        if (module?.programConfigs?.length) {
+          module.programConfigs.forEach((cfg) => {
+            const key = `${moduleId}_${cfg.key}`;
+            if (moduleConfigs[key] === undefined && cfg.defaultValue !== undefined) {
+              moduleConfigs[key] = cfg.defaultValue;
+            }
+          });
+        }
       } else if (!isChecked) {
         updatedModules = updatedModules.filter((id) => id !== moduleId);
+        this.expandedSettings.update((s) => {
+          const next = new Set(s);
+          next.delete(moduleId);
+          return next;
+        });
       }
 
-      return { ...prog, modules: updatedModules };
+      return { ...prog, modules: updatedModules, moduleConfigs };
+    });
+  }
+
+  toggleSettings(moduleId: string) {
+    this.expandedSettings.update((s) => {
+      const next = new Set(s);
+      next.has(moduleId) ? next.delete(moduleId) : next.add(moduleId);
+      return next;
     });
   }
 

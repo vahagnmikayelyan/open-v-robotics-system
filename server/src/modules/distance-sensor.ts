@@ -6,7 +6,7 @@ export default defineModule({
   description: 'Detects obstacles and measures distance for collision avoidance.',
   category: 'sensor',
 
-  tools: [
+  getTools: () => [
     {
       module: 'distanceSensor',
       name: 'distanceSensor_getValue',

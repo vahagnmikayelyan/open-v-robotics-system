@@ -9,7 +9,7 @@ export default defineModule({
   description: 'Enables using Camera.',
   category: 'media',
 
-  tools: [
+  getTools: () => [
     {
       module: 'camera',
       name: 'camera_takePhoto',

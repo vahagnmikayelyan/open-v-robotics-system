@@ -6,7 +6,7 @@ export default defineModule({
   description: 'Monitors system and environmental temperatures.',
   category: 'sensor',
 
-  tools: [
+  getTools: () => [
     {
       module: 'thermalSensor',
       name: 'thermalSensor_getValue',

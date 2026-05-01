@@ -6,7 +6,7 @@ export default defineModule({
   description: 'Allows the AI to move the head for tracking.',
   category: 'actuator',
 
-  tools: [
+  getTools: () => [
     {
       module: 'headServo',
       name: 'headServo_rotate',

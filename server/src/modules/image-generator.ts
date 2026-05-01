@@ -4,7 +4,7 @@ import { defineModule, IModuleDeps } from '../types/module.js';
 export default defineModule({
   id: 'imageGenerator',
   name: 'Fal AI Image Generator',
-  description: "Generates images from text prompts using FLUX.1 [schnell] and displays them on the robot's screen.",
+  description: "Generates images from text prompts using Fal AI models and displays them on the robot's screen.",
   category: 'service',
   moduleConfigs: [
     {
@@ -14,8 +14,41 @@ export default defineModule({
       type: 'text',
     },
   ],
+  programConfigs: [
+    {
+      key: 'fal_ai_model',
+      label: 'Image Model',
+      type: 'select',
+      defaultValue: 'fal-ai/flux/schnell',
+      options: [
+        { label: 'FLUX.1 [schnell]', value: 'fal-ai/flux/schnell' },
+        { label: 'FLUX.1 [dev]', value: 'fal-ai/flux/dev' },
+        { label: 'FLUX.1 [pro]', value: 'fal-ai/flux-pro/v1.1' },
+      ],
+    },
+    {
+      key: 'image_size',
+      label: 'Image Size',
+      type: 'select',
+      defaultValue: 'landscape_4_3',
+      options: [
+        { label: 'Landscape (4:3)', value: 'landscape_4_3' },
+        { label: 'Landscape (16:9)', value: 'landscape_16_9' },
+        { label: 'Square HD', value: 'square_hd' },
+        { label: 'Portrait (3:4)', value: 'portrait_4_3' },
+        { label: 'Portrait (9:16)', value: 'portrait_16_9' },
+      ],
+    },
+    {
+      key: 'num_inference_steps',
+      label: 'Inference Steps',
+      type: 'number',
+      defaultValue: 4,
+      hint: 'Use ~4 for Schnell, ~28 for Dev/Pro',
+    },
+  ],
 
-  tools: [
+  getTools: () => [
     {
       module: 'imageGenerator',
       name: 'imageGenerator_generateImage',
@@ -44,7 +77,7 @@ export default defineModule({
 });
 
 class ImageGeneratorModule {
-  constructor(private deps: IModuleDeps) {}
+  constructor(private deps: IModuleDeps) { }
 
   async generateImage({ prompt }: { prompt: string }) {
     if (!prompt) {
@@ -61,11 +94,15 @@ class ImageGeneratorModule {
     try {
       fal.config({ credentials: apiKey as string });
 
-      const result = await fal.subscribe('fal-ai/flux/schnell', {
+      const model = (this.deps.getProgramConfig('fal_ai_model') as string) || 'fal-ai/flux/schnell';
+      const imageSize = (this.deps.getProgramConfig('image_size') as string) || 'landscape_4_3';
+      const numInferenceSteps = Number(this.deps.getProgramConfig('num_inference_steps')) || 4;
+
+      const result = await fal.subscribe(model as any, {
         input: {
           prompt,
-          image_size: 'landscape_4_3',
-          num_inference_steps: 4,
+          image_size: imageSize,
+          num_inference_steps: numInferenceSteps,
           num_images: 1,
           enable_safety_checker: true,
         },
@@ -80,7 +117,8 @@ class ImageGeneratorModule {
       const data = result.data as any;
 
       if (!data.images || !data.images[0]) {
-        throw new Error('No image returned from Fal API.');
+        this.deps.emitSystemError('Image generation failed: No image returned from Fal API.');
+        return { success: false, message: 'No image returned from Fal API.' };
       }
 
       const imageUrl = data.images[0].url;

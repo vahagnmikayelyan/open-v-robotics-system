@@ -14,7 +14,7 @@ export default defineModule({
   description: 'Allows the AI to speak using stereo speakers.',
   category: 'media',
 
-  tools: [],
+  getTools: () => [],
 
   create(_deps: IModuleDeps) {
     return new SpeakerController();

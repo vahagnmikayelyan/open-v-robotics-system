@@ -93,89 +93,92 @@ body {
 
 /* --- GLOBAL NAVIGATION BUTTONS --- */
 .nav-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    height: 32px;
-    padding: 0 10px;
-    background: rgba(30, 30, 30, 0.8);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    color: var(--text-control);
-    font-family: var(--font-mono), monospace;
-    font-size: 0.9rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-decoration: none;
-    cursor: pointer;
-    user-select: none;
-    transition: all 0.2s ease-out;
-    position: relative;
-    overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 10px;
+  background: rgba(30, 30, 30, 0.8);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-control);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease-out;
+  position: relative;
+  overflow: hidden;
+
+  &:active {
+    transform: scale(0.96);
+    background: #333;
+    color: #fff;
+    border-color: #666;
+  }
+
+  &.back {
+    justify-content: flex-start;
+    border-color: #555;
+    background: linear-gradient(90deg, #222 0%, #111 100%);
+
+    &::before {
+      content: '‹';
+      font-size: 1.8rem;
+      margin-right: 5px;
+      margin-top: -4px;
+      color: var(--primary-color);
+    }
 
     &:active {
-        transform: scale(0.96);
-        background: #333;
+      border-color: var(--primary-color);
+
+      &::before {
         color: #fff;
-        border-color: #666;
+      }
     }
+  }
 
-    &.back {
-        justify-content: flex-start;
-        border-color: #555;
-        background: linear-gradient(90deg, #222 0%, #111 100%);
+  &.primary {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.1);
 
-        &::before {
-            content: '‹';
-            font-size: 1.8rem;
-            margin-right: 5px;
-            margin-top: -4px;
-            color: var(--primary-color);
-        }
-
-        &:active {
-            border-color: var(--primary-color);
-            &::before { color: #fff; }
-        }
+    &:active {
+      background: rgba(0, 212, 255, 0.3);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
     }
+  }
 
-    &.primary {
-        background: rgba(0, 212, 255, 0.1);
-        border-color: var(--primary-color);
-        color: var(--primary-color);
-        box-shadow: 0 0 10px rgba(0, 212, 255, 0.1);
+  &.danger {
+    background: rgba(255, 68, 68, 0.1);
+    border-color: var(--danger-color);
+    color: var(--danger-color);
 
-        &:active {
-            background: rgba(0, 212, 255, 0.3);
-            color: #fff;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
-        }
+    &:active {
+      background: rgba(255, 68, 68, 0.3);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(255, 68, 68, 0.4);
     }
+  }
 
-    &.danger {
-        background: rgba(255, 68, 68, 0.1);
-        border-color: var(--danger-color);
-        color: var(--danger-color);
+  &.ghost {
+    background: transparent;
+    border-color: transparent;
+    color: #666;
 
-        &:active {
-            background: rgba(255, 68, 68, 0.3);
-            color: #fff;
-            box-shadow: 0 0 15px rgba(255, 68, 68, 0.4);
-        }
+    &:active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
     }
-
-    &.ghost {
-        background: transparent;
-        border-color: transparent;
-        color: #666;
-
-        &:active {
-            color: #fff;
-            background: rgba(255,255,255,0.05);
-        }
-    }
+  }
 }
 
 /* --- Header / Status Bar --- */
@@ -248,7 +251,6 @@ header {
   }
 
   .widget-content {
-
   }
 
   &.active {
@@ -365,8 +367,61 @@ lucide-icon {
 }
 
 .loader-wrapper {
-    flex-grow: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- Toggle switch (reusable) --- */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--slider-track-background);
+    transition: .4s;
+    border-radius: 34px;
+    border: 1px solid var(--slider-track-border);
+
+    &:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: var(--text-primary);
+      transition: .4s;
+      border-radius: 50%;
+    }
+  }
+
+  input:checked + .slider {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+
+  input:disabled + .slider {
+    background-color: var(--disabled-color);
+    border-color: var(--disabled-color);
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(22px);
+  }
 }

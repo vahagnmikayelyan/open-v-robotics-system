@@ -6,11 +6,12 @@ import { ApiService } from '../../services/api.service';
 import { NotificationService } from '../../services/notification.service';
 import { IConfig, IConfigGroup, IConfigResponse } from '../../models/models';
 import { environment } from '../../environments/environment';
+import { ConfigFieldComponent } from '../../components/config-field/config-field.component';
 
 @Component({
   selector: 'setup-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, ConfigFieldComponent],
   templateUrl: './setup-page.component.html',
   styleUrl: './setup-page.component.less',
 })
@@ -39,6 +40,10 @@ export class SetupPageComponent implements OnInit {
     } catch (error: any) {
       this.notifications.error(error.message);
     }
+  }
+
+  updateConfig(key: string, value: unknown) {
+    this.configs.update((current) => ({ ...current, [key]: value }));
   }
 
   async save() {

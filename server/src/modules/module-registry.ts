@@ -56,18 +56,21 @@ export const moduleRegistry: IModuleDefinition[] = [
 
 /** Module metadata for REST API GET /api/modules and UI */
 export function getAllModuleMetadata() {
-  return moduleRegistry.map(({ id, name, description, category, moduleConfigs }) => ({
+  return moduleRegistry.map(({ id, name, description, category, moduleConfigs, programConfigs }) => ({
     id,
     name,
     description,
     category,
     moduleConfigs: moduleConfigs ?? [],
+    programConfigs: programConfigs ?? [],
   }));
 }
 
 /** Tool declarations for AI function calling */
-export function getAllToolDeclarations(): IToolDeclaration[] {
-  return moduleRegistry.flatMap((m) => m.tools);
+export function getAllToolDeclarations(allowedModules: Set<string>, programConfigs: Record<string, unknown>): IToolDeclaration[] {
+  return moduleRegistry
+    .filter((m) => allowedModules.has(m.id))
+    .flatMap((m) => m.getTools(programConfigs));
 }
 
 /** Config groups for all modules (for settings page) */
