@@ -21,9 +21,11 @@ export interface IConfigItem {
   key: string;
   label: string;
   hint?: string;
-  type?: 'text' | 'number' | 'range' | 'password';
+  type?: 'text' | 'number' | 'range' | 'password' | 'select' | 'toggle';
   min?: number;
   max?: number;
+  defaultValue?: unknown;
+  options?: { label: string; value: string }[];
 }
 
 export interface IConfigGroup {
@@ -62,6 +64,7 @@ export interface IProgram {
   aiModel: string;
   voice: string;
   modules: string[];
+  moduleConfigs: Record<string, unknown>;
 }
 
 export interface IModule {
@@ -70,6 +73,7 @@ export interface IModule {
   description: string;
   category: 'sensor' | 'actuator' | 'media' | 'service';
   moduleConfigs: IConfigItem[];
+  programConfigs: IConfigItem[];
 }
 
 export interface IModuleCategory {

@@ -15,7 +15,7 @@ export default defineModule({
   description: 'Enables microphones.',
   category: 'media',
 
-  tools: [],
+  getTools: () => [],
 
   create(_deps: IModuleDeps) {
     return new MicrophoneController();

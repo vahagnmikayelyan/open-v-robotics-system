@@ -14,26 +14,15 @@
 
     <div class="form-group">
       <label>PROGRAM NAME</label>
-      <input type="text"
-             name="progName"
-             [(ngModel)]="program().name"
-             required
-             #nameField="ngModel"
-             placeholder="e.g. Home Guard"
-             class="input-dark"
-             [class.error]="nameField.invalid && nameField.touched">
+      <input type="text" name="progName" [(ngModel)]="program().name" required #nameField="ngModel"
+             placeholder="e.g. Home Guard" class="input-dark" [class.error]="nameField.invalid && nameField.touched">
       <div *ngIf="nameField.invalid && nameField.touched" class="error-msg">Name is required.</div>
     </div>
 
     <div class="form-group">
       <label>SYSTEM INSTRUCTION</label>
-      <textarea name="progInstruction"
-                [(ngModel)]="program().systemInstruction"
-                required
-                #instructionField="ngModel"
-                rows="6"
-                placeholder="You are a helpful robot assistant..."
-                class="input-dark"
+      <textarea name="progInstruction" [(ngModel)]="program().systemInstruction" required #instructionField="ngModel"
+                rows="6" placeholder="You are a helpful robot assistant..." class="input-dark"
                 [class.error]="instructionField.invalid && instructionField.touched"></textarea>
 
       <div *ngIf="instructionField.invalid && instructionField.touched" class="error-msg">Instruction cannot be empty.
@@ -43,13 +32,8 @@
     <div class="form-group">
       <label>AI MODEL</label>
       <div class="select-wrapper">
-        <select name="progAiModel"
-                [(ngModel)]="program().aiModel"
-                required
-                #aiModelField="ngModel"
-                class="input-dark"
-                (ngModelChange)="onAIModelChange($event)"
-                [class.error]="aiModelField.invalid && aiModelField.touched">
+        <select name="progAiModel" [(ngModel)]="program().aiModel" required #aiModelField="ngModel" class="input-dark"
+                (ngModelChange)="onAIModelChange($event)" [class.error]="aiModelField.invalid && aiModelField.touched">
 
           <option value="" disabled *ngIf="!program().aiModel">Select an AI model...</option>
 
@@ -68,13 +52,8 @@
     <div class="form-group" *ngIf="aiVoices.length > 0">
       <label>VOICE</label>
       <div class="select-wrapper">
-        <select
-          name="progVoice"
-          [(ngModel)]="program().voice"
-          required
-          #voiceField="ngModel"
-          class="input-dark"
-          [class.error]="voiceField.invalid && voiceField.touched">
+        <select name="progVoice" [(ngModel)]="program().voice" required #voiceField="ngModel" class="input-dark"
+                [class.error]="voiceField.invalid && voiceField.touched">
 
           <option value="" disabled *ngIf="!program().voice">Select a voice...</option>
           <option *ngFor="let v of aiVoices" [value]="v">{{ v }}</option>
@@ -92,18 +71,37 @@
         <div class="sub">{{ cat.description }}</div>
       </div>
 
-      <div class="form-group row" *ngFor="let module of getModulesByCategory(cat.id)">
-        <div class="lbl-grp">
-          <label>{{ module.name }}</label>
-          <div class="sub">{{ module.description }}</div>
+      <ng-container *ngFor="let module of getModulesByCategory(cat.id)">
+        <div class="form-group row">
+          <div class="lbl-grp">
+            <label>{{ module.name }}</label>
+            <div class="sub">{{ module.description }}</div>
+          </div>
+
+          <div class="module-controls">
+            <button *ngIf="module?.programConfigs?.length" type="button" class="settings-btn"
+                    (click)="toggleSettings(module.id)" [class.active]="expandedSettings().has(module.id)"
+                    [disabled]="!hasModule(module.id)">
+              <lucide-icon [img]="LucideIcons.Settings"></lucide-icon>
+            </button>
+
+            <label class="toggle-switch">
+              <input type="checkbox" [checked]="hasModule(module.id)" [disabled]="isRequiredModule(module.id)"
+                     (change)="toggleModule(module.id, $any($event.target).checked)">
+              <span class="slider"></span>
+            </label>
+          </div>
         </div>
 
-        <label class="toggle-switch">
-          <input type="checkbox" [checked]="hasModule(module.id)" [disabled]="isRequiredModule(module.id)"
-                 (change)="toggleModule(module.id, $any($event.target).checked)">
-          <span class="slider"></span>
-        </label>
-      </div>
+        <!-- Module Settings Section -->
+        <div class="module-settings-panel" *ngIf="expandedSettings().has(module.id)">
+          <config-field *ngFor="let config of module.programConfigs" [config]="config"
+                        [name]="'config_' + module.id + '_' + config.key" [required]="hasModule(module.id)"
+                        [(ngModel)]="program().moduleConfigs[module.id + '_' + config.key]">
+          </config-field>
+        </div>
+        <!-- End Module Settings -->
+      </ng-container>
     </div>
 
   </div>

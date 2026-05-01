@@ -1,0 +1,41 @@
+<div class="config-field">
+
+  <div class="config-label">
+    <span class="config-label-text">{{ config.label }}</span>
+    <span class="config-hint" *ngIf="config.hint">{{ config.hint }}</span>
+  </div>
+
+  <div class="config-control">
+
+    <!-- Text / Password -->
+    <input *ngIf="isText" [type]="config.type === 'password' ? 'password' : 'text'" class="config-input"
+           [name]="name" [(ngModel)]="value" [required]="required" (blur)="onInputBlur()" autocomplete="off">
+
+    <!-- Number -->
+    <input *ngIf="isNumber" type="number" class="config-input" [name]="name" [(ngModel)]="value"
+           [required]="required" (blur)="onInputBlur()" autocomplete="off">
+
+    <!-- Range slider -->
+    <ng-container *ngIf="isRange">
+      <span class="config-range-value">{{ value ?? config.defaultValue ?? config.min ?? 0 }}%</span>
+      <input type="range" class="range-input" [name]="name" [min]="config.min ?? 0" [max]="config.max ?? 100"
+             [(ngModel)]="value" autocomplete="off">
+    </ng-container>
+
+    <!-- Select dropdown -->
+    <div *ngIf="isSelect" class="config-select-wrapper">
+      <select class="config-input config-select" [name]="name" [(ngModel)]="value" [required]="required"
+              (blur)="onInputBlur()">
+        <option *ngFor="let opt of config.options" [value]="opt.value">{{ opt.label }}</option>
+      </select>
+      <span class="config-select-arrow">▼</span>
+    </div>
+
+    <!-- Toggle switch -->
+    <label *ngIf="isToggle" class="toggle-switch">
+      <input type="checkbox" [name]="name" [(ngModel)]="value">
+      <span class="slider"></span>
+    </label>
+
+  </div>
+</div>

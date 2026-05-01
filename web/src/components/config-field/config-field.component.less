@@ -1,0 +1,99 @@
+:host {
+  display: block;
+
+  &:first-child .config-field {
+    padding-top: 0;
+  }
+
+  &:last-child .config-field {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.config-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+  gap: 15px;
+}
+
+.config-label {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  flex-grow: 1;
+}
+
+.config-label-text {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+}
+
+.config-hint {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.config-control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 200px;
+  width: 50%;
+}
+
+/* --- Input (text, password, number) --- */
+.config-input {
+  width: 100%;
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  color: var(--primary-color);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.95rem;
+
+  &:focus {
+    outline: none;
+    border-color: var(--border-color-focus);
+  }
+}
+
+/* --- Range value display --- */
+.config-range-value {
+  font-family: var(--font-mono), monospace;
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 0.85rem;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* --- Select dropdown --- */
+.config-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.config-select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 35px;
+}
+
+.config-select-arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+  font-size: 0.7rem;
+}

@@ -17,6 +17,7 @@ const programsTableQuery = `
     aiModel TEXT,
     systemInstruction TEXT,
     modules TEXT DEFAULT '[]',
+    moduleConfigs TEXT DEFAULT '{}',
     voice TEXT NOT NULL DEFAULT '',
     addTime DATETIME DEFAULT CURRENT_TIMESTAMP,
     editTime DATETIME DEFAULT CURRENT_TIMESTAMP

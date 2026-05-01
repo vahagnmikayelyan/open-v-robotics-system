@@ -19,6 +19,7 @@ const programSchema = z
         }),
       )
       .default([]),
+    moduleConfigs: z.record(z.string(), z.unknown()).default({}),
   })
   .superRefine((data, ctx) => {
     const model = availableAIModels.find((m) => m.id === data.aiModel);

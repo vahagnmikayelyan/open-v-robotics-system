@@ -6,7 +6,7 @@ export default defineModule({
   description: 'Measures environmental illumination levels.',
   category: 'sensor',
 
-  tools: [
+  getTools: () => [
     {
       module: 'lightSensor',
       name: 'lightSensor_getValue',

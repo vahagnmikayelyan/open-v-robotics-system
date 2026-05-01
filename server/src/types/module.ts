@@ -5,9 +5,11 @@ export interface IConfigItem {
   key: string;
   label: string;
   hint?: string;
-  type?: 'text' | 'number' | 'range' | 'password';
+  type?: 'text' | 'number' | 'range' | 'password' | 'select' | 'toggle';
   min?: number;
   max?: number;
+  defaultValue?: unknown;
+  options?: { label: string; value: string }[];
 }
 
 export interface IModuleCategory {
@@ -21,6 +23,7 @@ export interface IModuleDeps {
   moduleId: string;
   picoConnector: IHardwareConnector;
   getConfig: (key: string) => unknown;
+  getProgramConfig: (key: string) => unknown;
   emitToUI: (command: string, params?: Record<string, unknown>) => void;
   emitSystemError: (message: string) => void;
 }
@@ -31,7 +34,8 @@ export interface IModuleDefinition {
   description: string;
   category: 'sensor' | 'actuator' | 'media' | 'service';
   moduleConfigs?: IConfigItem[];
-  tools: IToolDeclaration[];
+  programConfigs?: IConfigItem[];
+  getTools: (programConfig?: Record<string, unknown>) => IToolDeclaration[];
   create: (deps: IModuleDeps) => Record<string, any>;
 }
 

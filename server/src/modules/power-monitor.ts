@@ -6,7 +6,7 @@ export default defineModule({
   description: 'Monitors battery level and power consumption.',
   category: 'sensor',
 
-  tools: [
+  getTools: () => [
     {
       module: 'power',
       name: 'power_getValue',

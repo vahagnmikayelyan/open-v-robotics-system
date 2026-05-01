@@ -6,7 +6,7 @@ export default defineModule({
   description: 'Provides tilt, acceleration, and rotation telemetry.',
   category: 'sensor',
 
-  tools: [
+  getTools: () => [
     {
       module: 'inertialSensor',
       name: 'inertialSensor_getValue',

@@ -6,7 +6,7 @@ export default defineModule({
   description: 'Controls the fan for thermal management.',
   category: 'actuator',
 
-  tools: [
+  getTools: () => [
     {
       module: 'fan',
       name: 'fan_changeSpeed',

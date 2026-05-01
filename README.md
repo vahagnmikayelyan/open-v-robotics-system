@@ -114,7 +114,7 @@ export default defineModule({
   ],
   
   // AI capabilities automatically registered with the selected LLM
-  tools: [
+  getTools: () => [
     {
       module: 'weatherService',
       name: 'weatherService_getWeather',
@@ -272,7 +272,7 @@ Create a new configuration file:
 nano ~/.config/pipewire/pipewire.conf.d/20-webrtc-aec.conf
 ```
 Insert the following parameters:
-```json
+```conf
 context.modules = [
     {   name = libpipewire-module-echo-cancel
         args = {

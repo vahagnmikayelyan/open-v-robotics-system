@@ -6,7 +6,7 @@ export default defineModule({
   description: 'Allows the AI to control the chassis and navigate.',
   category: 'actuator',
 
-  tools: [
+  getTools: () => [
     {
       module: 'drive',
       name: 'drive_stop',
