@@ -1,7 +1,11 @@
-import { Component, DestroyRef, inject, signal, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal, OnDestroy, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { Volume1, Volume2, VolumeX, Power } from 'lucide-angular';
+import { LucideAngularModule } from 'lucide-angular';
 import { UiSocketService } from '../../services/ui-socket.service';
+import { ApiService } from '../../services/api.service';
+import { PromptButton, PromptService } from '../../services/prompt.service';
 import { BatteryStatusComponent } from '../../components/battery-status/battery-status.component';
 import { IProgram } from '../../models/models';
 import { NgIf } from '@angular/common';
@@ -9,13 +13,16 @@ import { NgIf } from '@angular/common';
 @Component({
   selector: 'main-page',
   standalone: true,
-  imports: [BatteryStatusComponent, NgIf],
+  imports: [BatteryStatusComponent, NgIf, LucideAngularModule],
   templateUrl: './main-page.component.html',
   styleUrl: './main-page.component.less',
 })
 export class MainPageComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
+  private api = inject(ApiService);
+  private prompt = inject(PromptService);
+  readonly LucideIcons = { Volume2, Volume1, VolumeX, Power };
 
   pupilOffset = signal({ x: 0, y: 0 });
   isBlinking = signal(false);
@@ -27,8 +34,14 @@ export class MainPageComponent implements OnInit, OnDestroy {
   private idleTimer: any;
   private holdTimer: any;
   private voltageTimer: any;
+  private volumePanelTimer: any;
+  private volumeDebounceTimer: any;
 
-  constructor(private uiSocketService: UiSocketService) {}
+  volumeLevel = signal(80);
+  isMuted = signal(false);
+  isVolumePanelOpen = signal(false);
+
+  constructor(private uiSocketService: UiSocketService) { }
 
   ngOnInit() {
     this.uiSocketService.onProgramChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
@@ -38,6 +51,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
     this.uiSocketService.onInit.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.getVoltageLevel();
       this.uiSocketService.getRunningProgram();
+      this.uiSocketService.sendCommand('speaker', 'getVolume', null);
     });
 
     this.uiSocketService.onCommandResult.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((commandResult) => {
@@ -45,12 +59,17 @@ export class MainPageComponent implements OnInit, OnDestroy {
         if (commandResult && commandResult.hasOwnProperty('module') && commandResult.module === 'power') {
           this.batteryLevel.set(commandResult.p);
         }
-      } catch (e) {}
+        if (commandResult && commandResult.hasOwnProperty('module') && commandResult.module === 'speaker') {
+          this.volumeLevel.set(commandResult.volume);
+          this.isMuted.set(commandResult.muted ?? false);
+        }
+      } catch (e) { }
     });
 
     this.startBlinkingLoop();
     this.getVoltageLevel();
     this.uiSocketService.getRunningProgram();
+    this.uiSocketService.sendCommand('speaker', 'getVolume', null);
 
     this.uiSocketService.onModuleEvent.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
       console.log('Module event:', event);
@@ -73,6 +92,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
     clearInterval(this.voltageTimer);
     clearInterval(this.blinkTimer);
     clearInterval(this.idleTimer);
+    this.clearVolumePanelTimer();
   }
 
   startHold() {
@@ -103,6 +123,69 @@ export class MainPageComponent implements OnInit, OnDestroy {
 
   stopRunningProgram() {
     this.uiSocketService.stopRunningProgram();
+  }
+
+  volumeIcon = computed(() => {
+    if (this.isMuted()) return this.LucideIcons.VolumeX;
+    const v = this.volumeLevel();
+    if (v < 70) return this.LucideIcons.Volume1;
+    return this.LucideIcons.Volume2;
+  });
+
+  toggleVolumePanel() {
+    const isOpen = this.isVolumePanelOpen();
+    this.isVolumePanelOpen.set(!isOpen);
+    if (!isOpen) {
+      this.resetVolumePanelTimer();
+    } else {
+      this.clearVolumePanelTimer();
+    }
+  }
+
+  onVolumeChange(event: Event) {
+    const value = parseInt((event.target as HTMLInputElement).value, 10);
+    this.volumeLevel.set(value);
+    this.resetVolumePanelTimer();
+
+    clearTimeout(this.volumeDebounceTimer);
+    this.volumeDebounceTimer = setTimeout(() => {
+      this.uiSocketService.sendCommand('speaker', 'setVolume', { volume: value });
+    }, 300);
+  }
+
+  toggleMute() {
+    this.uiSocketService.sendCommand('speaker', 'toggleMute', null);
+    this.resetVolumePanelTimer();
+  }
+
+  private resetVolumePanelTimer() {
+    this.clearVolumePanelTimer();
+    this.volumePanelTimer = setTimeout(() => {
+      this.isVolumePanelOpen.set(false);
+    }, 5000);
+  }
+
+  private clearVolumePanelTimer() {
+    if (this.volumePanelTimer) {
+      clearTimeout(this.volumePanelTimer);
+      this.volumePanelTimer = null;
+    }
+  }
+
+  openPowerMenu() {
+    this.prompt
+      .open('warning', 'Power Control', 'Select an action:', [
+        PromptButton.Restart,
+        PromptButton.PowerOff,
+        PromptButton.Cancel,
+      ])
+      .subscribe(async (button) => {
+        if (button === PromptButton.Restart) {
+          await this.api.post('/utils/reboot', {});
+        } else if (button === PromptButton.PowerOff) {
+          await this.api.post('/utils/power-off', {});
+        }
+      });
   }
 
   private startBlinkingLoop() {

@@ -97,14 +97,14 @@ body {
   align-items: center;
   justify-content: center;
   gap: 5px;
-  height: 32px;
-  padding: 0 10px;
+  height: 42px;
+  padding: 0 15px;
   background: rgba(30, 30, 30, 0.8);
   border: 1px solid var(--border-color);
   border-radius: 6px;
   color: var(--text-control);
   font-family: var(--font-mono), monospace;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -250,8 +250,6 @@ header {
     }
   }
 
-  .widget-content {
-  }
 
   &.active {
     .widget-toggle-switch {
@@ -411,17 +409,17 @@ lucide-icon {
     }
   }
 
-  input:checked + .slider {
+  input:checked+.slider {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
   }
 
-  input:disabled + .slider {
+  input:disabled+.slider {
     background-color: var(--disabled-color);
     border-color: var(--disabled-color);
   }
 
-  input:checked + .slider:before {
+  input:checked+.slider:before {
     transform: translateX(22px);
   }
 }

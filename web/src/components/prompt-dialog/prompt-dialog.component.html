@@ -13,12 +13,9 @@
     <div class="prompt-msg">{{ config.message }}</div>
 
     <div class="prompt-actions">
-      <button
-        *ngFor="let btn of config.buttons"
-        type="button"
-        [class]="'btn btn-' + btn.toLowerCase()"
+      <button *ngFor="let btn of config.buttons" type="button" [class]="'btn btn-' + btn.toLowerCase()"
         (click)="onAction(btn)">
-        {{ btn }}
+        {{ buttonsLabels[btn] }}
       </button>
     </div>
 
