@@ -1,4 +1,5 @@
 import os from 'os';
+import { exec } from 'node:child_process';
 import { Request, Response } from 'express';
 
 import { Logger } from '../services/logger.js';
@@ -58,6 +59,20 @@ const ApiUtilsController = () => {
         Logger.errorLog(error.message, 'Utils API');
         res.status(400).json({ error: 'Failed to get module categories' });
       }
+    },
+
+    reboot: async (_: Request, res: Response) => {
+      Logger.debugLog('Reboot requested from UI', 'Utils API');
+      res.status(200).json({ ok: true });
+      // Execute after response is sent
+      setTimeout(() => exec('sudo shutdown -r now'), 500);
+    },
+
+    powerOff: async (_: Request, res: Response) => {
+      Logger.debugLog('Power off requested from UI', 'Utils API');
+      res.status(200).json({ ok: true });
+      // Execute after response is sent
+      setTimeout(() => exec('sudo shutdown -h now'), 500);
     },
   };
 };

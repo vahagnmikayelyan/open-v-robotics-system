@@ -1,24 +1,35 @@
-<div class="screen-container"
-     (mousemove)="onMouseMove($event)"
-     (dblclick)="onDoubleClick()"
+<div class="screen-container" (mousemove)="onMouseMove($event)" (dblclick)="onDoubleClick()" (mousedown)="startHold()"
+  (mouseup)="endHold()" (mouseleave)="endHold()" (touchstart)="startHold()" (touchend)="endHold()"
+  (touchcancel)="endHold()">
 
-     (mousedown)="startHold()"
-     (mouseup)="endHold()"
-     (mouseleave)="endHold()"
-
-     (touchstart)="startHold()"
-     (touchend)="endHold()"
-     (touchcancel)="endHold()">
-
-  <div class="program-bar" (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()">
-    <span class="program-label" [class.idle]="!runningProgram()">
+  <div class="main-page-header">
+    <div class="program-bar" (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()">
+      <span class="program-label" [class.idle]="!runningProgram()">
         {{ runningProgram() ? runningProgram()?.name : 'No program running' }}
-    </span>
-    <button *ngIf="runningProgram()" type="button" class="stop-btn" (click)="stopRunningProgram()">Stop</button>
-  </div>
+      </span>
+      <button *ngIf="runningProgram()" type="button" class="stop-btn" (click)="stopRunningProgram()">Stop</button>
+    </div>
 
-  <div class="buttery-level">
-    <battery-status [level]="batteryLevel()"></battery-status>
+    <div class="right-panel">
+      <div class="volume-control" (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()">
+        <button class="volume-btn" (click)="toggleVolumePanel()">
+          <lucide-icon [img]="volumeIcon()" class="icon"></lucide-icon>
+        </button>
+        <div class="volume-panel" *ngIf="isVolumePanelOpen()" [class.muted]="isMuted()">
+          <button class="mute-btn" (click)="toggleMute()">
+            <lucide-icon [img]="isMuted() ? LucideIcons.VolumeX : LucideIcons.Volume2" class="icon"></lucide-icon>
+          </button>
+          <input class="range-input" type="range" min="0" max="100" [value]="volumeLevel()"
+            (input)="onVolumeChange($event)" />
+          <span class="volume-value">{{ volumeLevel() }}%</span>
+        </div>
+      </div>
+      <battery-status [level]="batteryLevel()"></battery-status>
+      <button class="power-btn" (click)="openPowerMenu()" (mousedown)="$event.stopPropagation()"
+        (touchstart)="$event.stopPropagation()">
+        <lucide-icon [img]="LucideIcons.Power" class="icon"></lucide-icon>
+      </button>
+    </div>
   </div>
 
   <div class="face-layer" [class.closing]="isBlinking()">

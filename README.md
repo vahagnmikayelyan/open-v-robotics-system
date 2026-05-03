@@ -303,9 +303,36 @@ Restart all audio services to apply:
 systemctl --user restart pipewire pipewire-pulse wireplumber
 ```
 
+### 5. Allow Power Control from UI (Shutdown / Reboot)
+
+The web interface can trigger a system reboot or shutdown. Since the Node.js server runs as a regular user (not root), you must grant it permission to call `shutdown` via `sudo` without a password prompt.
+
+Create a dedicated sudoers rule:
+```bash
+sudo visudo -f /etc/sudoers.d/open-v-power
+```
+
+Add the following line, replacing `pi` with your actual system username:
+```
+pi ALL=(root) NOPASSWD: /sbin/shutdown
+```
+
+If you didn't use `visudo` to create the file, make sure the permissions are strictly `0440` (otherwise `sudo` will reject it):
+```bash
+sudo chmod 0440 /etc/sudoers.d/open-v-power
+```
+
+Save and verify the file syntax is correct:
+```bash
+sudo visudo -c
+```
+
+> **Note:** This grants the user permission to run **only** `/sbin/shutdown` as root — no other commands. This is a minimal, safe privilege escalation.
+
+
 ---
 
-### 5. Flashing the Firmware (OpenOCD)
+### 6. Flashing the Firmware (OpenOCD)
 To flash the Pico directly from the Pi 5's GPIO pins, compile OpenOCD:
 
 ```bash
@@ -321,7 +348,7 @@ make -j4
 sudo make install
 ```
 
-### 6. Clone & Compile Open V System
+### 7. Clone & Compile Open V System
 Clone the project repository:
 ```bash
 cd ~
@@ -358,7 +385,7 @@ chmod +x build-and-deploy.sh
 
 ---
 
-### 7. Web UI and Server 
+### 8. Web UI and Server 
 Install the Node.js runtime and compile the frontend and backend.
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -

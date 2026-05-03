@@ -1,9 +1,13 @@
-import { ChildProcessWithoutNullStreams, spawn } from 'node:child_process';
+import { ChildProcessWithoutNullStreams, exec, spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
+import { promisify } from 'node:util';
 import { defineModule, IModuleDeps } from '../types/module.js';
+import config from '../config.js';
 import { Logger } from '../services/logger.js';
+
+const execAsync = promisify(exec);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,7 +28,7 @@ export default defineModule({
 class SpeakerController {
   private playerProcess: ChildProcessWithoutNullStreams | null = null;
 
-  constructor() {}
+  constructor() { }
 
   startStream() {
     if (this.playerProcess) {
@@ -98,5 +102,43 @@ class SpeakerController {
         }
       });
     });
+  }
+
+  private async getSinkId(): Promise<string> {
+    const { stdout } = await execAsync('wpctl status');
+    const regex = new RegExp(`(\\d+)\\.\\s+${config.speakerSinkName}`);
+    const match = stdout.match(regex);
+    if (!match) throw new Error(`Sink "${config.speakerSinkName}" not found in wpctl status`);
+    return match[1];
+  }
+
+  async getVolume(): Promise<{ module: string; volume: number; muted: boolean }> {
+    const id = await this.getSinkId();
+    const { stdout } = await execAsync(`wpctl get-volume ${id}`);
+    // stdout: "Volume: 0.80" or "Volume: 0.80 [MUTED]"
+    const match = stdout.match(/Volume:\s+([\d.]+)/);
+    if (!match) throw new Error('Cannot parse volume from wpctl output');
+    // Map wpctl range [MIN..MAX] → UI range [0..100]
+    const wpctlRaw = parseFloat(match[1]);
+    const uiVolume = Math.round(Math.max(0, Math.min(100, (wpctlRaw - config.speakerMinWpctl) / (config.speakerMaxWpctl - config.speakerMinWpctl) * 100)));
+    const muted = stdout.includes('[MUTED]');
+    Logger.debugLog(`Current volume: wpctl=${wpctlRaw} → ui=${uiVolume}% muted=${muted}`, 'Speaker');
+    return { module: 'speaker', volume: uiVolume, muted };
+  }
+
+  async setVolume({ volume }: { volume: number }): Promise<{ module: string; volume: number; muted: boolean }> {
+    const id = await this.getSinkId();
+    // Map UI range [0..100] → wpctl range [MIN..MAX]
+    const uiClamped = Math.max(0, Math.min(100, volume));
+    const wpctlValue = (config.speakerMinWpctl + (uiClamped / 100) * (config.speakerMaxWpctl - config.speakerMinWpctl)).toFixed(2);
+    await execAsync(`wpctl set-volume ${id} ${wpctlValue}`);
+    Logger.debugLog(`Volume set: ui=${uiClamped}% → wpctl=${wpctlValue}`, 'Speaker');
+    return { module: 'speaker', volume: uiClamped, muted: false };
+  }
+
+  async toggleMute(): Promise<{ module: string; volume: number; muted: boolean }> {
+    const id = await this.getSinkId();
+    await execAsync(`wpctl set-mute ${id} toggle`);
+    return this.getVolume();
   }
 }

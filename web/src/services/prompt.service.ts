@@ -7,6 +7,8 @@ export enum PromptButton {
   Cancel = 'CANCEL',
   Delete = 'DELETE',
   Ok = 'OK',
+  Restart = 'RESTART',
+  PowerOff = 'POWER_OFF',
 }
 
 export type PromptType = 'error' | 'warning' | 'info' | 'question';
