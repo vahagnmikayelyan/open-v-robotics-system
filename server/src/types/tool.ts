@@ -7,5 +7,7 @@ export interface IToolDeclaration {
     description: string;
     isRequired: boolean;
     type: string;
+    items?: { type: string };
   }>;
 }
+

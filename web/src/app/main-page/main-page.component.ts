@@ -8,12 +8,12 @@ import { ApiService } from '../../services/api.service';
 import { PromptButton, PromptService } from '../../services/prompt.service';
 import { BatteryStatusComponent } from '../../components/battery-status/battery-status.component';
 import { IProgram } from '../../models/models';
-import { NgIf } from '@angular/common';
+import { NgIf, NgFor } from '@angular/common';
 
 @Component({
   selector: 'main-page',
   standalone: true,
-  imports: [BatteryStatusComponent, NgIf, LucideAngularModule],
+  imports: [BatteryStatusComponent, NgIf, NgFor, LucideAngularModule],
   templateUrl: './main-page.component.html',
   styleUrl: './main-page.component.less',
 })
@@ -29,6 +29,9 @@ export class MainPageComponent implements OnInit, OnDestroy {
   batteryLevel = signal(0);
   runningProgram = signal<IProgram | null>(null);
   displayMedia = signal<{ type: 'image' | 'video' | 'map'; url: string } | null>(null);
+  activePoll = signal<{ question?: string; options: string[] } | null>(null);
+
+  isPollAnswered = signal<boolean>(false);
 
   private blinkTimer: any;
   private idleTimer: any;
@@ -73,13 +76,30 @@ export class MainPageComponent implements OnInit, OnDestroy {
 
     this.uiSocketService.onModuleEvent.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
       console.log('Module event:', event);
+
       if (event.command === 'showImage') {
         const url = event.params['url'] as string;
         this.displayMedia.set({ type: 'image', url });
       } else if (event.command === 'clearScreen') {
-        this.displayMedia.set(null);
+        this.clearDisplay();
+      } else if (event.command === 'showPoll') {
+        const options = event.params['options'] as string[];
+        const question = event.params['question'] as string | undefined;
+        this.isPollAnswered.set(false);
+        this.activePoll.set({ options, question });
       }
     });
+  }
+
+  clearDisplay() {
+    this.displayMedia.set(null);
+    this.activePoll.set(null);
+  }
+
+  onPollAnswer(answer: string) {
+    if (this.isPollAnswered()) return;
+    this.isPollAnswered.set(true);
+    this.uiSocketService.sendCommand('poll', 'handleAnswer', { answer });
   }
 
   getVoltageLevel() {
@@ -122,6 +142,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
   }
 
   stopRunningProgram() {
+    this.clearDisplay();
     this.uiSocketService.stopRunningProgram();
   }
 

@@ -28,6 +28,10 @@ class SystemController extends EventEmitter implements ISystemController {
     this.moduleController = moduleController;
     this.configController = configController;
     this.programController = new ProgramController(new ProgramRepository(dbClient));
+
+    this.moduleController.on('moduleAIMessage', (message: string) => {
+      this.sendText(message);
+    });
   }
 
   async runProgram(programId: number) {
@@ -152,6 +156,8 @@ class SystemController extends EventEmitter implements ISystemController {
       let executionResult;
 
       const parts = call.name.split('_');
+
+      Logger.debugLog('onAIFunctionCall', 'System', call);
 
       this.onAISystemMessage({ event: 'functionCall', name: call.name, args: call.args });
 
