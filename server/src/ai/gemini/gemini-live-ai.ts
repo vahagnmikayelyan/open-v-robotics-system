@@ -40,7 +40,14 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
         parameters: {
           type: 'OBJECT',
           properties: tool.parameters.reduce((acc: Record<string, any>, parameter) => {
-            acc[parameter.name] = { type: parameter.type.toUpperCase(), description: parameter.description };
+            const prop: Record<string, any> = {
+              type: parameter.type.toUpperCase(),
+              description: parameter.description,
+            };
+            if (parameter.type.toUpperCase() === 'ARRAY') {
+              prop['items'] = { type: (parameter.items?.type ?? 'string').toUpperCase() };
+            }
+            acc[parameter.name] = prop;
             return acc;
           }, {}),
           required: tool.parameters.filter((parameter) => parameter.isRequired).map((parameter) => parameter.name),
@@ -48,6 +55,7 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
       };
     });
   }
+
 
   private getSetupMessage() {
     return {

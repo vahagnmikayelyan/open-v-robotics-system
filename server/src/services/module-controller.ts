@@ -29,6 +29,9 @@ class ModuleController extends EventEmitter implements IModuleController {
         emitSystemError: (message: string) => {
           this.emit('systemError', message);
         },
+        emitToAI: (message: string) => {
+          this.emit('moduleAIMessage', message);
+        },
       };
 
       this.modules[def.id] = def.create(deps);

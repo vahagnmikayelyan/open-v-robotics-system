@@ -32,6 +32,7 @@
     </div>
   </div>
 
+  <!-- Robot face (default state) -->
   <div class="face-layer" [class.closing]="isBlinking()">
 
     <div class="eye left">
@@ -53,8 +54,21 @@
 
   </div>
 
-  <div class="media-overlay" *ngIf="displayMedia() as media" (dblclick)="onDoubleClick()">
+  <!-- Media overlay -->
+  <div class="media-overlay" *ngIf="displayMedia() as media">
     <img *ngIf="media.type === 'image'" [src]="media.url" class="fullscreen-image" />
+  </div>
+
+  <!-- Poll overlay -->
+  <div class="poll-overlay" *ngIf="activePoll() as poll" (mousedown)="$event.stopPropagation()"
+    (touchstart)="$event.stopPropagation()">
+    <p class="poll-question" *ngIf="poll.question">{{ poll.question }}</p>
+    <div class="poll-options">
+      <button *ngFor="let opt of poll.options" [disabled]="isPollAnswered()" class="poll-btn"
+        (click)="onPollAnswer(opt)">
+        {{ opt }}
+      </button>
+    </div>
   </div>
 
 </div>
