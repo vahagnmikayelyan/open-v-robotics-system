@@ -56,7 +56,6 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
     });
   }
 
-
   private getSetupMessage() {
     return {
       setup: {
@@ -82,7 +81,7 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
         // If exists stored session id, restoring
         sessionResumption: this.sessionHandle ? { handle: this.sessionHandle } : {},
         // Adding tools if available
-        tools: this.tools && this.tools.length > 0 ? [{ functionDeclarations: this.convertToTools() }] : null,
+        ...(this.tools && this.tools.length > 0 ? { tools: [{ functionDeclarations: this.convertToTools() }] } : {}),
       },
     };
   }
@@ -129,33 +128,60 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
   }
 
   sendText(text: string) {
-    this.sendData({
-      clientContent: {
-        turns: [{ role: 'user', parts: [{ text: text }] }],
-        turnComplete: true,
-      },
-    });
+    const isGemini3 = this.model.includes('gemini-3');
+    if (isGemini3) {
+      this.sendData({
+        realtimeInput: {
+          text: text,
+        },
+      });
+    } else {
+      this.sendData({
+        clientContent: {
+          turns: [{ role: 'user', parts: [{ text: text }] }],
+          turnComplete: true,
+        },
+      });
+    }
   }
 
   sendAudio(pcmOrBase64: Buffer | string, mimeType = 'audio/pcm;rate=16000') {
     const base64Data = Buffer.isBuffer(pcmOrBase64) ? pcmOrBase64.toString('base64') : pcmOrBase64;
+    const isGemini3 = this.model.includes('gemini-3');
 
-    this.sendData({
-      realtimeInput: {
-        mediaChunks: [{ mimeType: mimeType, data: base64Data }],
-      },
-    });
+    if (isGemini3) {
+      this.sendData({
+        realtimeInput: {
+          audio: { mimeType: mimeType, data: base64Data },
+        },
+      });
+    } else {
+      this.sendData({
+        realtimeInput: {
+          mediaChunks: [{ mimeType: mimeType, data: base64Data }],
+        },
+      });
+    }
   }
 
   sendImage(imageBytesOrBase64: Buffer | string, mimeType = 'image/jpeg') {
     const base64Data = Buffer.isBuffer(imageBytesOrBase64) ? imageBytesOrBase64.toString('base64') : imageBytesOrBase64;
+    const isGemini3 = this.model.includes('gemini-3');
 
-    this.sendData({
-      clientContent: {
-        turns: [{ role: 'user', parts: [{ inlineData: { mimeType, data: base64Data } }] }],
-        turnComplete: true,
-      },
-    });
+    if (isGemini3) {
+      this.sendData({
+        realtimeInput: {
+          video: { mimeType: mimeType, data: base64Data },
+        },
+      });
+    } else {
+      this.sendData({
+        clientContent: {
+          turns: [{ role: 'user', parts: [{ inlineData: { mimeType, data: base64Data } }] }],
+          turnComplete: true,
+        },
+      });
+    }
   }
 
   sendToolResponses(responsesArray: unknown[]) {
@@ -205,7 +231,7 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
 
           // Media event
           if (part.inlineData) {
-            const mimeType = part.inlineData.mimeType;
+            const mimeType = part.inlineData.mimeType || 'audio/pcm;rate=24000';
             const base64Data = part.inlineData.data;
 
             if (mimeType.startsWith('image/')) {
