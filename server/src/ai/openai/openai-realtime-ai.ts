@@ -39,11 +39,11 @@ class OpenAIRealtimeAI extends EventEmitter implements IAIModelController {
         type: 'object',
         properties: tool.parameters.reduce((acc: Record<string, any>, parameter) => {
           const prop: Record<string, any> = {
-            type: parameter.type.toUpperCase(),
+            type: parameter.type.toLowerCase(),
             description: parameter.description,
           };
-          if (parameter.type.toUpperCase() === 'ARRAY') {
-            prop['items'] = { type: (parameter.items?.type ?? 'string').toUpperCase() };
+          if (parameter.type.toLowerCase() === 'array') {
+            prop['items'] = { type: (parameter.items?.type ?? 'string').toLowerCase() };
           }
           acc[parameter.name] = prop;
           return acc;
