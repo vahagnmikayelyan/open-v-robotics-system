@@ -2,11 +2,12 @@ import { Component, Input, forwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { IConfigItem } from '../../models/models';
+import { RangeInputComponent } from '../range-input/range-input.component';
 
 @Component({
   selector: 'config-field',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RangeInputComponent],
   templateUrl: './config-field.component.html',
   styleUrl: './config-field.component.less',
   providers: [

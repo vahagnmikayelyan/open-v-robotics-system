@@ -18,8 +18,7 @@
     <!-- Range slider -->
     <ng-container *ngIf="isRange">
       <span class="config-range-value">{{ value ?? config.defaultValue ?? config.min ?? 0 }}%</span>
-      <input type="range" class="range-input" [name]="name" [min]="config.min ?? 0" [max]="config.max ?? 100"
-             [(ngModel)]="value" autocomplete="off">
+      <range-input [name]="name" [min]="config.min ?? 0" [max]="config.max ?? 100" [(ngModel)]="value"></range-input>
     </ng-container>
 
     <!-- Select dropdown -->

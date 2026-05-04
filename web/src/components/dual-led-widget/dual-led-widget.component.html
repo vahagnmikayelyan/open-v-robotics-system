@@ -18,7 +18,7 @@
         </svg>
       </div>
 
-      <input class="range-input" type="range" min="0" max="100" [ngModel]="leftLed()" (ngModelChange)="updateLeft($event)">
+      <range-input [min]="0" [max]="100" [ngModel]="leftLed()" (ngModelChange)="updateLeft($event)"></range-input>
 
       <span class="val">{{ leftLed() }}%</span>
     </div>
@@ -31,7 +31,7 @@
         </svg>
       </div>
 
-      <input class="range-input" type="range" min="0" max="100" [ngModel]="rightLed()" (ngModelChange)="updateRight($event)">
+      <range-input [min]="0" [max]="100" [ngModel]="rightLed()" (ngModelChange)="updateRight($event)"></range-input>
 
       <span class="val">{{ rightLed() }}%</span>
     </div>

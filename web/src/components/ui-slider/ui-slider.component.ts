@@ -1,10 +1,11 @@
 import { Component, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RangeInputComponent } from '../range-input/range-input.component';
 
 @Component({
   selector: 'ui-slider',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RangeInputComponent],
   templateUrl: './ui-slider.component.html',
   styleUrl: './ui-slider.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush

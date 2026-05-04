@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, RotateCcw, RotateCw, ArrowUp, ArrowDown } from 'lucide-angular';
 import { ModuleCommandParams, IModuleCommand } from '../../models/models';
+import { RangeInputComponent } from '../range-input/range-input.component';
 
 interface WheelsState {
   fl: number;
@@ -16,7 +17,7 @@ const defaultStates: WheelsState = { fl: 0, fr: 0, bl: 0, br: 0 };
 @Component({
   selector: 'motors-widget',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule, RangeInputComponent],
   templateUrl: './motors-widget.component.html',
   styleUrl: './motors-widget.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,

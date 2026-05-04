@@ -2,11 +2,12 @@ import { Component, output, signal, ChangeDetectionStrategy } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IModuleCommand } from '../../models/models';
+import { RangeInputComponent } from '../range-input/range-input.component';
 
 @Component({
   selector: 'dual-led-widget',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RangeInputComponent],
   templateUrl: './dual-led-widget.component.html',
   styleUrl: './dual-led-widget.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,

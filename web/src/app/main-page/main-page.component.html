@@ -19,8 +19,7 @@
           <button class="mute-btn" (click)="toggleMute()">
             <lucide-icon [img]="isMuted() ? LucideIcons.VolumeX : LucideIcons.Volume2" class="icon"></lucide-icon>
           </button>
-          <input class="range-input" type="range" min="0" max="100" [value]="volumeLevel()"
-            (input)="onVolumeChange($event)" />
+          <range-input [min]="0" [max]="100" [ngModel]="volumeLevel()" (ngModelChange)="onVolumeChange($event)"></range-input>
           <span class="volume-value">{{ volumeLevel() }}%</span>
         </div>
       </div>
