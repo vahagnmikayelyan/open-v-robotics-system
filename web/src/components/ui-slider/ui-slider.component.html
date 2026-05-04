@@ -5,13 +5,11 @@
   </div>
 
   <div class="widget-content">
-    <input
-      class="range-input"
-      type="range"
+    <range-input
       [min]="min()"
       [max]="max()"
       [step]="step()"
-      [ngModel]="value()"
-      (ngModelChange)="value.set($event)">
+      [(ngModel)]="value">
+    </range-input>
   </div>
 </div>

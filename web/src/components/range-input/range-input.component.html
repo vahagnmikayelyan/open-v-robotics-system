@@ -1,0 +1,12 @@
+<div class="range-slider-container" #container [class.disabled]="disabled" (mousedown)="onPointerDown($event)"
+  (touchstart)="onPointerDown($event)">
+
+  <div class="range-track">
+    <div class="range-fill" [style.width.%]="percentage()"></div>
+  </div>
+
+  <div class="range-thumb-wrapper" [style.left.%]="percentage()">
+    <div class="range-thumb" [class.active]="isActive()" [class.focused]="isFocused()">
+    </div>
+  </div>
+</div>

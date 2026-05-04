@@ -44,7 +44,7 @@ export class WebsocketWrapper {
   }
 
   private emitResponse(event: string, data: any) {
-    if (this.callbacks.hasOwnProperty(event)) {
+    if (event in this.callbacks) {
       this.callbacks[event](data);
     }
   }
@@ -54,7 +54,7 @@ export class WebsocketWrapper {
   }
 
   off(event: string) {
-    if (this.callbacks.hasOwnProperty(event)) {
+    if (event in this.callbacks) {
       delete this.callbacks[event];
     }
   }

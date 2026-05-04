@@ -101,7 +101,7 @@ export class DevToolsPageComponent implements OnInit, OnDestroy {
   }
 
   private handleCommandResult(commandResult: any) {
-    if (commandResult && commandResult.hasOwnProperty('module')) {
+    if (commandResult && 'module' in commandResult) {
       if (commandResult.module === 'power') {
         this.powerDataSignal.set(commandResult);
       }

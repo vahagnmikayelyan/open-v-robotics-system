@@ -9,11 +9,13 @@ import { PromptButton, PromptService } from '../../services/prompt.service';
 import { BatteryStatusComponent } from '../../components/battery-status/battery-status.component';
 import { IProgram } from '../../models/models';
 import { NgIf, NgFor } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RangeInputComponent } from '../../components/range-input/range-input.component';
 
 @Component({
   selector: 'main-page',
   standalone: true,
-  imports: [BatteryStatusComponent, NgIf, NgFor, LucideAngularModule],
+  imports: [BatteryStatusComponent, NgIf, NgFor, LucideAngularModule, FormsModule, RangeInputComponent],
   templateUrl: './main-page.component.html',
   styleUrl: './main-page.component.less',
 })
@@ -59,10 +61,10 @@ export class MainPageComponent implements OnInit, OnDestroy {
 
     this.uiSocketService.onCommandResult.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((commandResult) => {
       try {
-        if (commandResult && commandResult.hasOwnProperty('module') && commandResult.module === 'power') {
+        if (commandResult && 'module' in commandResult && commandResult.module === 'power') {
           this.batteryLevel.set(commandResult.p);
         }
-        if (commandResult && commandResult.hasOwnProperty('module') && commandResult.module === 'speaker') {
+        if (commandResult && 'module' in commandResult && commandResult.module === 'speaker') {
           this.volumeLevel.set(commandResult.volume);
           this.isMuted.set(commandResult.muted ?? false);
         }
@@ -75,8 +77,6 @@ export class MainPageComponent implements OnInit, OnDestroy {
     this.uiSocketService.sendCommand('speaker', 'getVolume', null);
 
     this.uiSocketService.onModuleEvent.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
-      console.log('Module event:', event);
-
       if (event.command === 'showImage') {
         const url = event.params['url'] as string;
         this.displayMedia.set({ type: 'image', url });
@@ -163,8 +163,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  onVolumeChange(event: Event) {
-    const value = parseInt((event.target as HTMLInputElement).value, 10);
+  onVolumeChange(value: number) {
     this.volumeLevel.set(value);
     this.resetVolumePanelTimer();
 

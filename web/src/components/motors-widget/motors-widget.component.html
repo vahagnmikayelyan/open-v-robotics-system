@@ -8,8 +8,7 @@
 
     <div class="chassis-settings-row">
       <label>SPEED</label>
-      <input type="range" class="range-input" min="0" max="100" step="10" [ngModel]="speed()"
-             (ngModelChange)="speed.set($event)">
+      <range-input [min]="0" [max]="100" [step]="10" [(ngModel)]="speed"></range-input>
       <span class="value">{{ speed() }}%</span>
     </div>
 
@@ -92,8 +91,7 @@
 
       <div class="chassis-settings-row">
         <label>DIST</label>
-        <input type="range" class="range-input" min="50" max="2000" step="50" [ngModel]="distance()"
-               (ngModelChange)="distance.set($event)">
+        <range-input [min]="50" [max]="2000" [step]="50" [(ngModel)]="distance"></range-input>
         <span class="value">{{ distance() }}mm</span>
       </div>
 
@@ -114,8 +112,7 @@
 
       <div class="chassis-settings-row">
         <label>ANGLE</label>
-        <input type="range" class="range-input" min="10" max="720" step="10" [ngModel]="angle()"
-               (ngModelChange)="angle.set($event)">
+        <range-input [min]="10" [max]="720" [step]="10" [(ngModel)]="angle"></range-input>
         <span class="value">{{ angle() }}&deg;</span>
       </div>
 
