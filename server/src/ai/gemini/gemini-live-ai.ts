@@ -11,11 +11,13 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
   private readonly language: string;
   private readonly systemInstruction: string;
   private readonly tools: IToolDeclaration[];
+  private readonly isGemini3: boolean;
 
   private isConnected: boolean = false;
   private isReconnecting: boolean = false;
   private isManualDisconnect: boolean = false;
   private sessionHandle: string | null = null;
+  private hasTriggeredInitialResponse: boolean = false;
 
   private ws: WebSocket | null = null;
 
@@ -30,6 +32,7 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
     this.language = language ?? '';
     this.systemInstruction = systemInstruction;
     this.tools = tools;
+    this.isGemini3 = model.includes('gemini-3');
   }
 
   private convertToTools() {
@@ -128,8 +131,7 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
   }
 
   sendText(text: string) {
-    const isGemini3 = this.model.includes('gemini-3');
-    if (isGemini3) {
+    if (this.isGemini3) {
       this.sendData({
         realtimeInput: {
           text: text,
@@ -147,9 +149,8 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
 
   sendAudio(pcmOrBase64: Buffer | string, mimeType = 'audio/pcm;rate=16000') {
     const base64Data = Buffer.isBuffer(pcmOrBase64) ? pcmOrBase64.toString('base64') : pcmOrBase64;
-    const isGemini3 = this.model.includes('gemini-3');
 
-    if (isGemini3) {
+    if (this.isGemini3) {
       this.sendData({
         realtimeInput: {
           audio: { mimeType: mimeType, data: base64Data },
@@ -166,9 +167,8 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
 
   sendImage(imageBytesOrBase64: Buffer | string, mimeType = 'image/jpeg') {
     const base64Data = Buffer.isBuffer(imageBytesOrBase64) ? imageBytesOrBase64.toString('base64') : imageBytesOrBase64;
-    const isGemini3 = this.model.includes('gemini-3');
 
-    if (isGemini3) {
+    if (this.isGemini3) {
       this.sendData({
         realtimeInput: {
           video: { mimeType: mimeType, data: base64Data },
@@ -253,6 +253,16 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
       // Setup complete
       if (response.setupComplete) {
         this.emit('systemMessage', { event: 'ready' });
+
+        if (!this.hasTriggeredInitialResponse && !this.sessionHandle) {
+          if (this.isGemini3) {
+            // For Gemini 3 we send an empty text space to trigger generation
+            this.sendData({ realtimeInput: { text: ' ' } });
+          } else {
+            this.sendData({ clientContent: { turnComplete: true } });
+          }
+          this.hasTriggeredInitialResponse = true;
+        }
       }
 
       // Complete response generation
