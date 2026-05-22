@@ -20,6 +20,8 @@ class OpenAIRealtimeAI extends EventEmitter implements IAIModelController {
   private connectResolve: ((value: boolean) => void) | null = null;
   private connectReject: ((reason: unknown) => void) | null = null;
 
+  private hasTriggeredInitialResponse = false;
+
   constructor({ model, apiKey, voice, systemInstruction, tools }: IAIControllerParams) {
     super();
 
@@ -208,6 +210,10 @@ class OpenAIRealtimeAI extends EventEmitter implements IAIModelController {
 
         case 'session.updated':
           this.emit('systemMessage', { event: 'ready' });
+          if (!this.hasTriggeredInitialResponse) {
+            this.sendData({ type: 'response.create' });
+            this.hasTriggeredInitialResponse = true;
+          }
 
           if (this.connectResolve) {
             this.connectResolve(true);
