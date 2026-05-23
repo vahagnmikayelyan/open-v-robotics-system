@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { LucideAngularModule, Zap } from 'lucide-angular';
+import { LucideAngularModule, Zap, SquarePen, Download, Trash2 } from 'lucide-angular';
 import { IProgram } from '../../models/models';
 
 @Component({
@@ -16,8 +16,9 @@ export class ProgramCardComponent {
   select = output<number>();
   edit = output<number>();
   deleteRequest = output<number>();
+  export = output<IProgram>();
 
-  readonly LucideIcons = { Zap };
+  readonly LucideIcons = { Zap, SquarePen, Download, Trash2 };
 
   onSelect(): void {
     this.select.emit(this.program().id);
@@ -26,6 +27,11 @@ export class ProgramCardComponent {
   onEdit(event: Event): void {
     event.stopPropagation();
     this.edit.emit(this.program().id);
+  }
+
+  onExport(event: Event): void {
+    event.stopPropagation();
+    this.export.emit(this.program());
   }
 
   onDelete(event: Event): void {

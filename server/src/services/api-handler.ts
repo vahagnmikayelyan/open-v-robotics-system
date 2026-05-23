@@ -41,6 +41,8 @@ const ApiHandler = (app: Express, dbClient: any) => {
   router.post('/utils/power-off', apiUtilsController.powerOff);
 
   // Programs
+  router.get('/programs/export', apiProgramController.exportPrograms);
+  router.post('/programs/import', apiProgramController.importPrograms);
   router.get('/programs', apiProgramController.getPrograms);
   router.get('/programs/:id', apiProgramController.getProgram);
   router.post('/programs', apiProgramController.addProgram);

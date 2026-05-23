@@ -3,7 +3,9 @@
   <div class="header">
     <button type="button" class="nav-btn back" routerLink="/menu">CANCEL</button>
     <span class="title">{{ !program().id ? 'NEW PROGRAM' : 'EDIT PROGRAM' }}</span>
-    <button type="submit" class="nav-btn primary save-btn" [disabled]="configForm.invalid">SAVE</button>
+    <div class="header-actions">
+      <button type="submit" class="nav-btn primary save-btn" [disabled]="configForm.invalid">SAVE</button>
+    </div>
   </div>
 
   <div *ngIf="isLoading()" class="loader-wrapper">

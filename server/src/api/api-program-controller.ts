@@ -115,6 +115,56 @@ const ApiProgramController = (programsController: IProgramController) => {
         handleError(res, error);
       }
     },
+
+    exportPrograms: async (_: Request, res: Response) => {
+      try {
+        const programs = programsController.getPrograms();
+        const exportData = programs.map(({ id, addTime, editTime, ...rest }) => ({
+          ...rest,
+          exportedAt: new Date().toISOString(),
+        }));
+
+        const filename = `programs_export_${new Date().toISOString().slice(0, 10)}.json`;
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        res.status(200).json(exportData);
+      } catch (error) {
+        handleError(res, error);
+      }
+    },
+
+    importPrograms: async (req: Request, res: Response) => {
+      try {
+        const raw = req.body;
+        const items = Array.isArray(raw) ? raw : [raw];
+
+        const results: IProgram[] = [];
+        const errors: string[] = [];
+
+        for (const item of items) {
+          try {
+            const validData = programSchema.parse(item) as IProgram;
+            const created = programsController.createProgram(validData);
+            results.push(created);
+          } catch (err) {
+            if (err instanceof z.ZodError) {
+              errors.push(`"${item?.name ?? 'unknown'}": ${err.issues.map((i) => i.message).join(', ')}`);
+            } else {
+              errors.push(`"${item?.name ?? 'unknown'}": ${(err as Error).message}`);
+            }
+          }
+        }
+
+        res.status(200).json({
+          imported: results.length,
+          skipped: errors.length,
+          errors,
+          programs: results,
+        });
+      } catch (error) {
+        handleError(res, error);
+      }
+    },
   };
 };
 
