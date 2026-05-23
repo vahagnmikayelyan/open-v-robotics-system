@@ -1,4 +1,4 @@
-<div class="screen-container" (mousemove)="onMouseMove($event)" (dblclick)="onDoubleClick()" (mousedown)="startHold()"
+<div class="screen-container" (dblclick)="onDoubleClick()" (mousedown)="startHold()"
   (mouseup)="endHold()" (mouseleave)="endHold()" (touchstart)="startHold()" (touchend)="endHold()"
   (touchcancel)="endHold()">
 
@@ -31,23 +31,34 @@
     </div>
   </div>
 
-  <!-- Robot face (default state) -->
-  <div class="face-layer" [class.closing]="isBlinking()">
+  <!-- Robot face (dynamic emotions and premium design) -->
+  <div [class]="'face-layer emotion-' + emotion()" [class.closing]="isBlinking()">
 
-    <div class="eye left">
+    <div class="eye left" [class.winking]="winkLeft()">
       <div class="eyelid top"></div>
       <div class="eyelid bottom"></div>
 
+      <!-- Cybernetic overlay details for premium sci-fi aesthetics -->
+      <div class="cyber-ring"></div>
+      <div class="iris-pattern"></div>
+
       <div class="pupil" [style.transform]="'translate(' + pupilOffset().x + 'px, ' + pupilOffset().y + 'px)'">
-        <div class="glint"></div>
+        <div class="glint glint-1"></div>
+        <div class="glint glint-2"></div>
       </div>
     </div>
 
-    <div class="eye right">
+    <div class="eye right" [class.winking]="winkRight()">
       <div class="eyelid top"></div>
       <div class="eyelid bottom"></div>
+
+      <!-- Cybernetic overlay details for premium sci-fi aesthetics -->
+      <div class="cyber-ring"></div>
+      <div class="iris-pattern"></div>
+
       <div class="pupil" [style.transform]="'translate(' + pupilOffset().x + 'px, ' + pupilOffset().y + 'px)'">
-        <div class="glint"></div>
+        <div class="glint glint-1"></div>
+        <div class="glint glint-2"></div>
       </div>
     </div>
 

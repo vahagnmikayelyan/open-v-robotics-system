@@ -33,6 +33,7 @@ export class ChatComponent {
 
   constructor() {
     effect(() => {
+      this.messages(); // Read messages signal so the effect re-runs on message updates
       setTimeout(() => {
         const el = this.scrollContainer().nativeElement;
         el.scrollTop = el.scrollHeight;
