@@ -14,7 +14,18 @@
     <button class="nav-btn" routerLink="/devtools">
       <lucide-icon [img]="LucideIcons.Wrench" class="icon"></lucide-icon>
     </button>
+
+    <button class="nav-btn warning import-btn" (click)="importFileInput.click()" title="Import program(s) from JSON">
+      <lucide-icon [img]="LucideIcons.Upload" class="icon"></lucide-icon>
+    </button>
+
+    <button class="nav-btn success export-all-btn" (click)="exportAllPrograms()" title="Export all programs to JSON">
+      <lucide-icon [img]="LucideIcons.Download" class="icon"></lucide-icon>
+    </button>
   </div>
+
+  <!-- Hidden file input for import -->
+  <input #importFileInput type="file" accept=".json" style="display:none" (change)="importProgram($event)">
 
   <div class="divider">SELECT PROGRAM</div>
 
@@ -30,7 +41,14 @@
       (select)="startProgram($event)"
       (edit)="editProgram($event)"
       (deleteRequest)="requestDeleteProgram($event)"
+      (export)="exportSingleProgram($event)"
     />
+
+    <!-- Import placeholder card -->
+    <button type="button" class="program-card add-new import-card" (click)="importFileInput.click()" title="Import program from JSON">
+      <lucide-icon [img]="LucideIcons.Upload" class="plus-icon"></lucide-icon>
+      <div class="tile-name">Import program</div>
+    </button>
 
     <button type="button" class="program-card add-new" (click)="createProgram()">
       <lucide-icon [img]="LucideIcons.Plus" class="plus-icon"></lucide-icon>

@@ -11,8 +11,15 @@
     </div>
 
     <div class="actions">
-      <button type="button" class="action-btn edit" (click)="onEdit($event)">Edit</button>
-      <button type="button" class="action-btn delete" (click)="onDelete($event)">Delete</button>
+      <button type="button" class="action-btn edit" (click)="onEdit($event)" title="Edit program">
+        <lucide-icon [img]="LucideIcons.SquarePen"></lucide-icon>
+      </button>
+      <button type="button" class="action-btn export" (click)="onExport($event)" title="Export program to JSON">
+        <lucide-icon [img]="LucideIcons.Download"></lucide-icon>
+      </button>
+      <button type="button" class="action-btn delete" (click)="onDelete($event)" title="Delete program">
+        <lucide-icon [img]="LucideIcons.Trash2"></lucide-icon>
+      </button>
     </div>
   </div>
 </div>

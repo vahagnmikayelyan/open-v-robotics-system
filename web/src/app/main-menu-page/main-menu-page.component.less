@@ -87,6 +87,19 @@
   &:active {
     transform: translateY(0) scale(0.98);
   }
+
+  &.import-card {
+    &:hover {
+      background: color-mix(in srgb, var(--warning-color) 5%, transparent);
+      border-color: var(--warning-color);
+      box-shadow: 0 5px 20px color-mix(in srgb, var(--warning-color) 10%, transparent);
+
+      .plus-icon,
+      .tile-name {
+        color: var(--warning-color);
+      }
+    }
+  }
 }
 
 .modal-overlay {

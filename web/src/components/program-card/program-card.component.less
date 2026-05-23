@@ -88,26 +88,33 @@
   background: var(--surface-button);
   border: 1px solid var(--border-color);
   color: var(--text-control);
-  font-family: var(--font-mono), monospace;
-  font-size: 0.75rem;
-  padding: 6px 12px;
-  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
   cursor: pointer;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.2s;
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.92);
   }
 
   &.edit:hover {
-    color: var(--text-primary);
+    color: #fff;
     border-color: var(--primary-color);
     background: color-mix(in srgb, var(--primary-color) 20%, transparent);
   }
 
+  &.export:hover {
+    color: #fff;
+    border-color: var(--success-color);
+    background: color-mix(in srgb, var(--success-color) 20%, transparent);
+  }
+
   &.delete:hover {
-    color: var(--text-primary);
+    color: #fff;
     border-color: var(--danger-color);
     background: color-mix(in srgb, var(--danger-color) 20%, transparent);
   }
