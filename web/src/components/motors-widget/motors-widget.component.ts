@@ -30,7 +30,7 @@ export class MotorsWidgetComponent {
     ArrowDown,
   };
 
-  speed = signal<number>(70);
+  speed = signal<number>(80);
   distance = signal<number>(200);
   angle = signal<number>(90);
   direction = signal<number>(1);
