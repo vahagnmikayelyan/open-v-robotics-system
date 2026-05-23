@@ -16,6 +16,7 @@ import speakerController from './speaker-controller.js';
 import microphoneController from './microphone-controller.js';
 import imageGenerator from './image-generator.js';
 import pollModule from './poll-module.js';
+import expressionController from './expression-controller.js';
 
 export const moduleCategories: IModuleCategory[] = [
   {
@@ -54,6 +55,7 @@ export const moduleRegistry: IModuleDefinition[] = [
   microphoneController,
   imageGenerator,
   pollModule,
+  expressionController,
 ];
 
 /** Module metadata for REST API GET /api/modules and UI */

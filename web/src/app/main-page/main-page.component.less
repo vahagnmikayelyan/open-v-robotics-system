@@ -91,25 +91,161 @@
   gap: 15%;
 }
 
+// --- PREMIUM CYBERNETIC VARIABLES ---
+@cyber-glow-neutral: 0 0 30px rgba(0, 212, 255, 0.6), inset 0 0 35px rgba(0, 212, 255, 0.4);
+
+// Keyframes
+@keyframes rotateCyberRing {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes rotateCyberRingReverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { filter: drop-shadow(0 0 10px var(--eye-accent)) contrast(1.1); opacity: 0.95; }
+  50% { filter: drop-shadow(0 0 25px var(--eye-accent)) contrast(1.3); opacity: 1; }
+}
+
+@keyframes exciteWiggle {
+  0%, 100% { transform: translateY(0) scale(1); }
+  25% { transform: translateY(-6px) scaleX(0.96) scaleY(1.04); }
+  75% { transform: translateY(1.5px) scaleX(1.04) scaleY(0.96); }
+}
+
+.face-layer {
+  // Emotion-specific variable mappings
+  --eye-accent: #00d4ff;
+  --eye-accent-rgb: 0, 212, 255;
+  transition: transform 0.4s ease;
+
+  &.emotion-neutral {
+    --eye-accent: #00d4ff;
+    --eye-accent-rgb: 0, 212, 255;
+  }
+  &.emotion-happy {
+    --eye-accent: #00ffaa;
+    --eye-accent-rgb: 0, 255, 170;
+  }
+  &.emotion-sad {
+    --eye-accent: #0066ff;
+    --eye-accent-rgb: 0, 102, 255;
+  }
+  &.emotion-angry {
+    --eye-accent: #ff3333;
+    --eye-accent-rgb: 255, 51, 51;
+  }
+  &.emotion-surprised {
+    --eye-accent: #bb33ff;
+    --eye-accent-rgb: 187, 51, 255;
+  }
+  &.emotion-thinking {
+    --eye-accent: #ffaa00;
+    --eye-accent-rgb: 255, 170, 0;
+  }
+  &.emotion-excited {
+    --eye-accent: #ff00ff;
+    --eye-accent-rgb: 255, 0, 255;
+  }
+  &.emotion-sleeping {
+    --eye-accent: rgba(138, 43, 226, 0.45);
+    --eye-accent-rgb: 138, 43, 226;
+  }
+  &.emotion-love {
+    --eye-accent: #ff3388;
+    --eye-accent-rgb: 255, 51, 136;
+  }
+  &.emotion-scanning {
+    --eye-accent: #00ffcc;
+    --eye-accent-rgb: 0, 255, 204;
+  }
+  &.emotion-bored {
+    --eye-accent: #78909c;
+    --eye-accent-rgb: 120, 144, 156;
+  }
+  &.emotion-cute {
+    --eye-accent: #ff6fa2;
+    --eye-accent-rgb: 255, 111, 162;
+  }
+}
+
 .eye {
   position: relative;
   width: 28vw;
   height: 28vw;
   max-width: 220px;
   max-height: 220px;
-  border-radius: 50%;
-  border: 3px solid var(--primary-color);
-  background: radial-gradient(circle at center, rgba(0, 212, 255, 0.2) 0%, rgba(0, 0, 0, 0.8) 80%);
-  box-shadow: 0 0 25px rgba(0, 212, 255, 0.5),
-    inset 0 0 30px rgba(0, 212, 255, 0.3);
+  // Sleek premium stadium/squircle shape
+  border-radius: 42% 42% 45% 45%;
+  border: 4px solid var(--eye-accent);
+  background: radial-gradient(circle at center, rgba(var(--eye-accent-rgb), 0.15) 0%, rgba(0, 0, 0, 0.9) 85%);
+  box-shadow: 0 0 30px rgba(var(--eye-accent-rgb), 0.45),
+    inset 0 0 35px rgba(var(--eye-accent-rgb), 0.25);
   overflow: hidden;
+  transition: border-color 0.4s ease, border-radius 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
 
   &.left {
-    transform: rotate(-2deg);
+    transform: rotate(-1.5deg);
   }
 
   &.right {
-    transform: rotate(2deg);
+    transform: rotate(1.5deg);
+  }
+
+  // Winking override: shuts eyelids completely instantly
+  &.winking {
+    .eyelid.top {
+      transform: translateY(0%) !important;
+      transition-duration: 0.15s !important;
+    }
+    .eyelid.bottom {
+      transform: translateY(0%) !important;
+      transition-duration: 0.15s !important;
+    }
+  }
+}
+
+// Cybernetic rings for high-tech premium aesthetics
+.cyber-ring {
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  width: 90%;
+  height: 90%;
+  border-radius: 50%;
+  border: 1px dashed rgba(var(--eye-accent-rgb), 0.35);
+  box-shadow: 0 0 10px rgba(var(--eye-accent-rgb), 0.1);
+  z-index: 5;
+  pointer-events: none;
+  animation: rotateCyberRing 20s linear infinite;
+  transition: border-color 0.4s ease;
+}
+
+.iris-pattern {
+  position: absolute;
+  top: 12.5%;
+  left: 12.5%;
+  width: 75%;
+  height: 75%;
+  border-radius: 50%;
+  border: 2px dotted rgba(var(--eye-accent-rgb), 0.2);
+  z-index: 4;
+  pointer-events: none;
+  animation: rotateCyberRingReverse 16s linear infinite;
+  transition: border-color 0.4s ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    border: 1px double rgba(var(--eye-accent-rgb), 0.12);
   }
 }
 
@@ -122,53 +258,322 @@
   margin-top: -20%;
   margin-left: -20%;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #fff 0%, var(--primary-color) 60%, #007aa3 100%);
-  box-shadow: 0 0 20px var(--primary-color);
-  transition: transform 0.1s ease-out;
+  background: radial-gradient(circle at 30% 30%, #fff 0%, var(--eye-accent) 60%, color-mix(in srgb, var(--eye-accent) 65%, #000) 100%);
+  box-shadow: 0 0 22px var(--eye-accent);
+  transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1.15), background 0.4s ease, box-shadow 0.4s ease;
+  z-index: 8;
 
   .glint {
     position: absolute;
-    top: 15%;
-    left: 20%;
-    width: 25%;
-    height: 25%;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 50%;
-    filter: blur(2px);
+    filter: drop-shadow(0 0 2px #fff);
+
+    &.glint-1 {
+      top: 15%;
+      left: 20%;
+      width: 28%;
+      height: 28%;
+    }
+
+    &.glint-2 {
+      bottom: 20%;
+      right: 22%;
+      width: 14%;
+      height: 14%;
+      opacity: 0.7;
+    }
   }
 }
 
 .eyelid {
   position: absolute;
-  left: 0;
-  width: 100%;
+  left: -5%;
+  width: 110%; // Overflow to cleanly cover slanted rotated edges
   background: var(--background-color);
   z-index: 10;
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1.15), border-color 0.4s ease;
 
   &.top {
     top: 0;
     height: 60%;
-    border-bottom: 3px solid var(--primary-color);
+    border-bottom: 4px solid var(--eye-accent);
     transform: translateY(-105%);
   }
 
   &.bottom {
     bottom: 0;
     height: 50%;
-    border-top: 3px solid var(--primary-color);
+    border-top: 4px solid var(--eye-accent);
     transform: translateY(105%);
   }
 }
 
+// ─── Emotion-Specific Eyelid and Pupil Styles ───────────────────────────────
+
+.face-layer.emotion-happy {
+  .eye {
+    border-radius: 46% 46% 40% 40%;
+  }
+  .eye.left .eyelid.bottom {
+    transform: translateY(35%) rotate(-3deg);
+  }
+  .eye.right .eyelid.bottom {
+    transform: translateY(35%) rotate(3deg);
+  }
+  .pupil {
+    transform: translateY(-8px) scale(0.95);
+  }
+}
+
+.face-layer.emotion-sad {
+  .eye.left {
+    transform: rotate(-5deg) translateY(5px);
+    .eyelid.top {
+      transform: translateY(-55%) rotate(-8deg); // slant down outer edge
+    }
+  }
+  .eye.right {
+    transform: rotate(5deg) translateY(5px);
+    .eyelid.top {
+      transform: translateY(-55%) rotate(8deg); // slant down outer edge
+    }
+  }
+  .eyelid.bottom {
+    transform: translateY(85%);
+  }
+  .pupil {
+    transform: translateY(10px) scale(0.92);
+  }
+}
+
+.face-layer.emotion-angry {
+  .eye {
+    animation: pulseGlow 1.2s infinite alternate ease-in-out;
+  }
+  .eye.left .eyelid.top {
+    transform: translateY(-52%) rotate(14deg); // slanted downward to nose
+  }
+  .eye.right .eyelid.top {
+    transform: translateY(-52%) rotate(-14deg); // slanted downward to nose
+  }
+  .eyelid.bottom {
+    transform: translateY(88%);
+  }
+  .pupil {
+    transform: scale(0.78);
+  }
+}
+
+.face-layer.emotion-surprised {
+  .eye {
+    transform: scale(1.08);
+    border-radius: 50%; // Shock roundness
+  }
+  .eye.left {
+    transform: scale(1.08) rotate(-1.5deg);
+  }
+  .eye.right {
+    transform: scale(1.08) rotate(1.5deg);
+  }
+  .eyelid.top {
+    transform: translateY(-120%);
+  }
+  .eyelid.bottom {
+    transform: translateY(120%);
+  }
+  .pupil {
+    transform: scale(0.55);
+  }
+}
+
+.face-layer.emotion-thinking {
+  .eye.left {
+    .eyelid.top {
+      transform: translateY(-58%) rotate(5deg);
+    }
+    .pupil {
+      transform: translate(-10px, -6px) scale(0.95);
+    }
+  }
+  .eye.right {
+    .eyelid.top {
+      transform: translateY(-110%);
+    }
+    .pupil {
+      transform: translate(-14px, -14px) scale(0.95);
+    }
+  }
+}
+
+.face-layer.emotion-excited {
+  .eye {
+    animation: exciteWiggle 0.4s infinite alternate ease-in-out;
+    border-radius: 46% 46% 42% 42%;
+  }
+  .eye.left {
+    animation-delay: -0.08s;
+  }
+  .eyelid.top {
+    transform: translateY(-115%);
+  }
+  .eyelid.bottom {
+    transform: translateY(115%);
+  }
+  .pupil {
+    background: radial-gradient(circle at 30% 30%, #fff 0%, #ff00ff 45%, #00ffff 100%);
+    box-shadow: 0 0 25px #ff00ff;
+    transform: scale(1.1);
+  }
+}
+
+.face-layer.emotion-sleeping {
+  .eye {
+    border-radius: 42%;
+    border-color: rgba(var(--eye-accent-rgb), 0.3) !important;
+    box-shadow: 0 0 15px rgba(var(--eye-accent-rgb), 0.2),
+      inset 0 0 15px rgba(var(--eye-accent-rgb), 0.1);
+  }
+  .eyelid.top {
+    transform: translateY(-8%);
+    border-bottom-width: 2px;
+    transition-duration: 1.5s;
+  }
+  .eyelid.bottom {
+    transform: translateY(8%);
+    border-top-width: 2px;
+    transition-duration: 1.5s;
+  }
+  .cyber-ring, .iris-pattern, .pupil {
+    opacity: 0.08;
+    transition: opacity 1.5s ease;
+  }
+}
+
+// Keyframe for scanner sweep laser line
+@keyframes scannerSweep {
+  0%, 100% { transform: translateY(-105%); }
+  50% { transform: translateY(105%); }
+}
+
+.face-layer.emotion-love {
+  .eye {
+    border-radius: 46% 46% 42% 42%;
+  }
+  .pupil {
+    background: transparent !important;
+    box-shadow: none !important;
+    width: 56px !important;
+    height: 56px !important;
+    margin-top: -28px !important;
+    margin-left: -28px !important;
+    transition: transform 0.25s ease-out;
+
+    // Drawing a cute CSS heart using pseudo-elements (25% larger)
+    &::before, &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      width: 28px;
+      height: 46px;
+      border-radius: 28px 28px 0 0;
+      background: #ff3388;
+      box-shadow: 0 0 20px rgba(255, 51, 136, 0.9);
+      transition: background 0.4s ease;
+    }
+    &::before {
+      left: 28px;
+      transform: rotate(-45deg);
+      transform-origin: 0 100%;
+    }
+    &::after {
+      left: 0;
+      transform: rotate(45deg);
+      transform-origin: 100% 100%;
+    }
+
+    .glint {
+      display: none !important; // Hide default glints for heart-eyes
+    }
+  }
+}
+
+.face-layer.emotion-scanning {
+  .eye {
+    border-radius: 42% 42% 45% 45%;
+    
+    // Add laser scanner bar inside the eye container
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: #00ffcc;
+      box-shadow: 0 0 14px #00ffcc, 0 0 4px #00ffcc;
+      animation: scannerSweep 2.2s infinite linear;
+      z-index: 9;
+      pointer-events: none;
+    }
+  }
+  .pupil {
+    transform: scale(0.9) translate(0px, 0px) !important; // pupil locks center during scan
+    filter: drop-shadow(0 0 10px #00ffcc);
+  }
+}
+
+.face-layer.emotion-bored {
+  .eye {
+    border-radius: 42% 42% 45% 45%;
+  }
+  .eyelid.top {
+    transform: translateY(-40%); // Droops significantly covering upper eye
+  }
+  .eyelid.bottom {
+    transform: translateY(92%); // Rises slightly from bottom
+  }
+  .pupil {
+    transform: translateY(4px) scale(0.92); // lazy pupil looking down
+  }
+}
+
+.face-layer.emotion-cute {
+  .eye {
+    border-radius: 45% 45% 43% 43%;
+  }
+  .eye.left {
+    .eyelid.top {
+      transform: translateY(-68%) rotate(-3deg);
+    }
+    .pupil {
+      transform: translate(7px, 3px) scale(1.1); // focused inward slightly
+    }
+  }
+  .eye.right {
+    .eyelid.top {
+      transform: translateY(-68%) rotate(3deg);
+    }
+    .pupil {
+      transform: translate(-7px, 3px) scale(1.1); // focused inward slightly
+    }
+  }
+  .eyelid.bottom {
+    transform: translateY(94%);
+  }
+}
+
+
+
 .face-layer.closing {
   .eyelid.top {
-    transform: translateY(0%);
+    transform: translateY(0%) !important;
+    transition-duration: 0.12s !important;
   }
 
   .eyelid.bottom {
-    transform: translateY(0%);
-    transition-duration: 0.25s;
+    transform: translateY(0%) !important;
+    transition-duration: 0.12s !important;
   }
 }
 

@@ -36,14 +36,8 @@ export default defineModule({
     {
       module: 'drive',
       name: 'drive_rotateAngle',
-      description: 'Rotate in place by angle in degrees (sign sets turn direction) at the given speed percent',
+      description: 'Rotate in place by angle in degrees (sign sets turn direction)',
       parameters: [
-        {
-          name: 'speed',
-          type: 'integer',
-          description: 'Motor speed magnitude 80-100',
-          isRequired: true,
-        },
         {
           name: 'angle',
           type: 'integer',
@@ -77,9 +71,9 @@ class DriveController {
     });
   }
 
-  rotateAngle({ speed, angle }: { speed: number; angle: number }) {
+  rotateAngle({ angle }: { angle: number }) {
     return this.deps.picoConnector.sendCommand(this.deps.moduleId, 'rotate_angle', {
-      s: Math.abs(speed),
+      s: 100,
       v: angle,
     });
   }

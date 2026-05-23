@@ -157,4 +157,8 @@ export class DevToolsPageComponent implements OnInit, OnDestroy {
   clearChat() {
     this.messages.set([]);
   }
+
+  reloadPage() {
+    location.reload();
+  }
 }

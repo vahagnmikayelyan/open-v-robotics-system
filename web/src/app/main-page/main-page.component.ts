@@ -35,6 +35,10 @@ export class MainPageComponent implements OnInit, OnDestroy {
 
   isPollAnswered = signal<boolean>(false);
 
+  emotion = signal<string>('neutral');
+  winkLeft = signal<boolean>(false);
+  winkRight = signal<boolean>(false);
+
   private blinkTimer: any;
   private idleTimer: any;
   private holdTimer: any;
@@ -51,6 +55,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.uiSocketService.onProgramChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
       this.runningProgram.set(state);
+      this.emotion.set('neutral');
     });
 
     this.uiSocketService.onInit.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
@@ -87,6 +92,19 @@ export class MainPageComponent implements OnInit, OnDestroy {
         const question = event.params['question'] as string | undefined;
         this.isPollAnswered.set(false);
         this.activePoll.set({ options, question });
+      } else if (event.command === 'setEmotion') {
+        const emotion = event.params['emotion'] as string;
+        this.emotion.set(emotion);
+      } else if (event.command === 'wink') {
+        const eye = event.params['eye'] as string;
+        const duration = (event.params['duration'] as number) || 400;
+        if (eye === 'left') {
+          this.winkLeft.set(true);
+          setTimeout(() => this.winkLeft.set(false), duration);
+        } else if (eye === 'right') {
+          this.winkRight.set(true);
+          setTimeout(() => this.winkRight.set(false), duration);
+        }
       }
     });
   }
@@ -128,14 +146,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  onMouseMove(e: MouseEvent) {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    const x = (e.clientX / width) * 2 - 1;
-    const y = (e.clientY / height) * 2 - 1;
 
-    this.pupilOffset.set({ x: x * 15, y: y * 15 });
-  }
 
   onDoubleClick() {
     this.router.navigate(['/menu']);
@@ -218,6 +229,9 @@ export class MainPageComponent implements OnInit, OnDestroy {
   }
 
   private blink() {
+    if (this.emotion() === 'sleeping' || this.winkLeft() || this.winkRight()) {
+      return;
+    }
     this.isBlinking.set(true);
 
     setTimeout(() => {
