@@ -18,7 +18,7 @@ export class DragScrollDirective implements OnDestroy {
 
   constructor(
     private el: ElementRef,
-    @Inject(PLATFORM_ID) platformId: Object
+    @Inject(PLATFORM_ID) platformId: Object,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
 
@@ -46,8 +46,9 @@ export class DragScrollDirective implements OnDestroy {
       const hasScrollableHeight = el.scrollHeight > el.clientHeight;
       const hasScrollableWidth = el.scrollWidth > el.clientWidth;
 
-      const isScrollable = (hasScrollableHeight && (style.overflowY === 'auto' || style.overflowY === 'scroll')) ||
-                           (hasScrollableWidth && (style.overflowX === 'auto' || style.overflowX === 'scroll'));
+      const isScrollable =
+        (hasScrollableHeight && (style.overflowY === 'auto' || style.overflowY === 'scroll')) ||
+        (hasScrollableWidth && (style.overflowX === 'auto' || style.overflowX === 'scroll'));
 
       if (isScrollable) {
         return el;
@@ -66,7 +67,7 @@ export class DragScrollDirective implements OnDestroy {
     if (!this.isBrowser || e.button !== 0) return;
 
     const target = e.target as HTMLElement;
-    
+
     // Avoid stealing drag events from HTML range sliders or other native draggable controls
     const isRangeInput = target.tagName === 'INPUT' && (target as HTMLInputElement).type === 'range';
     if (isRangeInput) return;

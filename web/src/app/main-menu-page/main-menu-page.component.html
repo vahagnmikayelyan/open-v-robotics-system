@@ -1,5 +1,4 @@
 <div class="menu-container" dragScroll>
-
   <div class="top-bar">
     <button class="nav-btn back" routerLink="/">BACK</button>
 
@@ -25,7 +24,7 @@
   </div>
 
   <!-- Hidden file input for import -->
-  <input #importFileInput type="file" accept=".json" style="display:none" (change)="importProgram($event)">
+  <input #importFileInput type="file" accept=".json" style="display: none" (change)="importProgram($event)" />
 
   <div class="divider">SELECT PROGRAM</div>
 
@@ -45,7 +44,12 @@
     />
 
     <!-- Import placeholder card -->
-    <button type="button" class="program-card add-new import-card" (click)="importFileInput.click()" title="Import program from JSON">
+    <button
+      type="button"
+      class="program-card add-new import-card"
+      (click)="importFileInput.click()"
+      title="Import program from JSON"
+    >
       <lucide-icon [img]="LucideIcons.Upload" class="plus-icon"></lucide-icon>
       <div class="tile-name">Import program</div>
     </button>
@@ -57,13 +61,11 @@
   </div>
 
   <div class="modal-overlay" *ngIf="isConnectDialogOpen()" (click)="closeConnectDialog()">
-
     <div class="modal-card" (click)="$event.stopPropagation()">
-
       <div class="modal-header">REMOTE CONTROL</div>
 
       <div class="qr-box">
-        <img *ngIf="qrImageUrl()" [src]="qrImageUrl()" alt="QR Code" width="180" height="180"/>
+        <img *ngIf="qrImageUrl()" [src]="qrImageUrl()" alt="QR Code" width="180" height="180" />
         <div *ngIf="!qrImageUrl()" class="loader-wrapper qr-loader">
           <ui-loader></ui-loader>
         </div>
@@ -77,5 +79,4 @@
       <button class="nav-btn back close-btn" (click)="closeConnectDialog()">CLOSE</button>
     </div>
   </div>
-
 </div>
