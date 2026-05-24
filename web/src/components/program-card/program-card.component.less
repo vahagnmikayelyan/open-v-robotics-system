@@ -37,9 +37,18 @@
   .tile-name {
     font-weight: bold;
     font-size: 1.1rem;
+    line-height: 1.3;
+    min-height: 2.86rem; /* 1.1rem * 1.3 * 2 = 2.86rem to keep icon/text alignment uniform */
     color: var(--text-primary);
     text-align: center;
     letter-spacing: 1px;
+    width: 100%;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
   }
 
   .tile-sub {
@@ -48,6 +57,11 @@
     margin-top: 5px;
     font-family: var(--font-mono), monospace;
     opacity: 0.8;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
   }
 }
 
