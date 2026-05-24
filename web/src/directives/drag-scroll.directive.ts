@@ -82,24 +82,21 @@ export class DragScrollDirective implements OnDestroy {
     this.startScrollLeft = this.scrollTarget.scrollLeft;
     this.hasMoved = false;
     this.preventNextClick = false;
-
-    try {
-      nativeEl.setPointerCapture(e.pointerId);
-    } catch (err) {}
   }
 
-  @HostListener('pointermove', ['$event'])
+  @HostListener('document:pointermove', ['$event'])
   onPointerMove(e: PointerEvent): void {
     if (!this.isDragging || !this.scrollTarget) return;
 
     const dy = e.clientY - this.startY;
     const dx = e.clientX - this.startX;
-    const nativeEl = this.el.nativeElement;
 
     // 10px threshold to distinguish dragging from simple tapping
     if (!this.hasMoved && (Math.abs(dy) > 10 || Math.abs(dx) > 10)) {
       this.hasMoved = true;
       this.preventNextClick = true;
+
+      const nativeEl = this.el.nativeElement;
       nativeEl.style.userSelect = 'none';
       nativeEl.style.touchAction = 'none';
     }
@@ -114,7 +111,7 @@ export class DragScrollDirective implements OnDestroy {
     }
   }
 
-  @HostListener('pointerup', ['$event'])
+  @HostListener('document:pointerup', ['$event'])
   onPointerUp(e: PointerEvent): void {
     if (!this.isDragging) return;
 
@@ -123,10 +120,6 @@ export class DragScrollDirective implements OnDestroy {
 
     nativeEl.style.removeProperty('user-select');
     nativeEl.style.removeProperty('touch-action');
-
-    try {
-      nativeEl.releasePointerCapture(e.pointerId);
-    } catch (err) {}
 
     this.scrollTarget = null;
 
