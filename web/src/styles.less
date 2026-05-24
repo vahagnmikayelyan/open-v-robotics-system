@@ -295,7 +295,8 @@ lucide-icon {
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 14px; /* Thicker for touch-friendliness on kiosks (was 8px) */
+  height: 14px;
 }
 
 ::-webkit-scrollbar-track {
@@ -304,11 +305,12 @@ lucide-icon {
 
 ::-webkit-scrollbar-thumb {
   background: #333;
-  border-radius: 4px;
+  border-radius: 7px;
+  border: 3px solid var(--background-color); /* Keep the thumb visually sleek (8px) but with a 14px touch target */
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #444;
+  background: #4a4a4a;
 }
 
 .loader-wrapper {
