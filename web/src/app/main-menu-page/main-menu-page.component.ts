@@ -10,7 +10,7 @@ import { UiLoaderComponent } from '../../components/ui-loader/ui-loader.componen
 import { PromptButton, PromptService } from '../../services/prompt.service';
 import * as QRCode from 'qrcode';
 import { IModule, IProgram } from '../../models/models';
-import { DragScrollDirective } from '../directives/drag-scroll.directive';
+import { DragScrollDirective } from '../../directives/drag-scroll.directive';
 
 @Component({
   selector: 'main-menu-page',
