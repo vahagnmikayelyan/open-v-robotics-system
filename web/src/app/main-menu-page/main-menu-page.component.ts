@@ -10,11 +10,12 @@ import { UiLoaderComponent } from '../../components/ui-loader/ui-loader.componen
 import { PromptButton, PromptService } from '../../services/prompt.service';
 import * as QRCode from 'qrcode';
 import { IModule, IProgram } from '../../models/models';
+import { DragScrollDirective } from '../directives/drag-scroll.directive';
 
 @Component({
   selector: 'main-menu-page',
   standalone: true,
-  imports: [RouterLink, LucideAngularModule, NgFor, NgIf, UiLoaderComponent, ProgramCardComponent],
+  imports: [RouterLink, LucideAngularModule, NgFor, NgIf, UiLoaderComponent, ProgramCardComponent, DragScrollDirective],
   templateUrl: './main-menu-page.component.html',
   styleUrl: './main-menu-page.component.less',
 })
