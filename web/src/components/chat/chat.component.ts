@@ -12,11 +12,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, Send, Trash2 } from 'lucide-angular';
 import { IChatMessage } from '../../models/models';
+import { DragScrollDirective } from '../../directives/drag-scroll.directive';
 
 @Component({
   selector: 'chat',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule, DragScrollDirective],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,

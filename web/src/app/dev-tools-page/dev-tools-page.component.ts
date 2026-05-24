@@ -14,6 +14,7 @@ import { DualLedWidgetComponent } from '../../components/dual-led-widget/dual-le
 import { SpeakerWidgetComponent } from '../../components/speaker-widget/speaker-widget.component';
 import { MicrophoneWidgetComponent } from '../../components/microphone-widget/microphone-widget.component';
 import { CameraWidgetComponent } from '../../components/camera-widget/camera-widget.component';
+import { DragScrollDirective } from '../../directives/drag-scroll.directive';
 
 @Component({
   selector: 'dev-tools-page',
@@ -29,6 +30,7 @@ import { CameraWidgetComponent } from '../../components/camera-widget/camera-wid
     SpeakerWidgetComponent,
     MicrophoneWidgetComponent,
     CameraWidgetComponent,
+    DragScrollDirective,
   ],
   templateUrl: './dev-tools-page.component.html',
   styleUrl: './dev-tools-page.component.less',

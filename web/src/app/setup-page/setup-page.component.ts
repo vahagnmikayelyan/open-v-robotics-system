@@ -7,11 +7,12 @@ import { NotificationService } from '../../services/notification.service';
 import { IConfig, IConfigGroup, IConfigResponse } from '../../models/models';
 import { environment } from '../../environments/environment';
 import { ConfigFieldComponent } from '../../components/config-field/config-field.component';
+import { DragScrollDirective } from '../../directives/drag-scroll.directive';
 
 @Component({
   selector: 'setup-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ConfigFieldComponent],
+  imports: [CommonModule, FormsModule, RouterLink, ConfigFieldComponent, DragScrollDirective],
   templateUrl: './setup-page.component.html',
   styleUrl: './setup-page.component.less',
 })

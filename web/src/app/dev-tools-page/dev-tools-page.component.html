@@ -8,9 +8,7 @@
 </header>
 
 <div class="dashboard-grid">
-
-  <div class="panel">
-
+  <div class="panel scroll-container" dragScroll>
     <sensor-tile
       label="Power" [valueMain]="powerDataSignal().v" unit="V" [valueSec]="powerDataSignal().p"
       unitSec="%" (isActiveChange)="changeModuleUpdates('power', $event)"></sensor-tile>
@@ -51,5 +49,4 @@
   <div class="panel">
     <chat [messages]="messages()" (sendMessage)="sendUserMessage($event)" (clearChat)="clearChat()"></chat>
   </div>
-
 </div>
