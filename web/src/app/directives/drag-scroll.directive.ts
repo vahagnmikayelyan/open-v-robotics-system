@@ -2,7 +2,7 @@ import { Directive, ElementRef, HostListener, Inject, PLATFORM_ID, OnDestroy } f
 import { isPlatformBrowser } from '@angular/common';
 
 @Directive({
-  selector: '[appDragScroll]',
+  selector: '[dragScroll]',
   standalone: true,
 })
 export class DragScrollDirective implements OnDestroy {
@@ -14,6 +14,7 @@ export class DragScrollDirective implements OnDestroy {
   private preventNextClick = false;
   private hasMoved = false;
   private isBrowser = false;
+  private scrollTarget: HTMLElement | null = null;
 
   constructor(
     private el: ElementRef,
@@ -34,6 +35,32 @@ export class DragScrollDirective implements OnDestroy {
     }
   };
 
+  /**
+   * Traverse up the DOM tree from startEl to find the nearest element that is actually scrollable.
+   * If none are found, fallback to the document viewport scroll container.
+   */
+  private getScrollableElement(startEl: HTMLElement): HTMLElement {
+    let el: HTMLElement | null = startEl;
+    while (el) {
+      const style = window.getComputedStyle(el);
+      const hasScrollableHeight = el.scrollHeight > el.clientHeight;
+      const hasScrollableWidth = el.scrollWidth > el.clientWidth;
+
+      const isScrollable = (hasScrollableHeight && (style.overflowY === 'auto' || style.overflowY === 'scroll')) ||
+                           (hasScrollableWidth && (style.overflowX === 'auto' || style.overflowX === 'scroll'));
+
+      if (isScrollable) {
+        return el;
+      }
+
+      if (el === document.body || el === document.documentElement) {
+        break;
+      }
+      el = el.parentElement;
+    }
+    return document.documentElement || document.body;
+  }
+
   @HostListener('pointerdown', ['$event'])
   onPointerDown(e: PointerEvent): void {
     if (!this.isBrowser || e.button !== 0) return;
@@ -45,12 +72,13 @@ export class DragScrollDirective implements OnDestroy {
     if (isRangeInput) return;
 
     const nativeEl = this.el.nativeElement;
+    this.scrollTarget = this.getScrollableElement(nativeEl);
 
     this.isDragging = true;
     this.startY = e.clientY;
     this.startX = e.clientX;
-    this.startScrollTop = nativeEl.scrollTop;
-    this.startScrollLeft = nativeEl.scrollLeft;
+    this.startScrollTop = this.scrollTarget.scrollTop;
+    this.startScrollLeft = this.scrollTarget.scrollLeft;
     this.hasMoved = false;
     this.preventNextClick = false;
 
@@ -61,7 +89,7 @@ export class DragScrollDirective implements OnDestroy {
 
   @HostListener('pointermove', ['$event'])
   onPointerMove(e: PointerEvent): void {
-    if (!this.isDragging) return;
+    if (!this.isDragging || !this.scrollTarget) return;
 
     const dy = e.clientY - this.startY;
     const dx = e.clientX - this.startX;
@@ -76,11 +104,11 @@ export class DragScrollDirective implements OnDestroy {
     }
 
     if (this.hasMoved) {
-      if (nativeEl.scrollHeight > nativeEl.clientHeight) {
-        nativeEl.scrollTop = this.startScrollTop - dy;
+      if (this.scrollTarget.scrollHeight > this.scrollTarget.clientHeight) {
+        this.scrollTarget.scrollTop = this.startScrollTop - dy;
       }
-      if (nativeEl.scrollWidth > nativeEl.clientWidth) {
-        nativeEl.scrollLeft = this.startScrollLeft - dx;
+      if (this.scrollTarget.scrollWidth > this.scrollTarget.clientWidth) {
+        this.scrollTarget.scrollLeft = this.startScrollLeft - dx;
       }
     }
   }
@@ -98,6 +126,8 @@ export class DragScrollDirective implements OnDestroy {
     try {
       nativeEl.releasePointerCapture(e.pointerId);
     } catch (err) {}
+
+    this.scrollTarget = null;
 
     if (this.preventNextClick) {
       setTimeout(() => {
