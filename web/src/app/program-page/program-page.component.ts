@@ -8,6 +8,7 @@ import { ApiService } from '../../services/api.service';
 import { UiLoaderComponent } from '../../components/ui-loader/ui-loader.component';
 import { ConfigFieldComponent } from '../../components/config-field/config-field.component';
 import { NotificationService } from '../../services/notification.service';
+import { DragScrollDirective } from '../../directives/drag-scroll.directive';
 
 @Component({
   selector: 'program-page',
@@ -21,6 +22,7 @@ import { NotificationService } from '../../services/notification.service';
     NgFor,
     UpperCasePipe,
     LucideAngularModule,
+    DragScrollDirective,
   ],
   templateUrl: './program-page.component.html',
   styleUrl: './program-page.component.less',
@@ -210,5 +212,4 @@ export class ProgramPageComponent implements OnInit {
       this.notifications.error('Failed to save program');
     }
   }
-
 }

@@ -32,7 +32,7 @@
     <ui-loader></ui-loader>
   </div>
 
-  <div *ngIf="!isLoading()" class="programs-grid">
+  <div *ngIf="!isLoading()" class="programs-grid scroll-container" dragScroll>
     <program-card
       *ngFor="let prog of programs()"
       [program]="prog"

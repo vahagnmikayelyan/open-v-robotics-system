@@ -1,5 +1,4 @@
 <form class="edit-container" #configForm="ngForm" (ngSubmit)="save(configForm)">
-
   <div class="header">
     <button type="button" class="nav-btn back" routerLink="/menu">CANCEL</button>
     <span class="title">{{ !program().id ? 'NEW PROGRAM' : 'EDIT PROGRAM' }}</span>
@@ -12,7 +11,7 @@
     <ui-loader></ui-loader>
   </div>
 
-  <div *ngIf="!isLoading()" class="form-scroll">
+  <div *ngIf="!isLoading()" class="scroll-container" dragScroll>
 
     <div class="form-group">
       <label>PROGRAM NAME</label>
@@ -48,8 +47,8 @@
 
       <div class="error-msg" *ngIf="aiModelField.invalid && aiModelField.touched">
         Please select an AI model.
-      </div>
-    </div>
+    </div>    
+  </div>
 
     <div class="form-group" *ngIf="aiVoices.length > 0">
       <label>VOICE</label>
@@ -105,6 +104,5 @@
         <!-- End Module Settings -->
       </ng-container>
     </div>
-
   </div>
 </form>

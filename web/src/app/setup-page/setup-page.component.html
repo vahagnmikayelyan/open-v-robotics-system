@@ -1,13 +1,11 @@
 <div class="setup-container">
-
   <div class="header">
     <button class="nav-btn back" routerLink="/menu">BACK</button>
     <span class="title">SYSTEM SETTINGS</span>
     <button class="nav-btn primary save-btn" (click)="save()">SAVE</button>
   </div>
 
-  <div class="settings-scroll">
-
+  <div class="scroll-container" dragScroll>
     <ng-container *ngFor="let group of schema()">
       <div class="section-title">{{ group.name }}</div>
       <div class="card-group">
@@ -22,6 +20,5 @@
     <div class="info-block">
       <div>System Version: v{{ platformVersion() }}</div>
     </div>
-
   </div>
 </div>
