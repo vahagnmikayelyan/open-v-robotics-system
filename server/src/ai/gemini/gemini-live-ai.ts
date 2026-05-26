@@ -60,6 +60,16 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
   }
 
   private getSetupMessage() {
+    const hasSearch = !this.isGemini3;
+
+    const tools: any[] = [];
+    if (hasSearch) {
+      tools.push({ googleSearch: {} });
+    }
+    if (this.tools && this.tools.length > 0) {
+      tools.push({ functionDeclarations: this.convertToTools() });
+    }
+
     return {
       setup: {
         model: `models/${this.model}`,
@@ -83,8 +93,8 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
         },
         // If exists stored session id, restoring
         sessionResumption: this.sessionHandle ? { handle: this.sessionHandle } : {},
-        // Adding tools if available
-        ...(this.tools && this.tools.length > 0 ? { tools: [{ functionDeclarations: this.convertToTools() }] } : {}),
+        // Adding tools conditionally inline if available
+        ...(tools.length > 0 ? { tools } : {}),
       },
     };
   }
@@ -241,6 +251,38 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
             }
           }
         }
+      }
+
+      // Grounding / Google Search Metadata
+      if (response.serverContent && response.serverContent.groundingMetadata) {
+        const metadata = response.serverContent.groundingMetadata;
+        const queries = metadata.webSearchQueries || [];
+        const chunks = metadata.groundingChunks || [];
+
+        const sources = chunks
+          .map((chunk: any) => {
+            const web = chunk.web;
+            if (web) {
+              return {
+                title: web.title || '',
+                uri: web.uri || '',
+              };
+            }
+            if (chunk.uri || chunk.title) {
+              return {
+                title: chunk.title || '',
+                uri: chunk.uri || '',
+              };
+            }
+            return null;
+          })
+          .filter(Boolean);
+
+        this.emit('systemMessage', {
+          event: 'googleSearch',
+          queries,
+          sources,
+        });
       }
 
       // Tools call
