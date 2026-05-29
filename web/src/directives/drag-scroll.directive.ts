@@ -40,9 +40,9 @@ export class DragScrollDirective implements OnDestroy {
 
     const target = e.target as HTMLElement;
     
-    // Avoid stealing drag events from HTML range sliders or other native draggable controls
-    const isRangeInput = target.tagName === 'INPUT' && (target as HTMLInputElement).type === 'range';
-    if (isRangeInput) return;
+    // Avoid stealing drag/scroll events from interactive elements like inputs, selects, buttons, links, etc.
+    const isInteractive = target.closest('select, input, textarea, button, a');
+    if (isInteractive) return;
 
     const nativeEl = this.el.nativeElement;
 
