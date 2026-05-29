@@ -1,4 +1,4 @@
-<div class="menu-container" dragScroll>
+<div class="menu-container">
   <div class="top-bar">
     <button class="nav-btn back" routerLink="/">BACK</button>
 
@@ -50,13 +50,17 @@
       (click)="importFileInput.click()"
       title="Import program from JSON"
     >
-      <lucide-icon [img]="LucideIcons.Upload" class="plus-icon"></lucide-icon>
-      <div class="tile-name">Import program</div>
+      <div class="add-new-content">
+        <lucide-icon [img]="LucideIcons.Upload" class="plus-icon"></lucide-icon>
+        <div class="tile-name">Import program</div>
+      </div>
     </button>
 
     <button type="button" class="program-card add-new" (click)="createProgram()">
-      <lucide-icon [img]="LucideIcons.Plus" class="plus-icon"></lucide-icon>
-      <div class="tile-name">Add program</div>
+      <div class="add-new-content">
+        <lucide-icon [img]="LucideIcons.Plus" class="plus-icon"></lucide-icon>
+        <div class="tile-name">Add program</div>
+      </div>
     </button>
   </div>
 
