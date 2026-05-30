@@ -3,56 +3,156 @@
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-## Open V Robotics System
+The **Open V Robotics System** is a software-first orchestration platform, operating framework, and developer environment for building **embodied physical AI Agents** (AI Agents with a physical body) of any complexity. 
 
-The Open V Robotics System is a modular, open-source platform and architectural framework for building autonomous AI robots of any complexity.
+Rather than a static blueprint for a single specific robot, the **Open V Robotics System** is a highly adaptable operating framework. It provides a production-ready, decoupled bridge connecting high-level cognitive AI (large language models, cloud real-time adapters), low-level real-time microcontrollers, and a sleek, interactive web interface.
 
-The goal of the project is to provide developers and engineers with a reliable, production-ready foundation. The platform offers a seamless bridge between low-level microcontrollers, high-level AI, and a user-friendly web interface. You can take this code, 3D print your own chassis, connect the specific sensors you need, and build a smart machine tailored to your unique tasks.
+With the **Open V Robotics System**, the hardware is simply a physical extension of the software. You can take any chassis (wheeled, tracked, or static), connect your custom sensors and actuators, write modular drivers, and instantly instantiate diverse, safe AI personalities with custom physical and digital capabilities.
 
-## The "Programs" System (Core Feature)
+---
 
-The flagship feature of Open V Robotics System is its dynamic configuration management system, known as **"Programs."** Right from the web interface, you can create isolated behavior profiles for your robot.
+## The Core Concept: Software-First Cognitive Profiles ("Programs")
 
-Each Program includes:
+The heart of the **Open V Robotics System** is the **"Programs" System**. A single machine can hold multiple programs simultaneously, each designed for entirely different environments, tasks, or audiences:
+* **The Cognitive Brain:** In a program, you choose the underlying AI model (e.g., Gemini 3.5 Flash, OpenAI Realtime) and select the voice for the AI model.
+* **The Behavioral Mind (System Instruction):** You write a comprehensive system prompt defining how the agent behaves, speaks, and acts.
+* **The Physical & Digital Scope (Modules Access):** You explicitly toggle which capabilities the AI has access to. A module can be a hardware peripheral (camera, mic, motors, thermal sensors) or a software API (e.g., Fal.ai for image generation, a Poll module for interactive quizzes).
+* **Decoupled Security & Tool Isolation:** Swapping active programs "on the fly" re-allocates hardware permissions and tool declarations instantly. If a program disables drive motors, the core `SystemController` physically isolates that module—meaning even if the AI model tries to make a function call to move, the request is intercepted and denied at the software gateway.
 
-* **AI Model Selection:** Assigning a specific engine (Cloud AI or a local model).
-* **System Prompt:** Setting the persona and global objectives (e.g., *"You are a friendly companion"* or *"You are an agricultural assistant, perform tasks dryly and accurately"*).
-* **Module Permissions:** Flexible control over robot capabilities. You can programmatically disable physical hardware (e.g., chassis drive motors, distance sensors) or virtual modules (e.g., external web APIs, media players) for any specific program.
-* **Instant Switching:** Switching between programs happens "on the fly," completely changing the AI's operating context and its hardware access without rebooting the system.
+---
+
+## Web control
+
+Explore the highly responsive web interface custom-tailored for robot touchscreens, mobile phones, and tablets:
+
+### 1. Main Screen (The Face & Dynamic Stage of the Agent)
+
+<img src="docs/images/main screen.png" width="100%" alt="Main Screen Standby">
+
+The main screen is the Control Panel (accessible locally on the robot's display or remotely from any network-connected device).
+
+The top header of the screen houses critical system-level control widgets in a clean, high-premium status bar:
+* **Active Program Status:** Shows the name of the currently running program (or "No program running" when stopped).
+* **Execution Stop Button:** A fast-action stop button to instantly halt the running program profile.
+* **Volume Controls:** Speaker volume control panel.
+* **Power Controls:** Reboot and power off.
+
+Below the header is the active face area. When in standby mode, it acts as a digital "face" with animated eyes expressing presence and focus. Symmetrical design and custom animations allow the robot to convey feelings (e.g. happiness, curiosity, attention) using the Expression Controller, helping establish an empathetic connection with the user.
+
+<table width="100%">
+  <tr>
+    <td width="50%"><img src="docs/images/main screen emorions.png" alt="Emotions View"></td>
+    <td width="50%"><img src="docs/images/main screen poll .png" alt="Quiz & Art View"></td>
+  </tr>
+</table>
+
+Beyond static expressions and eye movements, the main screen acts as a **dynamic rendering stage** that can show rich visual content controlled directly by active modules. For instance, the **Poll module** can generate and display questions and multiple-choice answer buttons directly on screen. In essence, each module can create its own unique visual experiences utilizing the platform's rich UI rendering capabilities (such as displaying full-screen generated paintings via the Fal AI module, rendering maps, or flashing sensory alerts).
+
+---
+
+### 2. Main Menu and Programs List
+
+<img src="docs/images/programs.png" width="100%" alt="Programs List Dashboard">
+
+This main menu serves as the central control panel for selecting the active behavior program of the robot. From this menu, users can view all created programs, quickly swap the running program "on the fly" without rebooting the hardware, and monitor which services are active. Each program card displays the enabled AI model, allowed modules count, and features fast controls to edit, export, or delete the program. Furthermore, the main menu supports program operations, enabling developers to easily export a single program or all saved programs as JSON files, and import them for rapid distribution.
+
+---
+
+### 3. Program add/edit
+
+<table width="100%">
+  <tr>
+    <td width="50%"><img src="docs/images/program page 1.png" alt="Program Info & Prompt Selector"></td>
+    <td width="50%"><img src="docs/images/program page 2.png" alt="Module Toggles & programConfigs"></td>
+  </tr>
+</table>
+
+The Program Editor is the primary configuration workspace where users define their AI agent's personality, intelligence model, and hardware access boundaries. It allows setting the global system instructions (the prompt defining the agent's behavior, style, and goals), choosing the underlying LLM engine (e.g., Gemini Flash, OpenAI Realtime), and selecting the voice for the AI model. 
+
+Crucially, the editor manages module permissions: turning a module ON grants the AI permission to access its capabilities, while turning a module OFF completely isolates it. Furthermore, any module that requires program-specific adjustments exposes its configurations (`programConfigs`) directly inside the editor, allowing the user to configure module-specific parameters specifically for the current program.
+
+---
+
+### 4. System Settings
+
+<img src="docs/images/settings page.png" width="100%" alt="System Settings Page">
+
+The System Settings page is the configuration panel for global, system-wide variables that apply across all programs. It manages the robot's default general parameters, such as the system name used in AI tool calls and a safety global speed limit slider that limits the motor controller's absolute maximum output. In addition, the settings page consolidates global module configurations (`moduleConfigs`), automatically displaying custom input controls for any registered module that defines its own global settings.
+
+---
+
+### 5. Dev mode
+
+<table width="100%">
+  <tr>
+    <td width="33.3%"><img src="docs/images/dev mode 1.png" alt="Telemetry Gauges & Gyro"></td>
+    <td width="33.3%"><img src="docs/images/dev mode 2.png" alt="Actuators & Headlight Controls"></td>
+    <td width="33.3%"><img src="docs/images/dev mode 3.png" alt="Media Peripherals & Terminal Feed"></td>
+  </tr>
+</table>
+
+Developer Mode is a comprehensive diagnostic console designed for debugging, hardware calibration, driver development, and real-time telemetry testing. 
+
+The left panel offers **manual controls and testing of existing modules** (such as overriding motor controls and fan speeds, switching headlights, rotating head servos, capturing camera stream previews, and triggering microphone or speaker audio playback tests).
+
+The right panel features an **interactive chat and debug console**: it displays incoming sensor readings in real-time, system alerts, and system messages from the active AI agent, along with a terminal input field to send direct text messages to the AI model of the running program.
+
+---
+
+### 6. QR Remote Connection
+
+<img src="docs/images/qr connection.png" width="80%" style="display: block; margin: 0 auto;" alt="QR Remote Control Pairing">
+
+The QR Quick Connect modal provides rapid remote access to the robot's control system. The web application dynamically generates a QR code on the robot's main display that users can scan using any smartphone or tablet connected to the same network. This opens the responsive Web UI instantly on the remote device without needing to type or search for the robot's local IP address, making manual remote override or profile editing extremely accessible.
+
+---
+
+## Use Cases: One Core Stack, Infinite Physical Realities
+
+Because the **Open V Robotics System** treats capabilities as modular blocks, the exact same software stack fits vastly different physical realities:
+* **A Headless Garden Sentinel:** An agricultural robot patrolling greenhouse crops. It uses distance sensors, light sensors, thermal scanners, and a robotic manipulator arm. Since it is built for a farmer, it has **no screen**—the AI processes environmental telemetry, makes local crop judgments, and controls the arm.
+* **An Interactive STEM Tutor:** An educational companion for children. It runs in a chassis with a touchscreen, speaker, and microphone. It tells stories, generates visual illustrations via the Fal.ai API, reacts with cute facial emotions, and conducts multiple-choice math quizzes using the Poll module on the screen.
+* **An R&D / Prototyping Sandbox:** A complete pre-engineered developer playground. If you are developing a new AI-robotic feature, you do not need to write WebSockets, real-time audio mixers, camera streaming, local SQLite repositories, or UART communication from scratch—all of this plumbing is already done. You simply focus on writing your specific module driver and test it instantly.
+
+---
 
 ## System Architecture
 
-The system is intentionally divided into isolated layers to prevent bottlenecks and allow for effortless hardware scaling.
+The platform is intentionally divided into isolated layers to guarantee low latency, strict hardware timing, and effortless physical scaling.
 
 ### 1. High-Level (Brain / Compute Center)
-*Responsible for intelligence, decision-making, context retention, and user communication.*
+*Runs on an SBC (Raspberry Pi 5, Orange Pi, NVIDIA Jetson). Handles intelligence, sensory inputs, and user interfaces.*
+* **Backend Core (Node.js / TypeScript):** The central hub managing data routes, WebSockets, and SQLite configurations.
+* **AI Adapter Layer:** Platform-agnostic LLM client. Supports cloud AI (e.g. Gemini Live, OpenAI Realtime) cloud services seamlessly.
+* **Web UI (Angular PWA):** The responsive dashboard shown on the robot's display (Kiosk Mode) or remote control devices.
 
-* **Foundation (SBC):** Can run on a Raspberry Pi 5, AI computers like the Nvidia Jetson Orin Nano Super, or any other powerful single-board computer.
-* **Backend Core:** Written in TypeScript / Node.js. Acts as the central hub, routing all data streams.
-* **AI Adapter Layer:** The platform is agnostic and not tied to a single neural network. You can utilize **Cloud AI** (cloud APIs like Gemini Live) for a quick start and a broad knowledge base. Alternatively, you can deploy **Local Edge AI** (local models, fine-tuned for your specific business tasks) for offline operation, maximum privacy, and zero latency.
-* **Vision and Audio:** Connected directly to the main compute unit is an Arducam Camera Module V3 with autofocus for object recognition, alongside a hardware I2S bus for high-quality audio transmission (microphone and stereo speakers).
-* **User Interface (UI):** A fully-featured web application built with Angular (PWA). Communication with the core is instantaneous via WebSockets (handling telemetry and real-time manual command overrides).
-* **Configuration System:** Settings are stored in a lightweight local SQLite database (using a clean key/value structure with Zod validators).
+### 2. Low-Level (Spinal Cord / Real-Time Controller)
+*Runs on a dedicated microcontroller (Raspberry Pi Pico by default). Handles precise physical timing.*
+> **Why separate SBC and Microcontroller?**
+> Standard Linux operating systems are not Real-Time Operating Systems (RTOS). Linux's background processes and scheduler introduce unpredictable micro-delays (jitter). Relying on a Pi 5 or Orange Pi to drive motors or handle high-frequency sensor loops directly results in jerky movements and timing errors. The Pico microcontroller handles strict real-time loops (perfectly smooth PID motor controls and timing-sensitive sensor captures) while the SBC handles the heavy logic.
 
-### 2. Low-Level (Spinal Cord / Hardware Controller)
-*Responsible for strict, real-time control of the physical world.*
+### 3. Transport Layer (UART Protocol)
+Communication between the SBC and Pico occurs over hardware UART using a highly optimized, flat JSON serialization.
 
-* **Foundation:** Microcontroller (Raspberry Pi Pico by default).
+* **SBC to Pico (Commands):** Sent by the brain to trigger physical actions:
+  ```json
+  {"m": "drive", "a": "move_distance", "s": 100, "v": 300}
+  ```
+  *(Where: `m` — module ID, `a` — action name, `s` — speed percentage, `v` — value/distance in mm)*
 
-> **Why not run everything on the Raspberry Pi 5?**
-> Linux-based operating systems are not Real-Time Operating Systems (RTOS). Background processes and the task scheduler introduce unpredictable micro-delays (jitter). Driving motors or reading sensors directly from an RPi 5 results in jerky movements and timing failures. A microcontroller (Pico) solves this: it operates in strict real-time, ensuring perfectly smooth PID control and hardware safety, while the upper level handles the heavy logic.
+* **Pico to SBC (Telemetry):** Sent by the microcontroller to update sensor states:
+  ```json
+  {"m": "distanceSensor", "a": "update", "v": 150}
+  ```
+  *(Where: `m` — module ID, `a` — status/event name, `v` — sensor reading in mm)*
 
-### 3. Transport Layer (Communication)
-Communication between layers is handled via hardware UART. For maximum parsing speed, a flat JSON protocol is used:
+---
 
-```json
-{"m": "drive", "a": "move", "v": 300, "s": 100}
-```
-*(where: `m` - module, `a` - action, `v` - value/distance, `s` - speed)*
+## Software Data Flow & Architecture
 
-### 4. Software Data Flow & Architecture
+The backend separates responsibilities into distinct layers to ensure AI adapters, low-level hardware control, and user interfaces remain decoupled.
 
-Internally, the `server` (Node.js backend) separates responsibilities into distinct layers to ensure that AI capabilities, low-level hardware control, and user interactions are perfectly decoupled.
+Here is how the components are connected and interact with each other:
 
 ```mermaid
 graph TD
@@ -68,24 +168,55 @@ graph TD
     MOD <-->|UART / I2C / SPI| HW[Hardware layer]
 ```
 
-#### Core Components Overview:
-1. **SystemController (The Orchestrator):** The brain of the Node.js app. It loads the active "Program", enforces module permissions, instantiates the correct `AIController`, and routes user audio/text directly to the AI model.
-2. **AIController (The Adapter):** An abstraction layer that wraps different networks (Gemini, DeepSeek, etc.). It translates the platform's standardized AI tools into the specific JSON schema required by the vendor, and parses the model's function calls back into standard commands.
-3. **ModuleController (The Bridge):** Executes actions. When the `SystemController` receives a function call from the AI like `drive_moveDistance`, or the user presses a button on the UI, it goes to the `ModuleController`. This controller instantly finds the corresponding module and executes the logic.
-4. **Modules (The Extensibility Layer):** Modules are self-contained. They hold the business logic. A module can talk to external web APIs (like an Image Generator), or it can use the `PicoConnector` to send flat JSON over UART down to the Raspberry Pi Pico to spin a physical motor. A module can also trigger an `emitToUI()` event, which pushes dynamic data directly back to the Angular screen over WebSockets.
+1. **SystemController (The Orchestrator):** Loads the active program, enforces module permission blocks, instantiates the AI adapter, and routes mic audio/text directly to the AI model.
+2. **AIController (The Adapter):** Translates standard tool definitions into the JSON schemas required by LLM vendors (Gemini, OpenAI) and parses function calls back to standard commands.
+3. **ModuleController (The Bridge):** Instantly routes manual commands from the UI or AI function calls to the target module.
+4. **Self-Contained Modules (The Capability Layer):** Completely holds the specific business logic, configurations, and tool definitions in a single file.
 
 ---
 
-### 5. Platform Extensibility (The Module System)
+## Platform Extensibility: The Module System
 
-The Open V Robotics System is designed as a "plug-and-play" platform. Everything the robot interacts with—physical hardware (sensors, motors), media components (screens, cameras), or software services (AI generators, external APIs)—are encapsulated as **Modules**.
+The **Open V Robotics System** framework is highly extensible. Everything the agent interacts with—physical sensors, motor controllers, or software APIs—is encapsulated as a **Self-Contained Module**.
 
-The architecture uses a "Self-Contained Module" pattern. This means all logic, AI tool declarations, UI permissions, and required API keys for a specific feature live in a **single file**.
+Adding a new capability (physical or digital) is **not automatic or plug-and-play**. If you add a new hardware sensor or a new software service, you must write a dedicated module driver in TypeScript (and, if it involves physical hardware connected to the Pico, the corresponding MicroPython sensor handler).
 
-Adding a new capability to the robot (e.g., a Weather Forecaster) requires only two simple steps:
+### The Module Definition Developer Interface
+All modules are defined using a structured typescript layout adhering to `IModuleDefinition`.
 
-#### Step 1: Create the Module File
-Create a new file in the `server/src/modules/` directory (e.g., `weather-service.ts`). The module must export a `defineModule()` definition.
+```typescript
+export interface IModuleDefinition {
+  id: string;
+  name: string;
+  description: string;
+  category: 'sensor' | 'actuator' | 'media' | 'service';
+  moduleConfigs?: IConfigItem[];
+  programConfigs?: IConfigItem[];
+  getTools: (programConfig?: Record<string, unknown>) => IToolDeclaration[];
+  create: (deps: IModuleDeps) => Record<string, any>;
+}
+```
+
+* `id`: Unique string identifier for the module (e.g. `'camera'`, `'poll'`).
+* `name`: Human-readable name displayed in the Web UI dashboard.
+* `description`: Explanatory summary of what this module does.
+* `category`: UI grouping category (`'sensor' | 'actuator' | 'media' | 'service'`).
+* `moduleConfigs`: Global settings (configured once globally on the Settings page).
+* `programConfigs`: Program-specific settings (customized per program profile).
+* `getTools`: Function returning the list of tool definitions registered with the AI model.
+* `create`: Factory method to instantiate the custom driver using system dependencies.
+
+The runtime dependencies are provided through the `IModuleDeps` helper interface on creation:
+* `moduleId`: The unique identifier of this module instance.
+* `picoConnector`: Low-level interface to execute binary commands or send telemetry directly to the Pico microcontroller.
+* `getConfig(key)`: Fetches global settings (e.g. API keys) stored securely in the sqlite database.
+* `getProgramConfig(key)`: Fetches configurations specific only to the currently executing Program.
+* `emitToUI(command, params)`: Symmetrically broadcasts real-time WebSocket events back to the active Web UI screen (used to pop up quizzes, graphics, or control buttons).
+* `emitSystemError(message)`: Triggers a global error alert on the Web UI.
+* `emitToAI(message)`: Symmetrically injects text observations/triggers directly back to the active AI's processing stream (e.g. informing the AI of an active sensor boundary crossover, or conveying a poll choice clicked by a user).
+
+### Module Example: `weather-service.ts`
+Here is an example demonstrating a custom module that integrates both global and program-specific settings, defines tools for the LLM, and uses symmetrical socket events to push animations back to the Angular screen:
 
 ```typescript
 import { defineModule, IModuleDeps } from '../types/module.js';
@@ -93,27 +224,34 @@ import { defineModule, IModuleDeps } from '../types/module.js';
 export default defineModule({
   id: 'weatherService',
   name: 'Weather Forecaster',
-  description: 'Fetches real-time weather data and displays animations on the screen.',
+  description: 'Fetches real-time weather and displays animations on the screen.',
   category: 'service', // Categories: 'sensor', 'actuator', 'media', 'service'
   
-  // Settings automatically exposed to the UI (Settings Page)
+  // Global settings: saved once in the System Settings page
   moduleConfigs: [
     { 
       key: 'openweathermap_api_key', 
       label: 'OpenWeather API Key', 
       hint: 'openweathermap.org / API Keys',
       type: 'text'
-    },
-    {
-      key: 'weather_refresh_rate',
-      label: 'Update Frequency (minutes)',
-      type: 'range',
-      min: 5,
-      max: 60
     }
   ],
   
-  // AI capabilities automatically registered with the selected LLM
+  // Program configs: customized individually in each Program Editor program
+  programConfigs: [
+    {
+      key: 'temp_unit',
+      label: 'Temperature Unit',
+      type: 'select',
+      defaultValue: 'celsius',
+      options: [
+        { label: 'Celsius (°C)', value: 'celsius' },
+        { label: 'Fahrenheit (°F)', value: 'fahrenheit' }
+      ]
+    }
+  ],
+  
+  // Tools automatically declared and registered with the active LLM
   getTools: () => [
     {
       module: 'weatherService',
@@ -123,7 +261,7 @@ export default defineModule({
     }
   ],
 
-  // Factory method called by the ModuleController
+  // Factory called by the ModuleController to instantiate the driver
   create(deps: IModuleDeps) {
     return new WeatherServiceModule(deps);
   }
@@ -133,53 +271,47 @@ class WeatherServiceModule {
   constructor(private deps: IModuleDeps) {}
 
   async getWeather({ city }: { city: string }) {
-    // 1. Get user configuration
+    // 1. Get global configuration (API key)
     const apiKey = this.deps.getConfig('openweathermap_api_key');
-    
-    // 2. Perform module logic (e.g., call external API)
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+    if (!apiKey) throw new Error('API Key missing. Configure in settings.');
+
+    // 2. Perform weather request
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
     const response = await fetch(url).then(res => res.json());
-    
-    // 3. Send a command symmetrically back to the Angular UI Web App!
-    // The UI module component will receive this command and render a 3D animation
-    this.deps.emitToUI('showWeatherAnimation', { condition: response.weather[0].main });
-    
-    // 4. Return text back to the AI
-    return `The weather in ${city} is ${response.weather[0].description} with a temperature of ${response.main.temp}K.`;
+
+    // 3. Get program-specific configuration (selected unit)
+    const tempUnit = this.deps.getProgramConfig('temp_unit') || 'celsius';
+    let temp = response.main.temp;
+    if (tempUnit === 'fahrenheit') {
+      temp = (temp * 9/5) + 32;
+    }
+
+    // 4. Symmetrically push a WebSocket event to trigger an animation on the Angular UI
+    this.deps.emitToUI('showWeatherAnimation', { 
+      condition: response.weather[0].main, 
+      temp: `${temp.toFixed(1)}` 
+    });
+
+    // 5. Return status result back to the AI
+    return {
+      weather: response.weather[0].description,
+      temperature: `${temp.toFixed(1)} ${tempUnit === 'celsius' ? '°C' : '°F'}`
+    };
   }
 }
 ```
 
-#### Step 2: Register the Module
-Add the module to the central registry in `server/src/modules/module-registry.ts`:
-
-```typescript
-import weatherService from './weather-service.js';
-
-export const moduleRegistry: IModuleDefinition[] = [
-  // ... existing modules
-  weatherService,
-];
-```
-
-**That's it!** The system automatically:
-1. Provisions the new configuration fields in the Web UI Settings page.
-2. Adds the module to the Program Editor (under the `SMART SERVICES` category) so you can grant or revoke AI access.
-3. Maps the AI tools, parses the JSON tool-calls, and routes the commands seamlessly to your class methods.
-4. Bridges symmetric communication (`emitToUI`), allowing your module to push data (like maps or generated images) directly to the Angular frontend.
-
-## Use Cases
-
-The Open V Robotics System is a blank slate. Here are just a few examples of what you can turn this system into:
-
-* **Home Companion:** Train a local model on your daily habits. The robot can recognize family members by face, remind you of important tasks, and control your smart home devices via Zigbee/Wi-Fi.
-* **AI Friend & Tutor for Children:** Leveraging the camera and audio system, the robot becomes an interactive teacher. It can help with homework, teach languages through play, recognize objects the child holds up, and serve as a safe, empathetic conversational partner.
-* **Autonomous Agricultural UGV (Unmanned Ground Vehicle):** Remove the audio modules for dirt and water resistance. Create a program with access to a manipulator arm and camera. Load a local AI model fine-tuned for weed recognition, and the rover can autonomously maintain greenhouses.
-* **Security Platform:** Integrate thermal imagers. The robot can conduct night perimeter patrols and trigger Webhook notifications to your server upon detecting motion.
+---
 
 ## Hardware
 
-#TBD
+The **Open V Robotics System** is highly flexible regarding physical form factors. While the architecture requires a central Single Board Computer (such as a Raspberry Pi 5, Orange Pi, or NVIDIA Jetson) as the high-level brain and a Raspberry Pi Pico (RP2040) as the real-time microcontroller, the mechanical chassis and shape are entirely up to you. You can build a multi-wheeled outdoor rover, a static home companion with active head servos, or a custom crawler.
+
+You are free to connect any custom array of sensors, actuators, and screens, as long as you write the corresponding software driver modules to integrate them with the central controller. Build it however you imagine!
+
+Below is an example of a physical robot built using this framework (my custom reference hardware):
+
+<img src="docs/images/robot example.jpg" width="80%" style="display: block; margin: 0 auto;" alt="Example of a Physical Build">
 
 ---
 
@@ -199,6 +331,9 @@ Navigate to: `Menu -> Preferences -> Control Centre -> Display -> On-screen Keyb
 Navigate to: `Menu -> Preferences -> Control Centre -> Interfaces -> Serial Port` and toggle it **On**.
 
 ### 2. Camera and I2S Audio Module Setup
+
+> **Note:** This step is only required if your robot has a camera module (e.g. Arducam V3) and an I2S microphone/speaker card physically installed. If you are running a purely software-based agent or don't have these peripherals, you can safely skip this step.
+
 Open the boot configuration file to enable the camera and sound card:
 ```bash
 sudo nano /boot/firmware/config.txt
@@ -226,6 +361,9 @@ rpicam-still -t 0
 ```
 
 ### 3. Audio Setup (PipeWire)
+
+> **Note:** This step is only required if you physically have I2S microphones and speakers installed, and configured them in Step 2.
+
 PipeWire manages audio directly through hardware. Since the ICS-43434 (and all I2S MEMS mics) have very low output, PipeWire's soft-mixer handles the necessary volume boost.
 
 **Verify PipeWire and WirePlumber:**
@@ -266,6 +404,9 @@ pw-play test_mic.wav
 ```
 
 ### 4. Noise & Echo Cancellation
+
+> **Note:** This step is only required if you physically have microphones and speakers installed, and want to enable Acoustic Echo Cancellation (AEC) to prevent the microphone from picking up the robot's own speaker feedback.
+
 We use WebRTC AEC module to cancel out speaker noise from the microphone.
 Create a new configuration file:
 ```bash
