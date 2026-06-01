@@ -11,6 +11,18 @@
     </div>
 
     <div class="right-panel">
+      <!-- Active Peripherals Indicators (Mic / Camera in use) -->
+      <div class="peripherals-indicators" *ngIf="runningProgram()">
+        <div class="indicator-pill mic" *ngIf="isMicEnabled()" title="Microphone in use">
+          <lucide-icon [img]="LucideIcons.Mic" class="indicator-icon"></lucide-icon>
+          <span class="pulse-dot mic-dot"></span>
+        </div>
+        <div class="indicator-pill camera" *ngIf="isCameraEnabled()" title="Camera in use">
+          <lucide-icon [img]="LucideIcons.Camera" class="indicator-icon"></lucide-icon>
+          <span class="pulse-dot camera-dot"></span>
+        </div>
+      </div>
+
       <div class="volume-control" (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()">
         <button class="volume-btn" (click)="toggleVolumePanel()">
           <lucide-icon [img]="volumeIcon()" class="icon"></lucide-icon>

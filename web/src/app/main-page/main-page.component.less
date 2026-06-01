@@ -620,6 +620,112 @@
   }
 }
 
+// --- Peripherals Indicators (Mic / Camera) ---
+
+@keyframes indicatorSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(10px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes dotPulseMic {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 149, 0, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(255, 149, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 149, 0, 0);
+  }
+}
+
+@keyframes dotPulseCamera {
+  0% {
+    box-shadow: 0 0 0 0 rgba(48, 209, 88, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(48, 209, 88, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(48, 209, 88, 0);
+  }
+}
+
+.peripherals-indicators {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 4px; // Spacing before volume control
+}
+
+.indicator-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: indicatorSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transition: background-color 0.2s, border-color 0.2s;
+
+  .indicator-icon {
+    width: 14px;
+    height: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  // Microphone style (amber/orange)
+  &.mic {
+    color: rgba(255, 149, 0, 0.85);
+    border-color: rgba(255, 149, 0, 0.15);
+    background: rgba(255, 149, 0, 0.03);
+
+    .mic-dot {
+      background: #ff9500;
+      animation: dotPulseMic 1.8s infinite cubic-bezier(0.4, 0, 0.6, 1);
+    }
+
+    &:hover {
+      background: rgba(255, 149, 0, 0.06);
+      border-color: rgba(255, 149, 0, 0.3);
+    }
+  }
+
+  // Camera style (green)
+  &.camera {
+    color: rgba(48, 209, 88, 0.85);
+    border-color: rgba(48, 209, 88, 0.15);
+    background: rgba(48, 209, 88, 0.03);
+
+    .camera-dot {
+      background: #30d158;
+      animation: dotPulseCamera 1.8s infinite cubic-bezier(0.4, 0, 0.6, 1);
+    }
+
+    &:hover {
+      background: rgba(48, 209, 88, 0.06);
+      border-color: rgba(48, 209, 88, 0.3);
+    }
+  }
+}
+
 // --- Volume control ---
 
 .volume-control {
