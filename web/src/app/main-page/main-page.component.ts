@@ -1,7 +1,7 @@
 import { Component, computed, DestroyRef, inject, signal, OnDestroy, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { Volume1, Volume2, VolumeX, Power } from 'lucide-angular';
+import { Volume1, Volume2, VolumeX, Power, Mic, Camera } from 'lucide-angular';
 import { LucideAngularModule } from 'lucide-angular';
 import { UiSocketService } from '../../services/ui-socket.service';
 import { ApiService } from '../../services/api.service';
@@ -24,7 +24,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
   private destroyRef = inject(DestroyRef);
   private api = inject(ApiService);
   private prompt = inject(PromptService);
-  readonly LucideIcons = { Volume2, Volume1, VolumeX, Power };
+  readonly LucideIcons = { Volume2, Volume1, VolumeX, Power, Mic, Camera };
 
   pupilOffset = signal({ x: 0, y: 0 });
   isBlinking = signal(false);
@@ -50,10 +50,21 @@ export class MainPageComponent implements OnInit, OnDestroy {
   isMuted = signal(false);
   isVolumePanelOpen = signal(false);
 
+  isMicEnabled = computed(() => {
+    const program = this.runningProgram();
+    return !!(program && program.modules && program.modules.includes('microphone'));
+  });
+
+  isCameraEnabled = computed(() => {
+    const program = this.runningProgram();
+    return !!(program && program.modules && program.modules.includes('camera'));
+  });
+
   constructor(private uiSocketService: UiSocketService) { }
 
   ngOnInit() {
     this.uiSocketService.onProgramChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
+      this.clearDisplay();
       this.runningProgram.set(state);
       this.emotion.set('neutral');
     });
