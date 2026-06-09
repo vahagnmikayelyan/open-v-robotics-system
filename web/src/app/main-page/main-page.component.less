@@ -916,3 +916,168 @@
     box-shadow: none;
   }
 }
+
+// ─── List Overlay ────────────────────────────────────────────────────────────
+
+@keyframes listContainerFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes listItemSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.list-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 15;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.88);
+  cursor: auto;
+  padding: 70px 24px 24px;
+}
+
+.list-container {
+  width: 100%;
+  max-width: 680px;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: rgba(12, 12, 12, 0.92);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 24px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 0 40px rgba(0, 212, 255, 0.1),
+    0 16px 48px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  animation: listContainerFadeIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) both;
+}
+
+.list-items {
+  overscroll-behavior: contain;
+  padding: 12px 0;
+
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 212, 255, 0.25);
+    border-radius: 3px;
+  }
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 24px 20px 28px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  animation: listItemSlideIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) both;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover {
+    background: rgba(0, 212, 255, 0.06);
+  }
+
+  &:active {
+    background: rgba(0, 212, 255, 0.1);
+  }
+}
+
+.list-item-checkbox {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 2.5px solid rgba(0, 212, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+
+  .checkmark {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+  }
+}
+
+.list-item.checked .list-item-checkbox {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 14px rgba(0, 212, 255, 0.4);
+}
+
+.list-item-text {
+  flex: 1;
+  font-family: var(--font-main), sans-serif;
+  font-size: clamp(1.4rem, 4.5vw, 1.8rem);
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: 0.02em;
+  transition: opacity 0.25s ease, text-decoration-color 0.25s ease;
+  text-decoration: line-through transparent;
+}
+
+.list-item.checked .list-item-text {
+  text-decoration: line-through rgba(255, 255, 255, 0.5);
+  opacity: 0.4;
+}
+
+.list-item-delete {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--text-muted);
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+
+  &:hover {
+    color: var(--danger-color);
+    background: rgba(255, 68, 68, 0.08);
+    border-color: rgba(255, 68, 68, 0.2);
+  }
+
+  &:active {
+    color: var(--danger-color);
+    background: rgba(255, 68, 68, 0.15);
+    transform: scale(0.9);
+  }
+}

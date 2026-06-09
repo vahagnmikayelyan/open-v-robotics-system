@@ -93,4 +93,23 @@
     </div>
   </div>
 
-</div>
+  <!-- List overlay -->
+  <div class="list-overlay" *ngIf="activeList() as items" (mousedown)="$event.stopPropagation()"
+    (touchstart)="$event.stopPropagation()">
+    <div class="list-container">
+      <div class="list-items scroll-container" dragScroll>
+        <div *ngFor="let item of items; let i = index" class="list-item" [class.checked]="item.checked"
+          [style.animation-delay]="(i * 60) + 'ms'" (click)="onListItemToggle(item.text)">
+          <span class="list-item-checkbox">
+            <span class="checkmark" *ngIf="item.checked">✓</span>
+          </span>
+          <span class="list-item-text">{{ item.text }}</span>
+          <button class="list-item-delete" (click)="onListItemDelete(item.text); $event.stopPropagation()">
+            <lucide-icon [img]="LucideIcons.Trash2"></lucide-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

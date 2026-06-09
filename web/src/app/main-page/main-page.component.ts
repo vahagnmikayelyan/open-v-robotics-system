@@ -1,7 +1,7 @@
 import { Component, computed, DestroyRef, inject, signal, OnDestroy, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { Volume1, Volume2, VolumeX, Power, Mic, Camera } from 'lucide-angular';
+import { Volume1, Volume2, VolumeX, Power, Mic, Camera, Trash2 } from 'lucide-angular';
 import { LucideAngularModule } from 'lucide-angular';
 import { UiSocketService } from '../../services/ui-socket.service';
 import { ApiService } from '../../services/api.service';
@@ -11,11 +11,12 @@ import { IProgram } from '../../models/models';
 import { NgIf, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RangeInputComponent } from '../../components/range-input/range-input.component';
+import { DragScrollDirective } from '../../directives/drag-scroll.directive';
 
 @Component({
   selector: 'main-page',
   standalone: true,
-  imports: [BatteryStatusComponent, NgIf, NgFor, LucideAngularModule, FormsModule, RangeInputComponent],
+  imports: [BatteryStatusComponent, NgIf, NgFor, LucideAngularModule, FormsModule, RangeInputComponent, DragScrollDirective],
   templateUrl: './main-page.component.html',
   styleUrl: './main-page.component.less',
 })
@@ -24,7 +25,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
   private destroyRef = inject(DestroyRef);
   private api = inject(ApiService);
   private prompt = inject(PromptService);
-  readonly LucideIcons = { Volume2, Volume1, VolumeX, Power, Mic, Camera };
+  readonly LucideIcons = { Volume2, Volume1, VolumeX, Power, Mic, Camera, Trash2 };
 
   pupilOffset = signal({ x: 0, y: 0 });
   isBlinking = signal(false);
@@ -34,6 +35,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
   activePoll = signal<{ question?: string; options: string[] } | null>(null);
 
   isPollAnswered = signal<boolean>(false);
+  activeList = signal<{ text: string; checked: boolean }[] | null>(null);
 
   emotion = signal<string>('neutral');
   winkLeft = signal<boolean>(false);
@@ -103,6 +105,11 @@ export class MainPageComponent implements OnInit, OnDestroy {
         const question = event.params['question'] as string | undefined;
         this.isPollAnswered.set(false);
         this.activePoll.set({ options, question });
+      } else if (event.command === 'showList') {
+        console.log('[MainPageComponent] Setting activeList with items:', event.params['items']);
+        this.activeList.set(event.params['items'] as { text: string; checked: boolean }[]);
+      } else if (event.command === 'clearList') {
+        this.activeList.set(null);
       } else if (event.command === 'setEmotion') {
         const emotion = event.params['emotion'] as string;
         this.emotion.set(emotion);
@@ -123,12 +130,21 @@ export class MainPageComponent implements OnInit, OnDestroy {
   clearDisplay() {
     this.displayMedia.set(null);
     this.activePoll.set(null);
+    this.activeList.set(null);
   }
 
   onPollAnswer(answer: string) {
     if (this.isPollAnswered()) return;
     this.isPollAnswered.set(true);
     this.uiSocketService.sendCommand('poll', 'handleAnswer', { answer });
+  }
+
+  onListItemToggle(item: string) {
+    this.uiSocketService.sendCommand('list', 'toggleItem', { item });
+  }
+
+  onListItemDelete(item: string) {
+    this.uiSocketService.sendCommand('list', 'deleteItem', { item });
   }
 
   getVoltageLevel() {
@@ -164,7 +180,6 @@ export class MainPageComponent implements OnInit, OnDestroy {
   }
 
   stopRunningProgram() {
-    this.clearDisplay();
     this.uiSocketService.stopRunningProgram();
   }
 
