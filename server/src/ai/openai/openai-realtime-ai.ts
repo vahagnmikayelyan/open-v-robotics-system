@@ -17,9 +17,6 @@ class OpenAIRealtimeAI extends EventEmitter implements IAIModelController {
 
   private ws: WebSocket | null = null;
 
-  private connectResolve: ((value: boolean) => void) | null = null;
-  private connectReject: ((reason: unknown) => void) | null = null;
-
   private hasTriggeredInitialResponse = false;
 
   constructor({ model, apiKey, voice, systemInstruction, tools }: IAIControllerParams) {
@@ -86,8 +83,6 @@ class OpenAIRealtimeAI extends EventEmitter implements IAIModelController {
 
   connect(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      this.connectResolve = resolve;
-      this.connectReject = reject;
       this.isManualDisconnect = false;
 
       const url = `wss://api.openai.com/v1/realtime?model=${this.model}`;
@@ -104,6 +99,7 @@ class OpenAIRealtimeAI extends EventEmitter implements IAIModelController {
 
         Logger.debugLog('OpenAI Realtime API connected', 'OpenAIRealtime');
         this.emit('systemMessage', { event: 'open' });
+        resolve(true);
       });
 
       this.ws.on('message', (data: string) => {
@@ -125,12 +121,7 @@ class OpenAIRealtimeAI extends EventEmitter implements IAIModelController {
 
       this.ws.on('error', (error) => {
         Logger.errorLog('WebSocket error', 'OpenAIRealtime', error);
-
-        if (this.connectReject) {
-          this.connectReject(error);
-          this.connectResolve = null;
-          this.connectReject = null;
-        }
+        reject(error);
       });
     });
   }
@@ -214,12 +205,6 @@ class OpenAIRealtimeAI extends EventEmitter implements IAIModelController {
             this.sendData({ type: 'response.create' });
             this.hasTriggeredInitialResponse = true;
           }
-
-          if (this.connectResolve) {
-            this.connectResolve(true);
-            this.connectResolve = null;
-            this.connectReject = null;
-          }
           break;
 
         case 'response.output_audio.delta':
@@ -274,12 +259,6 @@ class OpenAIRealtimeAI extends EventEmitter implements IAIModelController {
           const errorMessage = event.error?.message || 'Unknown error';
           Logger.errorLog('API error', 'OpenAIRealtime', event.error);
           this.emit('systemMessage', { event: 'error', message: errorMessage });
-
-          if (this.connectReject) {
-            this.connectReject(new Error(errorMessage));
-            this.connectResolve = null;
-            this.connectReject = null;
-          }
           break;
         }
       }

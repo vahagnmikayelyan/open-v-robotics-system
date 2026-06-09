@@ -301,7 +301,12 @@ class GeminiLiveAI extends EventEmitter implements IAIModelController {
             // For Gemini 3 we send an empty text space to trigger generation
             this.sendData({ realtimeInput: { text: ' ' } });
           } else {
-            this.sendData({ clientContent: { turnComplete: true } });
+            this.sendData({
+              clientContent: {
+                turns: [{ role: 'user', parts: [{ text: ' ' }] }],
+                turnComplete: true,
+              },
+            });
           }
           this.hasTriggeredInitialResponse = true;
         }
