@@ -157,21 +157,18 @@ Here is how the components are connected and interact with each other:
 ```mermaid
 graph TD
     UI[Angular Web UI] <-->|WebSockets & REST| SH[SocketHandler & API]
-    SH -->|Chat & Run Program| SC[SystemController]
-    SH -->|Manual Controls| MC[ModuleController]
+    SH -->|Chat, Run Program & Manual Controls| SC[SystemController]
     
     SC <-->|Prompts & Tool Calls| AI[AI Models adapter]
-    SC -->|Execute AI Decision| MC
     
-    MC -->|Commands| MOD[Self-Contained Modules]
+    SC -->|Commands| MOD[Self-Contained Modules]
     MOD -->|emitToUI| SH
     MOD <-->|UART / I2C / SPI| HW[Hardware layer]
 ```
 
-1. **SystemController (The Orchestrator):** Loads the active program, enforces module permission blocks, instantiates the AI adapter, and routes mic audio/text directly to the AI model.
+1. **SystemController (The Orchestrator & Bridge):** Loads the active program, enforces module permission blocks, instantiates the AI adapter, routes mic audio/text directly to the AI model, and routes manual commands or AI function calls to the target module.
 2. **AIController (The Adapter):** Translates standard tool definitions into the JSON schemas required by LLM vendors (Gemini, OpenAI) and parses function calls back to standard commands.
-3. **ModuleController (The Bridge):** Instantly routes manual commands from the UI or AI function calls to the target module.
-4. **Self-Contained Modules (The Capability Layer):** Completely holds the specific business logic, configurations, and tool definitions in a single file.
+3. **Self-Contained Modules (The Capability Layer):** Completely holds the specific business logic, configurations, and tool definitions in a single file.
 
 ---
 
@@ -213,7 +210,9 @@ The runtime dependencies are provided through the `IModuleDeps` helper interface
 * `getProgramConfig(key)`: Fetches configurations specific only to the currently executing Program.
 * `emitToUI(command, params)`: Symmetrically broadcasts real-time WebSocket events back to the active Web UI screen (used to pop up quizzes, graphics, or control buttons).
 * `emitSystemError(message)`: Triggers a global error alert on the Web UI.
-* `emitToAI(message)`: Symmetrically injects text observations/triggers directly back to the active AI's processing stream (e.g. informing the AI of an active sensor boundary crossover, or conveying a poll choice clicked by a user).
+* `emitTextToAI(message)`: Symmetrically injects text observations/triggers directly back to the active AI's processing stream (e.g. informing the AI of an active sensor boundary crossover, or conveying a poll choice clicked by a user).
+* `emitImageToAI(imageData, mimeType?)`: Sends an image buffer to the active AI.
+* `emitAudioToAI(audioData, mimeType?)`: Sends an audio buffer to the active AI.
 
 ### Module Example: `weather-service.ts`
 Here is an example demonstrating a custom module that integrates both global and program-specific settings, defines tools for the LLM, and uses symmetrical socket events to push animations back to the Angular screen:
@@ -261,7 +260,7 @@ export default defineModule({
     }
   ],
 
-  // Factory called by the ModuleController to instantiate the driver
+  // Factory called by the SystemController to instantiate the driver
   create(deps: IModuleDeps) {
     return new WeatherServiceModule(deps);
   }
