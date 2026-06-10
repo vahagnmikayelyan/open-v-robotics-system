@@ -91,6 +91,7 @@ class SystemController extends EventEmitter implements ISystemController {
       this.aiController.destroy();
       this.modules['microphone'].stopStream();
       this.modules['speaker'].stopStream();
+      this.modules['telegram'].stop();
     }
 
     this.updateProgramState(null);
@@ -148,6 +149,11 @@ class SystemController extends EventEmitter implements ISystemController {
         this.modules['microphone'].startStream(aiModel.micSampleRate);
       }
 
+      // Enable Telegram bot if program allowed use telegram
+      if (this.allowedModules.has('telegram')) {
+        this.modules['telegram'].start();
+      }
+
       await this.aiController.connect();
 
       this.updateProgramState(program);
@@ -161,6 +167,7 @@ class SystemController extends EventEmitter implements ISystemController {
 
       this.modules['microphone'].stopStream();
       this.modules['speaker'].stopStream();
+      this.modules['telegram'].stop();
       this.updateProgramState(null);
 
       const errorMessage = e instanceof Error ? e.message : String(e);
@@ -178,6 +185,7 @@ class SystemController extends EventEmitter implements ISystemController {
       this.aiController.destroy();
       this.modules['microphone'].stopStream();
       this.modules['speaker'].stopStream();
+      this.modules['telegram'].stop();
     }
     this.updateProgramState(null);
   }
