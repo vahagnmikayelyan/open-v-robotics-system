@@ -18,7 +18,7 @@ import imageGenerator from './image-generator.js';
 import pollModule from './poll-module.js';
 import listModule from './list-module.js';
 import expressionController from './expression-controller.js';
-import telegram from './telegram.js';
+import telegramModule from './telegram-module.js';
 
 export const moduleCategories: IModuleCategory[] = [
   {
@@ -59,7 +59,7 @@ export const moduleRegistry: IModuleDefinition[] = [
   pollModule,
   listModule,
   expressionController,
-  telegram,
+  telegramModule,
 ];
 
 /** Module metadata for REST API GET /api/modules and UI */

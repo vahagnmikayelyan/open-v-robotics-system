@@ -10,14 +10,14 @@ export default defineModule({
 
   moduleConfigs: [
     {
-      key: 'bot_token',
+      key: 'telegram_bot_token',
       label: 'Bot Token',
       hint: 'API Token from @BotFather',
       type: 'text',
       defaultValue: '',
     },
     {
-      key: 'allowed_chat_id',
+      key: 'telegram_allowed_chat_id',
       label: 'Allowed Chat ID',
       hint: 'Your Telegram Chat ID',
       type: 'text',
@@ -71,8 +71,8 @@ class TelegramModule {
   constructor(private deps: IModuleDeps) {}
 
   start() {
-    const token = this.deps.getConfig('bot_token') as string;
-    const allowedChatIdStr = this.deps.getConfig('allowed_chat_id') as string;
+    const token = this.deps.getConfig('telegram_bot_token') as string;
+    const allowedChatIdStr = this.deps.getConfig('telegram_allowed_chat_id') as string;
 
     if (!token) {
       Logger.errorLog('Telegram token is not configured', 'Telegram');
@@ -146,7 +146,7 @@ class TelegramModule {
   }
 
   async sendMessage(params: { text: string }): Promise<{ success: boolean }> {
-    const allowedChatIdStr = this.deps.getConfig('allowed_chat_id') as string;
+    const allowedChatIdStr = this.deps.getConfig('telegram_allowed_chat_id') as string;
     if (!this.bot || !allowedChatIdStr) {
       Logger.errorLog('Cannot send message: bot not started or chat ID not set', 'Telegram');
       return { success: false };
@@ -162,7 +162,7 @@ class TelegramModule {
   }
 
   async sendLocation(params: { latitude: number; longitude: number }): Promise<{ success: boolean }> {
-    const allowedChatIdStr = this.deps.getConfig('allowed_chat_id') as string;
+    const allowedChatIdStr = this.deps.getConfig('telegram_allowed_chat_id') as string;
     if (!this.bot || !allowedChatIdStr) {
       Logger.errorLog('Cannot send location: bot not started or chat ID not set', 'Telegram');
       return { success: false };
