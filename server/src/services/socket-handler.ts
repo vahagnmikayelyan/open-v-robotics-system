@@ -1,5 +1,4 @@
 import type { Server } from 'node:http';
-import { IModuleController } from '../types/hardware.js';
 import { WebSocketServer } from 'ws';
 import Socket from './socket.js';
 import { Logger } from './logger.js';
@@ -12,7 +11,7 @@ interface ICommand {
   params: Record<string, unknown>;
 }
 
-const SocketHandler = (server: Server, moduleController: IModuleController, systemController: ISystemController) => {
+const SocketHandler = (server: Server, systemController: ISystemController) => {
   const wss = new WebSocketServer({ clientTracking: false, noServer: true, path: '/socket' });
 
   server.on('upgrade', (request, socket, head) => {
@@ -29,16 +28,12 @@ const SocketHandler = (server: Server, moduleController: IModuleController, syst
       socket.emit('init');
     };
 
-    moduleController.modules['camera'].on('frame', (frame: Buffer) => {
+    systemController.modules['camera'].on('frame', (frame: Buffer) => {
       socket.emit('cameraData', 'data:image/jpg;base64,' + frame.toString('base64'));
     });
 
-    moduleController.on('moduleEvent', (data: { module: string; command: string; params: Record<string, unknown> }) => {
+    systemController.on('moduleEvent', (data: { module: string; command: string; params: Record<string, unknown> }) => {
       socket.emit('moduleEvent', data);
-    });
-
-    moduleController.on('systemError', (message: string) => {
-      socket.emit('systemError', message);
     });
 
     systemController.on('AISystemMessage', (message: string) => {
@@ -60,9 +55,9 @@ const SocketHandler = (server: Server, moduleController: IModuleController, syst
     socket.on<ICommand>('command', ({ module, command, params }) => {
       // ToDo need optimization and standardization for all modules
       if (module === 'camera') {
-        moduleController.runCommand(module, command, params);
+        systemController.runCommand(module, command, params);
       } else {
-        moduleController
+        systemController
           .runCommand(module, command, params)
           .then((response: unknown) => {
             response && socket.emit('commandResult', response);
