@@ -29,8 +29,14 @@ class ModuleController extends EventEmitter implements IModuleController {
         emitSystemError: (message: string) => {
           this.emit('systemError', message);
         },
-        emitToAI: (message: string) => {
-          this.emit('moduleAIMessage', message);
+        emitTextToAI: (message: string) => {
+          this.emit('moduleAITextMessage', message);
+        },
+        emitImageToAI: (imageData: Buffer, mimeType?: string) => {
+          this.emit('moduleAIImageMessage', { imageData, mimeType: mimeType || 'image/jpeg' });
+        },
+        emitAudioToAI: (audioData: Buffer, mimeType?: string) => {
+          this.emit('moduleAIAudioMessage', { audioData, mimeType: mimeType || 'audio/pcm;rate=16000' });
         },
       };
 

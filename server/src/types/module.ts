@@ -26,7 +26,9 @@ export interface IModuleDeps {
   getProgramConfig: (key: string) => unknown;
   emitToUI: (command: string, params?: Record<string, unknown>) => void;
   emitSystemError: (message: string) => void;
-  emitToAI: (message: string) => void;
+  emitTextToAI: (message: string) => void;
+  emitImageToAI: (imageData: Buffer, mimeType?: string) => void;
+  emitAudioToAI: (audioData: Buffer, mimeType?: string) => void;
 }
 
 export interface IModuleDefinition {

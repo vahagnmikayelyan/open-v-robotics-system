@@ -74,7 +74,7 @@ class PollModule {
   }
 
   handleAnswer({ answer }: { answer: string }): Promise<{ success: boolean }> {
-    this.deps.emitToAI(`Poll answer: ${answer}`);
+    this.deps.emitTextToAI(`Poll answer: ${answer}`);
     return Promise.resolve({ success: true });
   }
 }

@@ -29,8 +29,16 @@ class SystemController extends EventEmitter implements ISystemController {
     this.configController = configController;
     this.programController = new ProgramController(new ProgramRepository(dbClient));
 
-    this.moduleController.on('moduleAIMessage', (message: string) => {
-      this.sendText(message);
+    this.moduleController.on('moduleAITextMessage', (message: string) => {
+      this.aiController && this.aiController.sendText(message);
+    });
+
+    this.moduleController.on('moduleAIImageMessage', (data: { imageData: Buffer; mimeType: string }) => {
+      this.aiController && this.aiController.sendImage(data.imageData, data.mimeType);
+    });
+
+    this.moduleController.on('moduleAIAudioMessage', (data: { audioData: Buffer; mimeType: string }) => {
+      this.aiController && this.aiController.sendAudio(data.audioData, data.mimeType);
     });
   }
 
