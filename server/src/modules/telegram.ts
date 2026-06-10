@@ -13,7 +13,7 @@ export default defineModule({
       key: 'bot_token',
       label: 'Bot Token',
       hint: 'API Token from @BotFather',
-      type: 'password',
+      type: 'text',
       defaultValue: '',
     },
     {
