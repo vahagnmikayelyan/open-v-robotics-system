@@ -37,6 +37,10 @@ class SystemController extends EventEmitter implements ISystemController {
     this.picoConnector = new PicoUartConnector();
     this.modules = {};
 
+    this.initModules();
+  }
+
+  private initModules() {
     // Initialize all modules from registry
     for (const def of moduleRegistry) {
       const deps: IModuleDeps = {
