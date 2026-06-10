@@ -1,45 +1,82 @@
-import { IModuleController } from '../types/hardware.js';
+import { IHardwareConnector } from '../types/hardware.js';
 import { ISystemController } from '../types/system.js';
 import { IProgram, IProgramController } from '../types/program.js';
+import { IModuleDeps } from '../types/module.js';
 import SqliteClient from '../database/sqlite-client.js';
 import ProgramController from './program-controller.js';
 import ProgramRepository from '../repositories/sqlite/program-repository.js';
 import { IAIModelController } from '../types/ai.js';
 import { IToolDeclaration } from '../types/tool.js';
-import { getAllToolDeclarations } from '../modules/module-registry.js';
+import { moduleRegistry, getAllToolDeclarations } from '../modules/module-registry.js';
 import { Logger } from './logger.js';
 import { createAIController } from '../ai/ai-registry.js';
 import EventEmitter from 'events';
 import { IConfigController } from '../types/config.js';
 import ConfigController from './config-controller.js';
 import { availableAIModels } from '../configs/ai-models.js';
+import PicoUartConnector from './pico-uart-connector.js';
 
 class SystemController extends EventEmitter implements ISystemController {
-  private moduleController: IModuleController;
+  private readonly picoConnector: IHardwareConnector;
   private programController: IProgramController;
   private configController: IConfigController;
   private aiController: IAIModelController | null = null;
   private allowedModules: Set<string> = new Set();
   private runningProgram: IProgram | null = null;
+  private activeProgramConfigs: Record<string, unknown> = {};
 
-  constructor(dbClient: SqliteClient['db'], moduleController: IModuleController, configController: ConfigController) {
+  modules: Record<string, any>;
+
+  constructor(dbClient: SqliteClient['db'], configController: ConfigController) {
     super();
 
-    this.moduleController = moduleController;
     this.configController = configController;
     this.programController = new ProgramController(new ProgramRepository(dbClient));
 
-    this.moduleController.on('moduleAITextMessage', (message: string) => {
-      this.aiController && this.aiController.sendText(message);
+    // Initialize hardware connector
+    this.picoConnector = new PicoUartConnector();
+    this.modules = {};
+
+    // Initialize all modules from registry
+    for (const def of moduleRegistry) {
+      const deps: IModuleDeps = {
+        moduleId: def.id,
+        picoConnector: this.picoConnector,
+        getConfig: (key: string) => this.configController.getConfig(key),
+        getProgramConfig: (key: string) => this.activeProgramConfigs[`${def.id}_${key}`],
+        emitToUI: (command: string, params?: Record<string, unknown>) => {
+          this.emit('moduleEvent', { module: def.id, command, params: params ?? {} });
+        },
+        emitSystemError: (message: string) => {
+          this.emit('systemError', message);
+        },
+        emitTextToAI: (message: string) => {
+          this.aiController && this.aiController.sendText(message);
+        },
+        emitImageToAI: (imageData: Buffer, mimeType?: string) => {
+          this.aiController && this.aiController.sendImage(imageData, mimeType || 'image/jpeg');
+        },
+        emitAudioToAI: (audioData: Buffer, mimeType?: string) => {
+          this.aiController && this.aiController.sendAudio(audioData, mimeType || 'audio/pcm;rate=16000');
+        },
+      };
+
+      this.modules[def.id] = def.create(deps);
+    }
+
+    this.picoConnector.on('ready', () => {
+      Logger.debugLog('Pico connected successfully', 'Pico');
     });
 
-    this.moduleController.on('moduleAIImageMessage', (data: { imageData: Buffer; mimeType: string }) => {
-      this.aiController && this.aiController.sendImage(data.imageData, data.mimeType);
-    });
+    this.picoConnector.init();
+  }
 
-    this.moduleController.on('moduleAIAudioMessage', (data: { audioData: Buffer; mimeType: string }) => {
-      this.aiController && this.aiController.sendAudio(data.audioData, data.mimeType);
-    });
+  runCommand(module: string, command: string, params: Record<string, unknown>) {
+    if (this.modules[module] && typeof this.modules[module][command] === 'function') {
+      return this.modules[module][command](params ? params : {});
+    }
+
+    return Promise.reject('Wrong command');
   }
 
   async runProgram(programId: number) {
@@ -47,8 +84,8 @@ class SystemController extends EventEmitter implements ISystemController {
 
     if (this.aiController) {
       this.aiController.destroy();
-      this.moduleController.modules['microphone'].stopStream();
-      this.moduleController.modules['speaker'].stopStream();
+      this.modules['microphone'].stopStream();
+      this.modules['speaker'].stopStream();
     }
 
     this.updateProgramState(null);
@@ -66,7 +103,7 @@ class SystemController extends EventEmitter implements ISystemController {
         return Promise.reject('AI model not found');
       }
 
-      this.moduleController.setActiveProgramConfigs(program.moduleConfigs || {});
+      this.activeProgramConfigs = program.moduleConfigs || {};
 
       const tools: IToolDeclaration[] = getAllToolDeclarations(this.allowedModules, program.moduleConfigs || {});
 
@@ -94,16 +131,16 @@ class SystemController extends EventEmitter implements ISystemController {
 
       // Enable speaker if program allowed use speaker
       if (this.allowedModules.has('speaker')) {
-        this.moduleController.modules['speaker'].startStream();
+        this.modules['speaker'].startStream();
       }
 
       // Enable microphone if program allowed use microphone
       if (this.allowedModules.has('microphone')) {
-        this.moduleController.modules['microphone'].on('audioChunk', (audioChunk: Buffer) => {
+        this.modules['microphone'].on('audioChunk', (audioChunk: Buffer) => {
           this.aiController && this.aiController.sendAudio(audioChunk);
         });
 
-        this.moduleController.modules['microphone'].startStream(aiModel.micSampleRate);
+        this.modules['microphone'].startStream(aiModel.micSampleRate);
       }
 
       await this.aiController.connect();
@@ -117,8 +154,8 @@ class SystemController extends EventEmitter implements ISystemController {
         this.aiController = null;
       }
 
-      this.moduleController.modules['microphone'].stopStream();
-      this.moduleController.modules['speaker'].stopStream();
+      this.modules['microphone'].stopStream();
+      this.modules['speaker'].stopStream();
       this.updateProgramState(null);
 
       const errorMessage = e instanceof Error ? e.message : String(e);
@@ -134,8 +171,8 @@ class SystemController extends EventEmitter implements ISystemController {
     Logger.debugLog('Stopping program', 'System');
     if (this.aiController) {
       this.aiController.destroy();
-      this.moduleController.modules['microphone'].stopStream();
-      this.moduleController.modules['speaker'].stopStream();
+      this.modules['microphone'].stopStream();
+      this.modules['speaker'].stopStream();
     }
     this.updateProgramState(null);
   }
@@ -175,7 +212,7 @@ class SystemController extends EventEmitter implements ISystemController {
           executionResult = { status: 'error', error: 'Access denied' };
         } else {
           try {
-            const result = await this.moduleController.runCommand(parts[0], parts[1], call.args ?? {});
+            const result = await this.runCommand(parts[0], parts[1], call.args ?? {});
 
             // Camera returns a Buffer (JPEG) — send it as image to AI separately
             if (parts[0] === 'camera' && parts[1] === 'takePhoto') {
@@ -214,7 +251,7 @@ class SystemController extends EventEmitter implements ISystemController {
     const buffer = typeof data.base64Data === 'string' ? Buffer.from(data.base64Data, 'base64') : data.base64Data;
 
     // Writing audio data to PipeWire
-    this.moduleController.modules['speaker'].playStream(buffer);
+    this.modules['speaker'].playStream(buffer);
   }
 }
 
