@@ -25,7 +25,7 @@ class SystemController extends EventEmitter implements ISystemController {
   private runningProgram: IProgram | null = null;
   private activeProgramConfigs: Record<string, unknown> = {};
 
-  modules: Record<string, any>;
+  modules: Record<string, any> = {};
 
   constructor(dbClient: SqliteClient['db'], configController: ConfigController) {
     super();
@@ -35,12 +35,19 @@ class SystemController extends EventEmitter implements ISystemController {
 
     // Initialize hardware connector
     this.picoConnector = new PicoUartConnector();
-    this.modules = {};
 
     this.initModules();
+
+    this.picoConnector.on('ready', () => {
+      Logger.debugLog('Pico connected successfully', 'Pico');
+    });
+
+    this.picoConnector.init();
   }
 
   private initModules() {
+    this.modules = {};
+
     // Initialize all modules from registry
     for (const def of moduleRegistry) {
       const deps: IModuleDeps = {
@@ -67,12 +74,6 @@ class SystemController extends EventEmitter implements ISystemController {
 
       this.modules[def.id] = def.create(deps);
     }
-
-    this.picoConnector.on('ready', () => {
-      Logger.debugLog('Pico connected successfully', 'Pico');
-    });
-
-    this.picoConnector.init();
   }
 
   runCommand(module: string, command: string, params: Record<string, unknown>) {
