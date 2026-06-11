@@ -39,6 +39,9 @@ const ApiHandler = (app: Express, dbClient: any) => {
   router.get('/categories', apiUtilsController.getModuleCategories);
   router.post('/utils/reboot', apiUtilsController.reboot);
   router.post('/utils/power-off', apiUtilsController.powerOff);
+  router.get('/utils/wifi/scan', apiUtilsController.scanWifi);
+  router.post('/utils/wifi/connect', apiUtilsController.connectWifi);
+  router.get('/utils/wifi/status', apiUtilsController.getWifiStatus);
 
   // Programs
   router.get('/programs/export', apiProgramController.exportPrograms);

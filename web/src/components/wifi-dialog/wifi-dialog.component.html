@@ -1,0 +1,64 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-card wifi-card" (click)="$event.stopPropagation()">
+    <div class="modal-header wifi-header">
+      <span class="header-title">WI-FI SETTINGS</span>
+      <button class="icon-btn refresh-btn" (click)="scanWifi()" [disabled]="isScanning() || isConnecting()" title="Scan networks">
+        <lucide-icon [img]="LucideIcons.RefreshCw" [class.spin]="isScanning()" class="icon"></lucide-icon>
+      </button>
+    </div>
+
+    <!-- Wi-Fi Current Status -->
+    <div class="current-wifi-status">
+      <div class="label">CURRENT CONNECTION</div>
+      <div class="val" [class.connected]="activeWifi()">
+        {{ activeWifi() ? activeWifi() : 'DISCONNECTED' }}
+      </div>
+    </div>
+
+    <!-- Scanned networks list -->
+    <div class="wifi-list scroll-container" dragScroll>
+      <div *ngIf="isScanning() && wifiNetworks().length === 0" class="loader-wrapper list-loader">
+        <ui-loader></ui-loader>
+      </div>
+      
+      <div *ngIf="!isScanning() && wifiNetworks().length === 0" class="no-networks">
+        No networks found.
+      </div>
+
+      <div class="network-item" *ngFor="let net of wifiNetworks()" [class.selected]="selectedSsid() === net.ssid">
+        <div class="network-info" (click)="toggleNetworkSelect(net.ssid)">
+          <lucide-icon [img]="LucideIcons.Wifi" class="icon wifi-icon"></lucide-icon>
+          <div class="network-details">
+            <div class="network-ssid">{{ net.ssid }}</div>
+            <div class="network-meta">Signal: {{ net.signal }}% | {{ net.security || 'Open' }}</div>
+          </div>
+          <div class="active-indicator" *ngIf="activeWifi() === net.ssid">
+            <div class="dot"></div>
+          </div>
+        </div>
+        
+        <!-- Inline Password input if selected -->
+        <div class="password-form" *ngIf="selectedSsid() === net.ssid">
+          <input 
+            type="password" 
+            placeholder="Enter password..." 
+            class="password-input" 
+            [(ngModel)]="wifiPassword"
+            (keydown.enter)="connectWifi(net.ssid)"
+            [disabled]="isConnecting()"
+            autofocus
+          />
+          <div class="action-buttons">
+            <button class="nav-btn close-btn" (click)="selectedSsid.set(null)" [disabled]="isConnecting()">CANCEL</button>
+            <button class="nav-btn primary connect-btn" (click)="connectWifi(net.ssid)" [disabled]="isConnecting()">
+              <span *ngIf="!isConnecting()">CONNECT</span>
+              <span *ngIf="isConnecting()">CONNECTING...</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="nav-btn close-btn modal-close-btn" (click)="onClose()" [disabled]="isConnecting()">CLOSE</button>
+  </div>
+</div>

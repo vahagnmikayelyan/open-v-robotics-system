@@ -2,8 +2,12 @@
   <div class="top-bar">
     <button class="nav-btn back" routerLink="/">BACK</button>
 
-    <button class="nav-btn" (click)="openConnectDialog()">
+    <button class="nav-btn" (click)="openConnectDialog()" title="Remote Control QR Code">
       <lucide-icon [img]="LucideIcons.QrCode" class="icon"></lucide-icon>
+    </button>
+
+    <button class="nav-btn" (click)="isWifiDialogOpen.set(true)" title="Configure Wi-Fi">
+      <lucide-icon [img]="LucideIcons.Wifi" class="icon"></lucide-icon>
     </button>
 
     <button class="nav-btn" routerLink="/setup">
@@ -64,23 +68,7 @@
     </button>
   </div>
 
-  <div class="modal-overlay" *ngIf="isConnectDialogOpen()" (click)="closeConnectDialog()">
-    <div class="modal-card" (click)="$event.stopPropagation()">
-      <div class="modal-header">REMOTE CONTROL</div>
+  <qr-dialog *ngIf="isConnectDialogOpen()" (close)="isConnectDialogOpen.set(false)"></qr-dialog>
 
-      <div class="qr-box">
-        <img *ngIf="qrImageUrl()" [src]="qrImageUrl()" alt="QR Code" width="180" height="180" />
-        <div *ngIf="!qrImageUrl()" class="loader-wrapper qr-loader">
-          <ui-loader></ui-loader>
-        </div>
-      </div>
-
-      <div class="ip-info">
-        <div class="label">SCAN TO CONNECT</div>
-        <div class="val">{{ connectionString() }}</div>
-      </div>
-
-      <button class="nav-btn back close-btn" (click)="closeConnectDialog()">CLOSE</button>
-    </div>
-  </div>
+  <wifi-dialog *ngIf="isWifiDialogOpen()" (close)="isWifiDialogOpen.set(false)"></wifi-dialog>
 </div>
